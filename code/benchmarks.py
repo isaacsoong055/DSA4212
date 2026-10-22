@@ -18,6 +18,10 @@ LO, HI = -5.0, 5.0
 PRIMARY = dict(c=0.0, s=10.0, A=4.0, w=0.3)
 WELL_LOCATIONS = {"far": (3.0, 3.0), "near": (2.0, 0.0)}
 
+# Validation-function thresholds: set from the epsilon_validation pilot (docs/pilot_log.md).
+EPSILON_RASTRIGIN = 0.2  # random N=300 succeeds 5/200; cap (nearest non-global regret) 0.995
+EPSILON_SCHWEFEL = 5.0   # random N=300 succeeds 10/200 (exactly 5%); cap 118.4
+
 # Success threshold on regret, chosen from random sampling only (pilot step 2).
 EPSILON_PRIMARY = 0.05  # pilot step 2: random N=300 succeeds 5/200 on primary_far_w0.3
 
@@ -60,6 +64,26 @@ class Landscape:
         return self.regret(best_f) <= self.epsilon
 
 
+def local_minima(ls: Landscape, n_starts: int = 1000, seed: int = 0, merge_tol: float = 1e-2):
+    """Distinct local minima (x, regret), sorted by regret, from L-BFGS-B started at
+    n_starts uniform points drawn with a fixed seed. A larger n_starts reuses the same first starts."""
+    starts = np.random.default_rng(seed).uniform(LO, HI, size=(n_starts, ls.d))
+    ends = np.array([ls.local_descent(x) for x in starts])
+    fs = np.array([ls(x) for x in ends])
+    found: list[tuple[np.ndarray, float]] = []
+    for i in np.argsort(fs, kind="stable"):
+        if not any(np.linalg.norm(ends[i] - x) < merge_tol for x, _ in found):
+            found.append((ends[i], float(fs[i] - ls.f_star)))
+    return found
+
+
+def nearest_nonglobal(ls: Landscape, minima, tol: float = 1e-2):
+    """(regret, locations) of the lowest-regret non-global minimum; ties within 1e-6 relative are all returned."""
+    others = [(x, r) for x, r in minima if np.linalg.norm(x - ls.x_star) > tol]
+    r0 = others[0][1]
+    return r0, [x for x, r in others if abs(r - r0) <= 1e-6 * max(1.0, abs(r0))]
+
+
 def _polish(func, x0, d):
     """Refine an approximate minimiser numerically."""
     res = minimize(func, np.asarray(x0, float), method="L-BFGS-B",
@@ -74,7 +98,7 @@ def sphere(d: int = 2) -> Landscape:
 def rastrigin(d: int = 2) -> Landscape:
     def f(x):
         return float(10 * d + np.sum(x**2 - 10 * np.cos(2 * np.pi * x)))
-    return Landscape("rastrigin", d, f, np.zeros(d), 0.0)
+    return Landscape("rastrigin", d, f, np.zeros(d), 0.0, epsilon=EPSILON_RASTRIGIN)
 
 
 def schwefel(d: int = 2) -> Landscape:
@@ -83,7 +107,7 @@ def schwefel(d: int = 2) -> Landscape:
         z = 100.0 * x
         return float(418.9828872724338 * d - np.sum(z * np.sin(np.sqrt(np.abs(z)))))
     x_star, f_star = _polish(f, np.full(d, 4.2096874633), d)
-    return Landscape("schwefel", d, f, x_star, f_star)
+    return Landscape("schwefel", d, f, x_star, f_star, epsilon=EPSILON_SCHWEFEL)
 
 
 def decoy_well(d: int = 2, w: float = PRIMARY["w"], loc: str = "far",

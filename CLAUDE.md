@@ -23,7 +23,8 @@ without asking the user. If something there is ambiguous, ask rather than guess.
 - Configs in `code/configs.py` (BO kernel, n_init, refit schedule, acquisition
   optimiser, CMA-ES sigma0/x0, restart triggers) are frozen before the big runs.
 - epsilon for the primary landscape was chosen from random sampling only
-  (`pilot/epsilon_pilot.py`). Restart triggers are chosen from firing rates only,
+  (`pilot/epsilon_pilot.py`). Rastrigin and Schwefel epsilons follow the rule in
+  `docs/pilot_log.md` (cap below nearest non-global regret, random success <= 5%; `pilot/epsilon_validation.py`). Restart triggers are chosen from firing rates only,
   never from success.
 - `docs/predictions.md` is committed and must not be edited.
 - Report every outcome. A surprising result: check for bugs or config slips first.

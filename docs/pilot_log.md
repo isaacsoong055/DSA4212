@@ -181,6 +181,68 @@ Run All in FAST mode (N = 100, 5 seeds, single process): 51-65 s cold (two measu
 notebook: `run_cmaes` now also keeps the per-generation mean, sigma and C in `log.meta["dist"]` (in memory
 only, for drawing search ellipses). Trajectories are unchanged (checked against the saved seed-1000 CSV).
 
+## Epsilon for Rastrigin and Schwefel (validation functions): rule written 2026-10-22, BEFORE the pilot
+
+Neither function had an epsilon (the primary-landscape pilot above only covered `primary_far_w0.3`).
+Success on them is needed for Exp V. This rule was fixed before any random-sampling pilot ran on
+these functions, and before any CMA-ES or BO run on them (including smoke tests).
+
+1. **Cap from local minima.** Run L-BFGS-B (box-constrained) from a fixed set of uniform starts
+   (seed 0, 1000 starts). Cluster end points (distance < 1e-2) into distinct minima and print them
+   with their regrets. Check the nearest non-global minimum is unchanged (same location, regret equal
+   to 1e-6 relative) when the number of starts is doubled to 2000; **if it changes, stop and ask**.
+   Epsilon must be **strictly below** the nearest non-global regret, so that success implies the
+   global basin (a point in another basin descends to that basin's minimum, so its regret is at least
+   that minimum's regret). A pytest checks this.
+2. **Grid.** Start with {0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5} (regret units, unrescaled).
+3. **Random-sampling criterion.** Uniform random sampling, N = 300, d = 2, pilot seeds 9000-9199:
+   success = best regret <= epsilon. Random sampling "rarely succeeds" means success rate <= 5%.
+   The success rate is nondecreasing in epsilon (nested sets).
+4. **Extension.** If random success at the largest grid value is still <= 5%, extend upward by
+   factors of 2.5 until it exceeds 5%. If it already exceeds 5% at the smallest grid value, extend
+   downward by halving until it is <= 5% (stop and ask if 1e-4 is reached without that).
+5. **Choice.** epsilon = the largest value in the (extended) grid with random success <= 5%
+   **and** strictly below the cap. When the cap, not the 5% criterion, is what limits epsilon, say so.
+   Stop and ask only if the cap and the 5% rule conflict, meaning no grid value satisfies both.
+6. Only random sampling and landscape geometry are used. No CMA-ES or BO result informs epsilon.
+   One `epsilon_check_<function>.png` per function is saved to `docs/figures/`.
+
+### Result of the epsilon pilot for Rastrigin and Schwefel (run 2026-10-22, `pilot/epsilon_validation.py`)
+
+Wall-clock of the whole pilot (both functions, local-minima checks, 200 random runs each, figures): **8.2 s**.
+No CMA-ES or BO run on Rastrigin or Schwefel had been made when this ran or when it was committed.
+
+Cap (1000 starts, seed 0; the nearest non-global minimum was **unchanged at 2000 starts**: same regret and
+same tied minima; 118 -> 121 distinct minima for Rastrigin and 57 -> 62 for Schwefel, all found minima beyond the nearest):
+
+| function | nearest non-global regret (cap) | tied minima | next minima |
+| --- | --- | --- | --- |
+| Rastrigin | 0.994959 | 4: (+-0.995, 0), (0, +-0.995) | 1.98992 (four diagonal neighbours) |
+| Schwefel | 118.438 | 2: (4.21, -3.03) and its mirror | 217.14, 236.88, 238.39 |
+
+Random sampling (N = 300, d = 2, seeds 9000-9199), success = best regret <= epsilon:
+
+| epsilon | Rastrigin k/200 (Wilson 95%) | Schwefel k/200 (Wilson 95%) | below cap? |
+| --- | --- | --- | --- |
+| 0.01 | 0 [0.000, 0.019] | 0 [0.000, 0.019] | yes |
+| 0.02 | 0 [0.000, 0.019] | 0 [0.000, 0.019] | yes |
+| 0.05 | 2 [0.003, 0.036] | 0 [0.000, 0.019] | yes |
+| 0.1 | 3 [0.005, 0.043] | 0 [0.000, 0.019] | yes |
+| 0.2 | **5 [0.011, 0.057]** | 1 [0.001, 0.028] | yes |
+| 0.5 | 11 [0.031, 0.096] (5.5%) | 1 [0.001, 0.028] | yes |
+| 1 | 21 [0.070, 0.155] | 1 [0.001, 0.028] | Rastrigin no (cap 0.995), Schwefel yes |
+| 2 | 59 [0.236, 0.362] | 1 [0.001, 0.028] | Rastrigin no, Schwefel yes |
+| 5 | 174 [0.816, 0.910] | **10 [0.027, 0.090] (exactly 5.0%)** | Rastrigin no, Schwefel yes |
+| 12.5 (extension, x2.5) | n/a | 22 [0.074, 0.161] | Schwefel yes (cap 118.4) |
+
+**Chosen (frozen in `benchmarks.py`): epsilon_Rastrigin = 0.2, epsilon_Schwefel = 5.0.** Both are limited by
+the 5% rule, not the cap. Rastrigin: 0.5 gives 5.5% > 5%, so 0.2 is the largest value at or below 5%. Schwefel:
+epsilon = 5 gives exactly 5.0% (10/200), which satisfies "<= 5%" by the rule as written; the upward extension
+to 12.5 (11%) then confirmed it was the largest. **Caveat: Schwefel's value sits on the 5% boundary** (Wilson
+95% CI [2.7%, 9.0%]), so it is a borderline application of the rule, not a comfortable one. Success implies the
+global basin for both (tests `test_success_implies_global_basin`, `test_epsilon_below_nearest_nonglobal_regret`).
+Figures: `docs/figures/epsilon_check_rastrigin.png`, `docs/figures/epsilon_check_schwefel.png`.
+
 ## Open questions for the user
 1. ~~Restart triggers~~ Resolved: adopted (3e-3, 1e-5), see above.
 2. ~~Near well at w = 0.6, 1.0~~ Resolved: excluded from Exp E, see above.
