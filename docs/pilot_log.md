@@ -1,0 +1,190 @@
+# Phase 1 pilot log
+
+Machine: MacBook M2, CPU only, Python 3.13.x, torch 2.14.1 / botorch 0.18.1 /
+gpytorch 1.15.2 / cma 4.5.0 (exact pins in `requirements.txt`). Date: 2026-10-22.
+
+## Decisions taken before running anything
+
+| Item | Decision |
+| --- | --- |
+| BO library | BoTorch. EI-with-xi maps to `LogExpectedImprovement(best_f = y+ - xi, maximize=False)` (same argmax as EI, numerically stabler); LCB maps exactly to `UpperConfidenceBound(beta, maximize=False)` = mu - sqrt(beta) sigma. Fallback to scikit-learn was not needed (see timings). |
+| Primary landscape | c = 0, s = 10, A = 4, w = 0.3; far well x_g = (3, 3), near well x_g = (2, 0). x*, f* found by polishing from x_g. |
+| CMA-ES | Default lambda = 4 + floor(3 ln d) = 6. x0 ~ U[-4, 4]^d per seed, sigma0 = 2, `cma` BoundTransform on [-5, 5]^d. Own ask/tell restart loop; a generation cut short by the budget is evaluated but not told. Restarts redraw x0 ~ U[-5, 5]^d. BIPOP: first run counts as "large"; small regime lambda = floor(lambda_def (lambda_large / (2 lambda_def))^(U^2)), sigma = sigma0 10^(-2U). |
+| BO baseline GP (`mle_fixed`) | Matern-5/2 ARD in a ScaleKernel; inputs normalised to [0, 1]^d, outputs standardised. Pure MLE, no priors. Noise fixed at 1e-6 (standardised units). **Lengthscale bounds [0.005, 2.0] on the unit cube = [0.05, 20] domain units**; outputscale bounds [1e-3, 1e3]; initial lengthscale 0.2 (unit cube). Refit every 5 iterations, warm-started from the previous fit; in between, the GP is conditioned on new data with fixed hyperparameters. |
+| BO extra arm (`map_default`) | Same Matern-5/2 kernel built by BoTorch's `get_covar_module_with_dim_scaled_prior` (dim-scaled LogNormal lengthscale prior), learned noise with BoTorch's default prior, MAP fit. Only the fitting changes. |
+| BO acquisition optimiser | `optimize_acqf`, 10 restarts, 4096 raw samples; n_init = 10 scrambled Sobol points (seeded). Thompson: joint posterior draw over 4096 fresh Sobol candidates per iteration. |
+| Jitter logging | Each iteration counts gpytorch/linear_operator `NumericalWarning`s about added jitter (`n_jitter` column). Verified the counter fires on a forced rank-deficient Cholesky. |
+| Success | Primary: best regret <= epsilon. Secondary: best point in the global basin (L-BFGS-B local descent from it ends within min(0.1, w/2) of x*). |
+| Seeds | Experiment seeds 1000+, pilot seeds 9000+, per-run streams via `SeedSequence([seed, stream])`. |
+
+## Step 2: epsilon pilot (random sampling only), `pilot/epsilon_pilot.py`
+
+Rule fixed before running: epsilon = largest value in {0.01, 0.02, 0.05, 0.1, 0.2, 0.5}
+with random-sampling success <= 5% at N = 300 on `primary_far_w0.3`, seeds 9000-9199.
+
+| epsilon | random successes / 200 | Wilson 95% | radius of success disc | radius / w |
+| --- | --- | --- | --- | --- |
+| 0.01 | 2 | [0.003, 0.036] | 0.021 | 0.07 |
+| 0.02 | 3 | [0.005, 0.043] | 0.030 | 0.10 |
+| **0.05** | **5** | **[0.011, 0.057]** | **0.048** | **0.16** |
+| 0.1 | 12 | [0.035, 0.102] | 0.067 | 0.22 |
+| 0.2 | 19 | [0.062, 0.144] | 0.095 | 0.32 |
+| 0.5 | 44 | [0.168, 0.282] | 0.153 | 0.51 |
+
+**Chosen epsilon = 0.05** (frozen in `code/benchmarks.py`). The well floor has regret 0;
+the decoy minimum has regret 2.21 (44x epsilon). Random best-regret quantiles
+(5/25/50/75/95%): 0.076 / 0.61 / 1.25 / 2.09 / 2.23. Figure: `docs/figures/epsilon_check.png`.
+
+Random-sampling reference for Exp E (same epsilon, 200 pilot seeds):
+
+| landscape | random success | Wilson 95% |
+| --- | --- | --- |
+| near w0.1 | 1/200 | [0.001, 0.028] |
+| near w0.3 | 3/200 | [0.005, 0.043] |
+| near w0.6 | 22/200 | [0.074, 0.161] |
+| near w1.0 | 45/200 | [0.173, 0.288] |
+| far w0.1 | 3/200 | [0.005, 0.043] |
+| far w0.3 | 5/200 | [0.011, 0.057] |
+| far w0.6 | 12/200 | [0.035, 0.102] |
+| far w1.0 | 38/200 | [0.142, 0.250] |
+
+**Landscape check: local minima.** L-BFGS-B from the decoy centre (origin, nudged by 1e-3):
+
+| landscape | x* | f* | descent from origin ends at | separate decoy minimum? |
+| --- | --- | --- | --- | --- |
+| near w0.1 | (2.00, 0.00) | -3.600 | (0, 0), f = 0.000 | yes |
+| near w0.3 | (1.99, 0.00) | -3.602 | (0, 0), f = 0.000 | yes |
+| near w0.6 | (1.97, 0.00) | -3.607 | (1.97, 0.00), f = -3.607 | **no, basins merged** |
+| near w1.0 | (1.90, 0.00) | -3.619 | (1.90, 0.00), f = -3.619 | **no, basins merged** |
+| far w0.1 / 0.3 / 0.6 / 1.0 | (3.0, 3.0) to (2.85, 2.85) | -2.20 to -2.29 | origin (f within 1e-3 of 0) | yes, all four |
+
+**Decision (user, 2026-10-22): exclude near w0.6 and near w1.0 from Exp E.** With the
+decoy gone these cells are unimodal and do not test a narrow or distant basin. Exp E runs the
+full width sweep {0.1, 0.3, 0.6, 1.0} on the far well, and the near well only at w <= 0.3
+(`expE_baseline` in `configs.py`). The decision used only this local-minima check,
+not any success rate. The random-sampling rows above for the two excluded cells are kept
+for the record.
+
+## Step 1: timing, `pilot/timing.py` (one run each, N = 300, seed 1000, 1 thread)
+
+| config | wall (s) | jitter fallbacks | fit failures |
+| --- | --- | --- | --- |
+| cma_default | 1.5 (incl. imports; ~0.03 s optimiser) | n/a | n/a |
+| bo_default (EI, xi = 0) | 107.9 | 0 | 0 |
+| bo_lcb_b2 | 35.5 | 0 | 0 |
+| bo_map | 49.2 | 0 | 0 |
+| bo_ts (4096 candidates) | 174.0 | 0 | 0 |
+
+Smoke run `--fast` (all experiments, 5 seeds, N = 100, 6 workers): 175 runs in 306 s, no errors.
+
+Across 5 seeds `bo_default` took 47-116 s per run (5 in parallel, no visible slowdown
+vs. single).
+
+**Thompson candidates: dropped to 2048.** Run alone, TS-4096 is ~1.6x a default-EI run.
+But the `--fast` smoke run (6 workers, N = 100) showed TS-4096 at ~130 s per run vs 42 s
+alone (same seed, N = 100): the 4096x4096 joint draw is memory-bandwidth bound and slows
+~3x under 6-way parallelism. At full scale that would be ~60% of Exp C wall time, which
+meets the "dominates runtime" rule. TS-2048 alone at N = 100: 9.8 s. Changed before any
+TS result was inspected; 4096-candidate smoke files deleted.
+
+## Restart-trigger pilot (baseline CMA-ES firing rates only), `pilot/restart_triggers.py`
+
+No-restart CMA-ES on `primary_far_w0.3`, pilot seeds 9000-9049; records the first
+generation at which `es.stop()` would fire (trajectory is unaffected). Rule fixed
+before running: tightest pair with firing rate >= 80% and median firing eval <= 200
+at lambda = 6.
+
+| tolx | tolfun | fired lam=6 (median eval) | lam=12 | lam=24 |
+| --- | --- | --- | --- | --- |
+| 1e-1 | 1e-2 | 1.00 (96) | 1.00 (156) | 1.00 (240) |
+| 3e-2 | 1e-3 | 1.00 (126) | 1.00 (192) | 0.26 (288) |
+| 1e-2 | 1e-4 | 1.00 (156) | 1.00 (228) | 0.00 |
+| 3e-3 | 1e-5 | 1.00 (189) | 0.84 (276) | 0.00 |
+| 1e-3 | 1e-6 | 1.00 (216) | 0.34 (288) | 0.00 |
+| 1e-4 | 1e-8 | 0.78 (270) | 0.00 | 0.00 |
+| 1e-5 | 1e-10 | 0.14 (294) | 0.00 | 0.00 |
+| 1e-6 | 1e-8 | 0.04 (288) | 0.00 | 0.00 |
+| 1e-6 | 1e-12 | 0.00 | 0.00 | 0.00 |
+
+Almost all firings are `tolx`. The originally pre-stated grid (last five rows) had no
+pair meeting the rule; the agreed default (1e-6, 1e-8) fires in 4% of runs, so IPOP/BIPOP
+would be near-identical to no restarts. The grid was then extended (firing rates only).
+On the extended grid the same rule selects **(3e-3, 1e-5)**.
+
+**Decision (user, 2026-10-22): adopt (tolx, tolfun) = (3e-3, 1e-5) and freeze it** in
+`CMAES_BASE` (`configs.py`).
+
+**Deviation from the pre-set list, recorded as such:** the pre-stated grid contained no
+pair that satisfied the rule, so the list was extended (to looser thresholds) and the
+*same* firing-rate rule was applied to it. Neither the extension nor the choice used any
+success rate; only firing rates of no-restart baseline runs on pilot seeds 9000-9049.
+Baseline `cma_default` trajectories are unaffected (stop conditions are ignored
+without restarts).
+
+**For Exp B reporting:** report restart firing rates per lambda (pilot values above). At
+lambda = 24 the trigger never fired within N = 300 (0/50), so IPOP and BIPOP started
+at lambda = 24 would equal no restarts. Say so explicitly wherever restarts are compared
+with a large-lambda arm.
+
+## Predictions committed
+
+`docs/predictions.md` committed on 2026-10-22 (commit `9ae8476`), after the three pilots
+above and before any CMA-ES/BO success or regret was inspected. Adds M1-M3 (needle:
+lambda helps only via early samples, restarts act like random search; selection
+averaging applies to Rastrigin).
+
+## Step 3: baselines on 5 seeds (1000-1004), N = 300
+
+Figure: `docs/figures/pilot_baselines.png` (sigma per generation, sample scatter for
+seed 1000, BO fitted lengthscale vs w). Summary: `results/summary/`.
+
+| config | success (regret <= 0.05) | Wilson 95% | notes |
+| --- | --- | --- | --- |
+| cma_default | 0/5 | [0.00, 0.43] | all 5 converge on the decoy; 50 generations; sigma falls ~geometrically from 2 to ~1.5e-3 |
+| bo_default | 1/5 | [0.04, 0.62] | 4/5 sample the decoy almost exclusively after eval 100; seed 1004 hit the well at eval 108 |
+
+Diagnostics (5 seeds only, descriptive, not a result):
+- CMA-ES: >= 98% of evals after eval 100 lie within 0.5 of the decoy centre in every seed;
+  closest sample to the well 1.1-2.5 away. Consistent with the H1 failure mode.
+- BO: in the 4 failing seeds the fitted lengthscale sits **at the upper bound (20 domain
+  units)** from about eval 15 onward, i.e. the GP models a smooth bowl and EI (xi = 0)
+  re-samples the decoy; closest sample to the well 1.5-2.7 away. In the successful seed the
+  lengthscale drops to ~0.8-1.0 after the well is found. Lengthscale still > w = 0.3 there.
+- No Cholesky jitter fallbacks or fit failures in any baseline run.
+
+## Step 4: runtime estimate for the full plan (50 seeds, N = 300, 6 workers)
+
+CMA-ES runs take ~0.05 s each, so Exps A and B and all CMA-ES arms are negligible
+(< 2 min total, even at 200+ seeds). BO is the bottleneck. Per-run CPU assumed:
+EI ~100 s (median of 6 measured runs: 47-116 s), LCB 35 s, MAP 49 s, TS-2048 ~80 s
+(extrapolated, including a parallel-load penalty).
+
+| block | BO runs | CPU (h) |
+| --- | --- | --- |
+| Exp 0 (bo_default) | 50 | 1.4 |
+| Exp C (7 more arms) | 350 | ~6.0 |
+| Exp D (best + worst BO on sphere) | 100 | ~2.8 |
+| Exp E (6 landscapes x baseline + best BO, minus far w0.3 baseline already run) | ~500 | ~13.9 |
+| **A-E total** | ~1000 | **~24.5** |
+| V (2 BO arms x 2 functions x 30 seeds) | 120 | ~3.3 |
+
+**Wall clock at 6 workers: about 4 h for A-E (4.5 h with V).** Range 3-7 h:
+(Updated after Exp E was reduced from 8 to 6 landscapes; first estimate was ~5 h.)
+per-run time varies 35-120 s by acquisition and seed, and other landscapes may fit
+differently. A fanless M2 may throttle under sustained 6-core load. Exp E dominates;
+running it overnight fits the timeline in direction.md.
+
+## Notebook (`notebooks/main.ipynb`)
+
+Run All in FAST mode (N = 100, 5 seeds, single process): 51-65 s cold (two measurements) (the BO runs are computed and cached in
+`results/raw_fast/`), ~5 s warm. FULL mode (loads saved N = 300 results) ~5 s. Engine change for the
+notebook: `run_cmaes` now also keeps the per-generation mean, sigma and C in `log.meta["dist"]` (in memory
+only, for drawing search ellipses). Trajectories are unchanged (checked against the saved seed-1000 CSV).
+
+## Open questions for the user
+1. ~~Restart triggers~~ Resolved: adopted (3e-3, 1e-5), see above.
+2. ~~Near well at w = 0.6, 1.0~~ Resolved: excluded from Exp E, see above.
+3. BO lengthscale pinned at the upper bound (20) in 4/5 baseline runs. The bound is
+   part of the frozen baseline; confirm it, or widen it before the big runs? (still open)
+4. Restart x0 is drawn from the full box U[-5, 5]^d while the first start uses U[-4, 4]^d
+   (as instructed). Confirm. (still open)

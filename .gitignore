@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+results/raw/
+results/raw_fast/
+*.csv.tmp
+.DS_Store
+.ipynb_checkpoints/
