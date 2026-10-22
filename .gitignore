@@ -2,8 +2,13 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+# raw runs: working files only. BO runs are committed compressed via `run_experiments.py --archive`
+# (results/archive/raw_bo.zip + manifest, tracked). raw_fast (smoke test) is never committed.
 results/raw/
 results/raw_fast/
 *.csv.tmp
 .DS_Store
 .ipynb_checkpoints/
+results/summary_fast/
+docs/figures/*_fast.png
+docs/.Rhistory

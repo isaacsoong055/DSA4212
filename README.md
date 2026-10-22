@@ -17,11 +17,14 @@ python3.13 -m venv .venv
 
 ## Notebook
 
-`notebooks/main.ipynb` is the place to read and present the project (landscape, one CMA-ES and one BO run,
-a 2x4 seed grid, success rates with Wilson CIs, placeholders for Exps A, B, C, E). Set `FAST = True` in the
-top cell (N=100, 5 seeds, computed in the notebook, ~1 min cold, ~5 s once cached) or `FAST = False`
-(loads the saved N=300 results; produce them with `run_experiments.py --full` then `--aggregate`).
-Open it with the `.venv` kernel. Outputs are cleared before saving; figures go to `docs/figures/nb_*.png`.
+`notebooks/main.ipynb` is the single narrative to read and present (status, summary placeholders, setup,
+Exp 0 failure and diagnostics, experiment cards A-E and V, prediction scoreboard, verdict and limitations).
+It only loads saved files and calls helpers in `code/report.py`; runs and aggregation go through
+`run_experiments.py`. Set `FAST = True` in the top cell for the smoke test (`results/summary_fast/`, every
+figure stamped "SMOKE TEST", ~6 s), or `FAST = False` for the full results in `results/summary/`. Missing
+results show a "not run yet" message with the command to produce them. Open it with the `.venv` kernel.
+Outputs are cleared before saving; figures go to `docs/figures/nb_*.png` (`_fast` suffix in FAST mode).
+`docs/scoreboard.csv` holds prediction statuses and is edited by hand only.
 
 ## Running
 
@@ -33,7 +36,7 @@ Open it with the `.venv` kernel. Outputs are cleared before saving; figures go t
 .venv/bin/python run_experiments.py --full --exp expA
 .venv/bin/python run_experiments.py --full --method bo --landscape primary_far_w0.3
 
-# compact summaries for committing -> results/summary/
+# compact summaries for committing -> results/summary/ (add --fast for results/summary_fast/)
 .venv/bin/python run_experiments.py --aggregate
 ```
 
@@ -47,15 +50,26 @@ code/benchmarks.py      landscapes: sphere, Rastrigin, Schwefel (rescaled), prim
 code/optimizers.py      run(landscape, N, seed, config): random, CMA-ES (none/IPOP/BIPOP), GP-BO
 code/configs.py         frozen configs, seed lists, experiment definitions
 code/logging_utils.py   per-evaluation CSV schema and writer
-code/analysis.py        Wilson CIs, regret curves, plots, aggregation
+code/analysis.py        Wilson and Newcombe CIs, regret curves, diagnostics, aggregation
+code/report.py          notebook figures, tables and loaders (load and draw only)
 run_experiments.py      CLI
 notebooks/main.ipynb    the notebook described above
 pilot/                  Phase-1 pilot scripts (epsilon, timing, restart triggers, plots)
 tests/                  pytest: minima, exact budget, reproducibility
 docs/                   design, predictions, pilot log, figures
-results/raw/            one CSV per run (gitignored)
+results/raw/            one CSV per run (gitignored working files)
+results/archive/        raw_bo_<batch>.zip + manifest: raw BO runs per finished batch (committed)
 results/summary/        runs.csv, success.csv, regret_curves.csv (committed)
 ```
+
+## Reproducibility
+
+A seed fixes the initial design and random streams. CMA-ES and random sampling reproduce exactly; BO reproduces in distribution, because floating-point differences compound through the model-fitting loop. Paired comparisons are paired on starting conditions only.
+
+Raw runs live in `results/raw/` (gitignored working files, `results/raw_fast/` is never committed). The raw BO
+runs are kept in the repo compressed: `python run_experiments.py --archive NAME [--exp EXP]` writes `results/archive/raw_bo_NAME.zip`
+and `raw_bo_NAME_manifest.csv` (file, bytes, rows, sha256), both tracked. One zip per finished batch;
+an existing zip is never rewritten.
 
 ## Raw CSV schema
 

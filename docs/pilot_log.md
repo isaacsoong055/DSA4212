@@ -174,12 +174,16 @@ per-run time varies 35-120 s by acquisition and seed, and other landscapes may f
 differently. A fanless M2 may throttle under sustained 6-core load. Exp E dominates;
 running it overnight fits the timeline in direction.md.
 
-## Notebook (`notebooks/main.ipynb`)
+## Notebook (`notebooks/main.ipynb`), restructured 2026-10-22
 
-Run All in FAST mode (N = 100, 5 seeds, single process): 51-65 s cold (two measurements) (the BO runs are computed and cached in
-`results/raw_fast/`), ~5 s warm. FULL mode (loads saved N = 300 results) ~5 s. Engine change for the
-notebook: `run_cmaes` now also keeps the per-generation mean, sigma and C in `log.meta["dist"]` (in memory
-only, for drawing search ellipses). Trajectories are unchanged (checked against the saved seed-1000 CSV).
+Convention: the notebook only loads `results/summary*/` and `results/raw*/`; runs, aggregation and figure
+code live in `run_experiments.py`, `code/analysis.py` and the new `code/report.py`. FAST mode reads
+`results/summary_fast/` (written by `run_experiments.py --aggregate --fast`, gitignored); FULL mode reads
+`results/summary/`. Run All in FAST mode: about 6 s (loading plus one 0.05 s CMA-ES re-run). The re-run of
+seed 1000 matches the saved CSV to 4e-16 (pytest asserts 1e-8). Engine change for the ellipses: `run_cmaes`
+keeps the per-generation mean, sigma and C in `log.meta["dist"]` (in memory only); trajectories unchanged.
+The landscape name in the CSVs is canonical (`primary_far_w1`) while run directories use the requested name
+(`primary_far_w1.0`); `report.canon` maps one to the other.
 
 ## Epsilon for Rastrigin and Schwefel (validation functions): rule written 2026-10-22, BEFORE the pilot
 
@@ -243,10 +247,102 @@ to 12.5 (11%) then confirmed it was the largest. **Caveat: Schwefel's value sits
 global basin for both (tests `test_success_implies_global_basin`, `test_epsilon_below_nearest_nonglobal_regret`).
 Figures: `docs/figures/epsilon_check_rastrigin.png`, `docs/figures/epsilon_check_schwefel.png`.
 
+## Exp E best-variant selection rule: written 2026-10-22, BEFORE Exps A-C run
+
+Only smoke tests (N = 100, 5 seeds) exist so far; no full A-C results.
+
+- **Selection.** For each method, the "best variant" is the setting with the **highest success rate on
+  seeds 1000-1049** across its Exp A-C settings (CMA-ES: `cma_default`, `cma_lam12`, `cma_lam24`, `cma_ipop`,
+  `cma_bipop`; BO: `bo_default`, `bo_ei_xi0.01`, `bo_ei_xi0.1`, `bo_lcb_b0.5`, `bo_lcb_b2`, `bo_lcb_b8`,
+  `bo_ts`, `bo_map`) on the primary landscape (`primary_far_w0.3`). The default is eligible: if it wins or ties,
+  the best variant is the default and the figure says so.
+- **Ties** are broken toward the setting closest to default. Operationalised as this fixed order (closest
+  first): CMA-ES `cma_default`, `cma_lam12`, `cma_lam24`, `cma_ipop`, `cma_bipop`; BO `bo_default`,
+  `bo_ei_xi0.01`, `bo_ei_xi0.1`, `bo_lcb_b2`, `bo_lcb_b0.5`, `bo_lcb_b8`, `bo_ts`, `bo_map`.
+- **Evaluation.** The selected variant and the baseline are both re-run on **fresh seeds 2000-2049**
+  (`FRESH_SEEDS` in `configs.py`) on every Exp E landscape. The 1000-1049 baseline stays as the
+  baseline-only curve. The best-variant line is never drawn from seeds 1000-1049.
+- The fresh-seed BO runs will be timed after A-C, and the user is told **before any seeds are cut**.
+
+## Finding: BO runs are not reproducible across processes (found 2026-10-22, while checking Exp 0 smoke data)
+
+The same BO run (`bo_default`, `primary_far_w0.3`, seed 1004, N = 100) executed in separate fresh processes,
+one after another, single thread, gives trajectories that agree for about 65 evaluations and then diverge
+(first difference > 1e-9 at evaluation 65-67, in 3 of 3 pairs). Within one process repeated runs are
+identical (`test_same_seed_same_result` passes). Setting BLAS thread variables (`VECLIB_MAXIMUM_THREADS`,
+`OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS`) or `PYTHONHASHSEED=0` did not remove the divergence. Cause not
+established. *Hypothesis, untested:* last-digit floating-point differences in the numerical libraries that
+BO's feedback (GP fit -> acquisition optimum -> next point) amplifies. Visible consequence: seed 1004 at
+N = 100 reached the well at evaluation 98 in one process and not in another; its N = 300 run first reached the
+well at evaluation 108. CMA-ES is unaffected in practice (re-run matches saved CSV to 4e-16). Nothing in the
+engine was changed. A seed fixes the initial design and random streams, not the exact path of a BO run, so
+"reproducible from (method, config, landscape, seed)" holds bit-for-bit for CMA-ES and random sampling but only
+statistically for BO. See open question 5.
+
+## Exp D and Exp V best/worst variant rule: written 2026-10-22, BEFORE Exps A-C run
+
+No full A-C results exist; no variant has been chosen. This fixes how the best and worst variants are picked.
+
+- **Selection data.** Success rate (regret <= 0.05) on `primary_far_w0.3`, **seeds 1000-1049**, from the Exp A-C
+  runs. Selection is done separately for each method (CMA-ES and BO); methods are never ranked against each other.
+- **Candidates, exactly.** CMA-ES: the Exp A settings (`cma_default`, `cma_lam12`, `cma_lam24`) and the Exp B
+  settings (`cma_ipop`, `cma_bipop`). BO: the Exp C settings (`bo_default`, `bo_ei_xi0.01`, `bo_ei_xi0.1`,
+  `bo_lcb_b0.5`, `bo_lcb_b2`, `bo_lcb_b8`, `bo_ts`, `bo_map`). The defaults are candidates. Nothing from Exp
+  D, E or V is a candidate.
+- **Best** = highest success rate among the method's candidates. **Worst** = lowest success rate.
+- **Tie-break (both best and worst):** the candidate closest to default, using the same fixed order as the Exp E
+  rule above (CMA-ES: `cma_default`, `cma_lam12`, `cma_lam24`, `cma_ipop`, `cma_bipop`; BO: `bo_default`,
+  `bo_ei_xi0.01`, `bo_ei_xi0.1`, `bo_lcb_b2`, `bo_lcb_b0.5`, `bo_lcb_b8`, `bo_ts`, `bo_map`).
+- **Consequence stated in advance:** if several settings tie at the minimum success rate (for example several at
+  0/50), the tie-break picks the one closest to default, so the worst variant can be the default itself, and if all
+  settings tie then best = worst = default. In that case Exp D and Exp V run that single setting for the method and
+  the figure says "no spread between settings".
+- The best variant for Exp D and V is the same setting as the Exp E best variant for that method (selected once).
+- The evaluation seeds for Exp D and Exp V are **not** part of this rule and are to be fixed before they run
+  (direction.md: V uses 20-30 seeds).
+- Selection uses the primary landscape and evaluation uses other landscapes, so a variant is never selected and
+  evaluated on the same landscape.
+
+## Amendments and pre-set criteria, 2026-10-22 (written BEFORE the sphere BO check, Exp 0 and any A-C run)
+
+1. **The Exp E order is a convention, not a measure of closeness.** It is a fixed list used only to break ties
+   (above), not a claim that one setting is "nearer" the default than another.
+2. **All-tie rule for Exps D and V (supersedes the "run that single setting" consequence bullet above).** If every
+   candidate of a method ties, so best and worst are the same setting, Exps D and V use **the default plus the
+   last-listed setting in the order** for that method: CMA-ES `cma_bipop`, BO `bo_map`.
+3. **Arms and evaluation seeds for Exps D and V.** Both always include `cma_default`, `cma_lam12` and `cma_lam24`
+   (needed for H5 and H6), plus the best and worst variants from the rule above for each method (BO gets only
+   its best and worst variants). Exp D runs on the sphere, Exp V on Rastrigin and Schwefel. **Evaluation seeds:
+   CMA-ES settings 1000-1049, BO settings 1000-1019.** The random-sampling reference (`random`, seconds to run)
+   is run on the same landscapes on seeds 1000-1049 and **always drawn** on Rastrigin and Schwefel figures.
+   Pilot values at the frozen epsilon (200 seeds, N = 300): Rastrigin (epsilon 0.2) 5/200 = 2.5%, Wilson 95%
+   [1.1%, 5.7%]; Schwefel (epsilon 5) 10/200 = 5.0%, [2.7%, 9.0%], which is **borderline** (it sits exactly on the
+   5% line) with a wide interval.
+4. **Sphere sanity check, pass criterion (set before the BO half runs).** Default BO (`bo_default`), sphere, d = 2,
+   N = 300, pilot seeds 9000-9019 (20 runs). **BO passes if at least 19 of 20 runs reach regret <= 0.05 strictly
+   before the budget is exhausted (evaluations-to-solve <= 299).** If BO fails: stop and report, do not run Exp 0.
+   If it passes: report the numbers, then continue to Exp 0. (The CMA-ES half had no preset criterion; it ran first:
+   20/20 reached regret <= 0.05, median 51 evaluations, range 23-75, worst final regret 9.2e-9.) A check, not a
+   finding; nothing is tuned.
+5. **Exp 0 definition.** Default CMA-ES, default BO and random sampling on `primary_far_w0.3`, seeds 1000-1049,
+   N = 300 (`exp0` in `configs.py` now includes `random`). Existing runs are skipped: CMA-ES and BO seeds 1000-1004 are
+   the earlier 5-seed N = 300 pilot runs (same code path for these configs). After the run, report: success table,
+   outcome counts, and the gates (exact N per run, random sampling low at epsilon, no jitter fallbacks).
+6. **Archive policy.** One zip per finished batch, named `raw_bo_<batch>.zip` with `raw_bo_<batch>_manifest.csv`,
+   and an existing zip is never rewritten. The five pilot BO runs are archived as `raw_bo_pilot5.zip`; the
+   Exp 0 BO runs will be `raw_bo_exp0.zip` (it contains those same five runs).
+
+## Decisions on the remaining open questions (user, 2026-10-22: "accept all")
+
+1. **BO lengthscale upper bound (20 domain units): kept, frozen.** It is part of the baseline configuration; the
+   diagnostics (section 4 of the notebook) report how often the fitted lengthscale sits at the bound.
+2. **Restart x0:** the first start draws from U[-4, 4]^d and restarts redraw from the full box U[-5, 5]^d. Confirmed.
+3. **BO cross-process non-reproducibility: accepted (2026-10-22), wording fixed by the user:** "A seed fixes the initial design and random streams. CMA-ES and random sampling reproduce exactly; BO reproduces in distribution, because floating-point differences compound through the model-fitting loop. Paired comparisons are paired on starting conditions only."
+   Used verbatim in the README and the notebook's limitations cell. Raw BO runs are committed compressed
+   (`results/archive/raw_bo_<batch>.zip` + manifest via `run_experiments.py --archive`); `results/raw/` and
+   `results/raw_fast/` stay gitignored working directories.
+4. Reviewed and accepted as written: M1-M3 evidence columns, the best-variant tie-break order, and Schwefel
+   epsilon = 5 (borderline, exactly 5.0% random success).
+
 ## Open questions for the user
-1. ~~Restart triggers~~ Resolved: adopted (3e-3, 1e-5), see above.
-2. ~~Near well at w = 0.6, 1.0~~ Resolved: excluded from Exp E, see above.
-3. BO lengthscale pinned at the upper bound (20) in 4/5 baseline runs. The bound is
-   part of the frozen baseline; confirm it, or widen it before the big runs? (still open)
-4. Restart x0 is drawn from the full box U[-5, 5]^d while the first start uses U[-4, 4]^d
-   (as instructed). Confirm. (still open)
+None outstanding. (Experiments are not to be started until the user says so.)

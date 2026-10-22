@@ -24,6 +24,16 @@ def wilson_ci(k: int, n: int, conf: float = 0.95) -> tuple[float, float]:
     return (max(0.0, centre - half), min(1.0, centre + half))
 
 
+def newcombe_diff(k1: int, n1: int, k2: int, n2: int, conf: float = 0.95) -> tuple[float, float, float]:
+    """Difference p2 - p1 with a Newcombe (1998, method 10) interval from two Wilson intervals.
+    Unpaired, so conservative when the two groups use matched seeds."""
+    p1, p2 = k1 / n1, k2 / n2
+    l1, u1 = wilson_ci(k1, n1, conf)
+    l2, u2 = wilson_ci(k2, n2, conf)
+    d = p2 - p1
+    return d, d - np.sqrt((p2 - l2) ** 2 + (u1 - p1) ** 2), d + np.sqrt((u2 - p2) ** 2 + (p1 - l1) ** 2)
+
+
 def load_raw(raw_dir: Path = RAW_DIR, landscape: str | None = None) -> pd.DataFrame:
     files = sorted(Path(raw_dir).glob(f"{landscape or '*'}/*.csv"))
     if not files:
@@ -78,6 +88,25 @@ def regret_curves(df: pd.DataFrame, every: int = 10) -> pd.DataFrame:
     return q.reset_index()
 
 
+def diagnostics(df: pd.DataFrame) -> pd.DataFrame:
+    """Compact traces per run: CMA-ES sigma per generation; BO fitted lengthscales (min, max, in
+    domain units) at the evaluations where they change. Column `step` is gen or eval_idx."""
+    cols = ["config_id", "landscape", "seed", "step", "sigma", "ls_min", "ls_max", "restart", "popsize"]
+    parts = []
+    for (cid, lname, seed), g in df.groupby(["config_id", "landscape", "seed"], sort=True):
+        g = g.sort_values("eval_idx")
+        if g["sigma"].notna().any():
+            first = g.drop_duplicates("gen")
+            parts.append(pd.DataFrame(dict(config_id=cid, landscape=lname, seed=seed, step=first["gen"],
+                                           sigma=first["sigma"], restart=first["restart"], popsize=first["popsize"])))
+        if g["lengthscales"].notna().any():
+            arr = g["lengthscales"].dropna().str.split(";", expand=True).astype(float)
+            keep = (arr != arr.shift()).any(axis=1)
+            parts.append(pd.DataFrame(dict(config_id=cid, landscape=lname, seed=seed, step=g.loc[arr.index[keep], "eval_idx"],
+                                           ls_min=arr[keep].min(axis=1), ls_max=arr[keep].max(axis=1))))
+    return pd.concat(parts, ignore_index=True).reindex(columns=cols)
+
+
 def aggregate(raw_dir: Path = RAW_DIR, out_dir: Path = SUMMARY_DIR) -> None:
     """Write compact, committable summaries of all raw runs."""
     df = load_raw(raw_dir)
@@ -90,6 +119,7 @@ def aggregate(raw_dir: Path = RAW_DIR, out_dir: Path = SUMMARY_DIR) -> None:
     pd.concat([success_table(runs, "success"), success_table(runs, "best_in_basin")]).to_csv(
         out_dir / "success.csv", index=False)
     regret_curves(df).to_csv(out_dir / "regret_curves.csv", index=False)
+    diagnostics(df).to_csv(out_dir / "diagnostics.csv", index=False)
     print(f"wrote {len(runs)} runs to {out_dir}")
 
 

@@ -4,7 +4,8 @@ Examples
   python run_experiments.py --fast
   python run_experiments.py --full --exp expA
   python run_experiments.py --fast --method cmaes --landscape primary_far_w0.3
-  python run_experiments.py --aggregate
+  python run_experiments.py --aggregate [--fast]
+  python run_experiments.py --archive exp0 --exp exp0
 """
 from __future__ import annotations
 
@@ -59,10 +60,14 @@ def build_jobs(args) -> list[tuple[str, str, int]]:
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    mode = p.add_mutually_exclusive_group(required=True)
+    mode = p.add_mutually_exclusive_group()
     mode.add_argument("--fast", action="store_true", help="5 seeds, N=100 (smoke test)")
     mode.add_argument("--full", action="store_true", help="50 seeds, N=300")
-    mode.add_argument("--aggregate", action="store_true", help="write results/summary/ from raw CSVs")
+    p.add_argument("--aggregate", action="store_true",
+                   help="write summaries from raw CSVs: results/summary/ (or results/summary_fast/ with --fast)")
+    p.add_argument("--archive", metavar="NAME",
+                   help="zip the raw BO runs (of --exp if given, else all) as results/archive/raw_bo_NAME.zip "
+                        "with a manifest; never overwrites an existing archive")
     p.add_argument("--exp", choices=list(EXPERIMENTS))
     p.add_argument("--method", choices=["cmaes", "bo", "random"])
     p.add_argument("--landscape")
@@ -70,10 +75,24 @@ def main():
     p.add_argument("--workers", type=int, default=6)
     args = p.parse_args()
 
+    if args.archive:
+        from archive import archive_bo
+        from logging_utils import RAW_DIR
+        files = None
+        if args.exp:
+            files = [f for c in EXPERIMENTS[args.exp]["configs"] if CONFIGS[c]["method"] == "bo"
+                     for l in EXPERIMENTS[args.exp]["landscapes"]
+                     for f in (RAW_DIR / l).glob(f"bo__{c}__seed*.csv")]
+        z, m = archive_bo(args.archive, files)
+        print(f"wrote {z} ({z.stat().st_size / 1e6:.2f} MB) and {m}")
+        return
     if args.aggregate:
         from analysis import aggregate
-        aggregate()
+        from logging_utils import RAW_DIR, RAW_FAST_DIR, SUMMARY_DIR, SUMMARY_FAST_DIR
+        aggregate(*((RAW_FAST_DIR, SUMMARY_FAST_DIR) if args.fast else (RAW_DIR, SUMMARY_DIR)))
         return
+    if not (args.fast or args.full):
+        p.error("choose --fast, --full or --aggregate")
 
     N = N_FAST if args.fast else N_FULL
     # Fast runs go to a separate tree so they never mix with full results.

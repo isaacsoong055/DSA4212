@@ -34,8 +34,17 @@ without asking the user. If something there is ambiguous, ask rather than guess.
 - Raw CSVs (`results/raw*/`) are gitignored; commit `results/summary/` instead.
 - Check in with the user before anything expected to run longer than ~5 minutes.
 
-## Notebook
-- `notebooks/main.ipynb` imports from `code/` and holds no algorithm logic or multiprocessing. Long batches
-  run through `run_experiments.py`. Rebuild it only by editing cells; clear outputs before saving.
+## Notebook convention (applies to all future experiments)
+- Heavy work (runs, aggregation, figure and table generation) lives in `.py` files: `run_experiments.py` and
+  functions in `code/` (`analysis.py`, `report.py`). `notebooks/main.ipynb` only loads `results/summary*/` (and
+  `results/raw*/` for single-run illustrations), calls those helpers in one or two lines per figure, and holds the
+  findings in markdown: prediction, result with CI, explanation, caveat.
+- No multiprocessing or heavy computation in the notebook. A section whose results are missing shows a "not run yet"
+  message with the exact command. The notebook must run top to bottom without errors in FAST mode; clear outputs before saving.
+- Findings are written only after the full results exist; FAST (N=100, 5 seeds) is a smoke test and its figures are stamped.
+- Prediction statuses live in `docs/scoreboard.csv`, changed by hand, never by code.
 - Restart triggers are frozen at tolx = 3e-3, tolfun = 1e-5 (chosen from firing rates only).
 - Exp E near-well cells exist only for w <= 0.3 (basins merge at w >= 0.6; see `docs/pilot_log.md`).
+- Exp E best-variant line: selected by the rule in `docs/pilot_log.md`, evaluated on fresh seeds 2000-2049 only.
+- BO runs are reproducible only statistically across processes (see `docs/pilot_log.md`). Never delete raw BO CSVs in `results/raw/`; commit them compressed, one zip per finished batch, with `run_experiments.py --archive NAME --exp EXP` (`results/archive/`); never rewrite an existing zip. `raw_fast` is never committed.
+- Do not start the full experiments until the user says so.

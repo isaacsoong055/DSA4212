@@ -8,6 +8,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = ROOT / "results" / "raw"
 SUMMARY_DIR = ROOT / "results" / "summary"
+RAW_FAST_DIR = ROOT / "results" / "raw_fast"
+SUMMARY_FAST_DIR = ROOT / "results" / "summary_fast"  # smoke-test summaries, never committed
 
 BASE_COLS = ["method", "config_id", "landscape", "seed", "eval_idx"]
 TAIL_COLS = ["f", "best_so_far", "sigma", "cov_trace", "lengthscales", "opt_time_s",

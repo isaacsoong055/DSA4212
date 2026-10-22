@@ -7,6 +7,7 @@ from __future__ import annotations
 # Seed lists are fixed in advance and only ever extended by appending.
 SEEDS = list(range(1000, 1200))        # experiment seeds; full runs use a prefix
 PILOT_SEEDS = list(range(9000, 9200))  # epsilon pilot (random sampling only)
+FRESH_SEEDS = list(range(2000, 2050))  # Exp E best-variant line only (selection rule in pilot_log.md)
 
 N_FULL, N_FAST = 300, 100
 N_SEEDS_FULL, N_SEEDS_FAST = 50, 5
@@ -42,7 +43,7 @@ PRIMARY = "primary_far_w0.3"
 # Experiments with fully specified configs. D, E-best and V depend on A-C results
 # and are added once those are in (configs chosen by the rule in direction.md).
 EXPERIMENTS = {
-    "exp0": dict(configs=["cma_default", "bo_default"], landscapes=[PRIMARY]),
+    "exp0": dict(configs=["cma_default", "bo_default", "random"], landscapes=[PRIMARY]),
     "expA": dict(configs=["cma_default", "cma_lam12", "cma_lam24"], landscapes=[PRIMARY]),
     "expB": dict(configs=["cma_default", "cma_ipop", "cma_bipop"], landscapes=[PRIMARY]),
     "expC": dict(configs=["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_lcb_b0.5",
