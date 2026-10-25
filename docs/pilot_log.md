@@ -428,3 +428,23 @@ no BO run is compared against it. N = 1500 was chosen as a round 5x; it was not 
 success at N = 1500 should be above 0; lambda = 6 and 12 should stay near 0 because they have already collapsed. If all
 three stay at 0, the failure is not a budget effect. Either outcome is reported in the notebook and the report with the
 reason the check was added. No other budgets will be tried (one extra budget, fixed in advance).
+
+## Diagnostic 2026-10-25: why does CMA-ES never succeed? (`pilot/cma_positive_control.py`, pilot seeds 9000-9019, N = 300)
+
+Run after Exps 0-2 all gave 0/50, to rule out a bug and a success criterion that cannot be reached. Success needs a
+point within about 0.05 of the well centre (regret 0.056 at distance 0.05, 0.22 at 0.1). Default CMA-ES, no restarts,
+started at or near the well centre:
+
+| start | sigma0 | success |
+| --- | --- | --- |
+| at well centre | 0.3 | 20/20 |
+| 1.0 from well | 0.5 | 17/20 |
+| at well centre | 1 | 11/20 |
+| at well centre | **2 (frozen project value)** | **0/20** |
+| 1.0 from well | **2 (frozen project value)** | **1/20** |
+
+Reading: the criterion is reachable and the wrapper works (matched sigma0 gives 17-20/20). With the frozen sigma0 = 2,
+which is about 6.7 times the well width w = 0.3, CMA-ES fails even when started *at* the well centre. So the failure is
+a scale mismatch between the initial step size and the well, plus the decoy bowl's pull, not a budget or restart
+effect. This is post hoc and about the frozen config; it does not change any frozen choice. Whether to add sigma0 as a
+factor is a design decision for the user.
