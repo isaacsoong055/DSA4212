@@ -20,12 +20,12 @@ untested is labelled *hypothesis*.
 
 ### Gaps to close before submission
 
-- [ ] `authors.md` (names and student IDs); not yet created.
-- [ ] `readme.md` at the root: the repo has `README.md`. Check the exact filename the marker expects; rename or add.
-- [ ] `report/` folder with source, bibliography and figures; not yet created.
+- [x] `authors.md` added by the user.
+- [x] `readme.md` renamed by the user (git may still track `README.md`; run `git mv README.md readme.md` if so).
+- [ ] `report/` folder exists; the report itself is written at the end by the user (source, bibliography, figures).
 - [ ] Report template: the guidelines link an Overleaf LaTeX template; get it from Canvas.
 - [ ] Invite `alexxthiery` if the repo is private. The remote is `isaacsoong055/DSA4212`.
-- [ ] The two untracked "Multimodality Project Direction Guide" files in the root: decide to keep, move or delete.
+- [x] The "Direction Guide" files are personal notes and are never uploaded (keep them out of git).
 - [ ] Read the sources yourself (section 1 list). Do not cite anything unread.
 - [ ] Final check that every number in the report matches `results/summary/` and the configs in `code/configs.py`.
 
