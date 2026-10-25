@@ -134,12 +134,13 @@ def status_table(M: Mode) -> None:
 # ----------------------------------------------------------------- predictions and scoreboard
 
 def load_predictions() -> pd.DataFrame:
-    """All rows with an ID like H1 or M3 from docs/predictions.md (text unedited)."""
+    """All rows with an ID like H1 or M3 from docs/predictions.md and docs/predictions_addendum.md (text unedited)."""
     rows = []
-    for line in (ROOT / "docs" / "predictions.md").read_text().splitlines():
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) == 4 and re.fullmatch(r"[A-Z]\d+", cells[0]):
-            rows.append(cells)
+    for name in ("predictions.md", "predictions_addendum.md"):
+        for line in (ROOT / "docs" / name).read_text().splitlines():
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if len(cells) == 4 and re.fullmatch(r"[A-Z]\d+", cells[0]):
+                rows.append(cells)
     return pd.DataFrame(rows, columns=["ID", "Prediction", "Supported by", "Contradicted by"])
 
 

@@ -55,6 +55,8 @@ Commit this table to the repo before the big runs, so the analysis is defensible
 
 A contradicted prediction, explained with your diagnostics, shows more understanding than a clean confirmation.
 
+**Addendum (2026-10-25), BO chain.** So that BO has its own failure, mechanism and test, like CMA-ES (H1, M1, H2), `docs/predictions_addendum.md` adds B1 (post hoc: default BO fails at discovery, with a lengthscale far above w; seen in Exp 0) and M4 (forward-looking: exploration helps BO only through discovery, not by shortening the lengthscale). H4 is the test between them. No new runs: M4 uses the lengthscales and sample positions already logged in Exp C.
+
 ## 4. Step 1: build the landscapes
 
 Use one tunable primary landscape for all algorithm experiments, one control and two validation functions chosen in advance (one funnel, one deceptive), so the validation is informative however it turns out.
