@@ -128,6 +128,11 @@ def status_table(M: Mode) -> None:
         else:
             status = f"partial ({have}/{len(pairs)} cells, fewest seeds {min(n)} of {M.n_seeds})"
         rows.append((EXP_TITLE[e], status, command(e, M)))
+        if e == "exp1":
+            long_ok = (SUMMARY_LONG_DIR / "runs.csv").exists()
+            rows.append(("Exp 1 side check (N = 1500, CMA-ES only)",
+                         "loaded (50 seeds, full results only)" if long_ok else "missing",
+                         "python run_experiments.py --long --exp exp1_long && python run_experiments.py --aggregate --long"))
     df = pd.DataFrame(rows, columns=["experiment", "results", "command to produce"])
     display(df.style.hide(axis="index").set_properties(**{"text-align": "left"}))
 
@@ -378,7 +383,8 @@ def long_budget_card(M: Mode) -> None:
     """Exp 1 side check: the same lambda settings at N = 1500, next to their N = 300 result (CMA-ES only)."""
     path = SUMMARY_LONG_DIR / "runs.csv"
     if M.fast or not path.exists():
-        why = "The side check has no smoke-test version." if M.fast else "No saved results found."
+        why = ("The side check has no smoke-test version; set `FAST = False` in the top cell to see its saved full results."
+               if M.fast else "No saved results found.")
         display(Markdown(f"> **Not run yet: Exp 1 side check (N = {N_LONG}).** {why}  \n"
                          f"> Run: `python run_experiments.py --long --exp exp1_long && "
                          f"python run_experiments.py --aggregate --long`"))

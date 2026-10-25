@@ -139,7 +139,24 @@ Why: at N = 300 lambda 6 and 12 had contracted (median final sigma 0.0025, 0.076
 - Kept apart: `results/raw_long/`, `results/summary_long/`; never on BO axes; no BO comparison uses it. Only one extra
   budget was tried (fixed in advance). Explain this check, and why it exists, in the report text.
 
-### Exps 2 to 7: not run yet. Add a subsection per experiment: table, CI, effect size, the prediction it tests, whether
+### Exp 2: CMA-ES restarts (full, 2026-10-25, seeds 1000-1049, N = 300, `primary_far_w0.3`, epsilon = 0.05)
+
+| setting | success | Wilson 95% | runs with a sample in the well | best point in well basin | restarts per run |
+| --- | --- | --- | --- | --- | --- |
+| `cma_default` (none) | 0/50 | [0.000, 0.071] | 1 | 2 | 0 |
+| `cma_ipop` | 0/50 | [0.000, 0.071] | 6 | 9 | 1 (all runs) |
+| `cma_bipop` | 0/50 | [0.000, 0.071] | 6 | 9 | 1 (all runs) |
+
+- Wall 3 s for 100 new runs. **IPOP and BIPOP produce identical runs (50/50, evaluation by evaluation)**: BIPOP's first
+  restart is the large regime, equal to IPOP's first doubling, with the same restart random stream, and the budget only
+  allows one restart (first start uses a median 186 of 300 evals, range 144-234; the restart gets the rest at
+  lambda = 12). Property of the design at N = 300, checked in the code, not a bug. Exp 2 cannot separate IPOP from
+  BIPOP. Say this plainly in the report.
+- Well entry: 5 of the 6 entering runs entered during the restart. Comparable to a fresh lambda = 12 start in Exp 1 (7/50
+  over 300 evals) -> restarts look like fresh starts for finding the well (M2 first clause). M2 second clause not
+  assessable (no successes). H3: equal success (0 = 0), "contradicted" side on success. Statuses are the user's to set.
+
+### Exps 3 to 7: not run yet. Add a subsection per experiment: table, CI, effect size, the prediction it tests, whether
 ### supported, the diagnostic that explains it, caveat.
 
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
