@@ -27,13 +27,16 @@ RED = "#e34948"
 SMOKE_TOL = 1e-8
 COLOUR = {"cmaes": BLUE, "bo": ORANGE, "random": GREY}
 LABEL = {"cma_default": "default (λ=6)", "cma_lam12": "λ=12", "cma_lam24": "λ=24", "cma_ipop": "IPOP",
-         "cma_bipop": "BIPOP", "bo_default": "EI ξ=0", "bo_ei_xi0.01": "EI ξ=0.01", "bo_ei_xi0.1": "EI ξ=0.1", "bo_ei_xi0.5": "EI ξ=0.5", "bo_ei_xi1": "EI ξ=1", "bo_ei_xi2": "EI ξ=2",
+         "cma_bipop": "BIPOP", "cma_sig0.3": "σ0=0.3", "cma_sig0.5": "σ0=0.5", "cma_sig1": "σ0=1", "cma_sig4": "σ0=4",
+         "cma_o_sig0.3": "oracle σ0=0.3", "cma_o_sig0.5": "oracle σ0=0.5", "cma_o_sig1": "oracle σ0=1",
+         "cma_o_sig2": "oracle σ0=2", "cma_o_sig4": "oracle σ0=4", "bo_default": "EI ξ=0", "bo_ei_xi0.01": "EI ξ=0.01", "bo_ei_xi0.1": "EI ξ=0.1", "bo_ei_xi0.5": "EI ξ=0.5", "bo_ei_xi1": "EI ξ=1", "bo_ei_xi2": "EI ξ=2",
          "bo_lcb_b0.5": "LCB β=0.5", "bo_lcb_b2": "LCB β=2", "bo_lcb_b8": "LCB β=8", "bo_lcb_b32": "LCB β=32", "bo_ts": "Thompson",
          "bo_map": "EI, MAP fit", "bo_k_m32": "Matern-3/2", "bo_k_m12": "Matern-1/2", "bo_k_rbf": "RBF", "random": "random"}
-ORDER = ["exp0", "exp1", "exp2", "exp3", "exp4", "exp5", "exp6_baseline", "exp7"]
-EXP_TITLE = {"exp0": "Exp 0: baselines", "exp1": "Exp 1: population size", "exp2": "Exp 2: restarts",
-             "exp3": "Exp 3: BO exploration vs exploitation", "exp4": "Exp 4: BO kernel type", "exp5": "Exp 5: unimodal control",
-             "exp6_baseline": "Exp 6: basin width (baselines)", "exp7": "Exp 7: validation (Rastrigin, Schwefel)"}
+ORDER = ["exp0", "exp1", "exp2", "exp3", "exp3_oracle", "exp4", "exp5", "exp6", "exp7_baseline", "exp8"]
+EXP_TITLE = {"exp0": "Exp 0: baselines", "exp1": "Exp 1: population size", "exp2": "Exp 2: restarts", "exp3": "Exp 3: CMA-ES initial step size (random start)",
+             "exp3_oracle": "Exp 3: CMA-ES initial step size (oracle start 1.0 from the well)",
+             "exp4": "Exp 4: BO exploration vs exploitation", "exp5": "Exp 5: BO kernel type", "exp6": "Exp 6: unimodal control",
+             "exp7_baseline": "Exp 7: basin width (baselines)", "exp8": "Exp 8: validation (Rastrigin, Schwefel)"}
 
 
 @lru_cache(maxsize=None)
@@ -81,7 +84,7 @@ def not_run(exp: str, M: Mode, why: str = "No saved results found.") -> None:
 
 
 def not_configured(exp: str) -> None:
-    display(Markdown(f"> **Not configured yet: {EXP_TITLE[exp]}.** Its settings depend on the Exps 1-4 results "
+    display(Markdown(f"> **Not configured yet: {EXP_TITLE[exp]}.** Its settings depend on the Exps 1-5 results "
                      f"and are added to `code/configs.py` by the rule in `docs/direction.md`."))
 
 
@@ -116,7 +119,7 @@ def status_table(M: Mode) -> None:
     rows = []
     for e in ORDER:
         if e not in EXPERIMENTS:
-            rows.append((EXP_TITLE[e], "not configured (depends on the Exp 1-4 results)", "-"))
+            rows.append((EXP_TITLE[e], "not configured (depends on the Exp 1-5 results)", "-"))
             continue
         pairs = [(c, canon(l)) for c in EXPERIMENTS[e]["configs"] for l in EXPERIMENTS[e]["landscapes"]]
         n = [0 if counts is None else int(counts.get(p, 0)) for p in pairs]
@@ -418,12 +421,12 @@ def _success_card(exp: str, baseline: str, M: Mode) -> None:
     display(effect_table(runs, configs, PRIMARY, baseline).style.hide(axis="index"))
 
 
-def exp6_figure(M: Mode, best: dict | None = None) -> None:
+def exp7_figure(M: Mode, best: dict | None = None) -> None:
     """Far and near panels on one y-axis, fixed epsilon, random reference. `best` maps a method to
     its selected config id; its line is drawn only from the fresh seeds (2000-2049)."""
     runs = M.table("runs")
     if runs is None:
-        return not_run("exp6_baseline", M)
+        return not_run("exp7_baseline", M)
     main = runs[runs["seed"].isin(SEEDS)]
     fresh = runs[runs["seed"].isin(FRESH_SEEDS)]
     panels = [("far", [0.1, 0.3, 0.6, 1.0]), ("near", [0.1, 0.3])]
@@ -458,9 +461,9 @@ def exp6_figure(M: Mode, best: dict | None = None) -> None:
     axes[0].legend(frameon=False, loc="upper left")
     if not drawn:
         plt.close(fig)
-        return not_run("exp6_baseline", M)
+        return not_run("exp7_baseline", M)
     _finish(fig, "nb_5_exp6", M)
-    display(Markdown("*Exp 6 has no pre-registered prediction (see `docs/predictions.md`). Near-well cells at w = 0.6 and "
+    display(Markdown("*Only CMA3 (CMA-ES) is pre-registered for Exp 7; there is none for BO (see `docs/predictions_addendum.md`). Near-well cells at w = 0.6 and "
                      "w = 1.0 are excluded because the near well's basin merges with the decoy there "
                      "(`docs/pilot_log.md`). Random sampling is the reference at each w.*"))
 
@@ -490,7 +493,7 @@ def regret_figure(M: Mode, exp: str) -> None:
     _finish(fig, f"nb_5_{exp}", M)
 
 
-def lambda_gain_figure(M: Mode, exp: str = "exp7", base: str = "cma_default",
+def lambda_gain_figure(M: Mode, exp: str = "exp8", base: str = "cma_default",
                        others=("cma_lam12", "cma_lam24")) -> None:
     """Per validation function: success-rate gain over the default lambda with a Newcombe interval."""
     runs = main_runs(M)
@@ -530,10 +533,10 @@ def random_reference(ax, runs: pd.DataFrame, landscape: str) -> bool:
 
 def _validation_card(M: Mode) -> None:
     runs = main_runs(M)
-    lands = EXPERIMENTS["exp7"]["landscapes"]
-    configs = [c for c in EXPERIMENTS["exp7"]["configs"] if c != "random"]
+    lands = EXPERIMENTS["exp8"]["landscapes"]
+    configs = [c for c in EXPERIMENTS["exp8"]["configs"] if c != "random"]
     if runs is None or all(_sub(runs, configs, l).empty for l in lands):
-        return not_run("exp7", M)
+        return not_run("exp8", M)
     fig, axes = plt.subplots(1, len(lands), figsize=(5.5 * len(lands), 4.4), sharey=True, layout="constrained", squeeze=False)
     for ax, l in zip(axes[0], lands):
         success_bars(ax, runs, configs, l)
@@ -560,13 +563,15 @@ def experiment_card(exp: str, M: Mode) -> None:
     if miss:
         shown = ", ".join(f"{LABEL.get(c, c)} on {l}" for c, l in miss[:3]) + (" ..." if len(miss) > 3 else "")
         return not_run(exp, M, f"{len(miss)} of its settings have no saved runs (e.g. {shown}).")
-    if exp == "exp1" or exp == "exp2":
+    if exp in ("exp1", "exp2", "exp3"):
         _success_card(exp, "cma_default", M)
-    elif exp in ("exp3", "exp4"):
+    elif exp == "exp3_oracle":
+        _success_card(exp, "cma_o_sig2", M)
+    elif exp in ("exp4", "exp5"):
         _success_card(exp, "bo_default", M)
-    elif exp == "exp5":
+    elif exp == "exp6":
         regret_figure(M, exp)
-    elif exp == "exp6_baseline":
-        exp6_figure(M)
-    elif exp == "exp7":
+    elif exp == "exp7_baseline":
+        exp7_figure(M)
+    elif exp == "exp8":
         _validation_card(M)

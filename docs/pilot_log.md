@@ -448,3 +448,49 @@ which is about 6.7 times the well width w = 0.3, CMA-ES fails even when started 
 a scale mismatch between the initial step size and the well, plus the decoy bowl's pull, not a budget or restart
 effect. This is post hoc and about the frozen config; it does not change any frozen choice. Whether to add sigma0 as a
 factor is a design decision for the user.
+
+## Amendment 2026-10-25 (second): Exp 3 added (CMA-ES initial step size), later experiments renumbered. Written BEFORE Exp 3 ran
+
+**Name history, for reading the older sections.** Each column is the same experiment.
+
+| experiment | original (before 2026-10-25) | first rename (amendment above) | now |
+| --- | --- | --- | --- |
+| baselines | Exp 0 | Exp 0 | Exp 0 |
+| CMA-ES lambda | A | Exp 1 | Exp 1 |
+| CMA-ES restarts | B | Exp 2 | Exp 2 |
+| CMA-ES initial step size | - | - | **Exp 3 (new)** |
+| BO exploration vs exploitation | C | Exp 3 | Exp 4 |
+| BO kernel type | - | Exp 4 | Exp 5 |
+| sphere control | D | Exp 5 | Exp 6 |
+| landscape knobs | E | Exp 6 | Exp 7 |
+| validation | V | Exp 7 | Exp 8 |
+
+Where an older rule says "Exps A-C" or "Exps 1-4" it now means Exps 1-5. Exps 4 to 8 had not run when they were renumbered.
+
+**Why Exp 3 was added.** Exps 0, 1 and 2 (and the N = 1500 side check) all gave 0/50 for CMA-ES. The positive control
+above (pilot seeds 9000-9019) showed that CMA-ES started at the well centre fails with the frozen sigma0 = 2 (0/20) but
+succeeds with sigma0 = 0.3 (20/20). The user asked to keep the existing findings and test this explanation with a new
+experiment. The explanation: sigma0 = 2 is about 7 times the well width w = 0.3, so the bowl dominates the update.
+
+**Design (user decision; not tuned on any Exp 3 result).** Factor: sigma0 in {0.3, 0.5, 1, 2, 4}, where 2 is the frozen
+baseline (`cma_default`). All other settings unchanged (lambda default, no restarts, tolx/tolfun frozen), N = 300, seeds
+1000-1049, `primary_far_w0.3`, epsilon 0.05. Two arms, run as `--exp exp3` and `--exp exp3_oracle`:
+- **Random-start arm** (`cma_sig0.3`, `cma_sig0.5`, `cma_sig1`, `cma_default`, `cma_sig4`): the baseline start U[-4,4]^2. This is
+  the fair arm and the only one that can be a candidate for the best/worst rule.
+- **Oracle-start arm** (`cma_o_sig0.3`, `cma_o_sig0.5`, `cma_o_sig1`, `cma_o_sig2`, `cma_o_sig4`): the first start is at
+  distance 1.0 from the well centre in a random direction (`x0_from_well` in `code/optimizers.py`, reproducible from the
+  seed). It uses knowledge of the well, so it isolates *refinement* from *finding* and is a diagnostic: never compared with
+  BO, never a candidate in the best/worst rule. Its baseline is `cma_o_sig2`.
+The grid {0.3, 0.5, 1, 2, 4} was set from the well width (w = 0.3) and the box (width 10), before any Exp 3 run. Predictions
+CMA1 and CMA2 are in `docs/predictions_addendum.md`, committed before the runs. CMA3 (success rises with w, tested in
+Exp 7) is written there too, before Exp 7.
+
+**Best/worst candidate rule, updated.** CMA-ES candidates are now the settings of Exps 1, 2 and the random-start arm of
+Exp 3, defaults included. Tie order (closest to default first): `cma_default`, `cma_lam12`, `cma_lam24`, `cma_ipop`,
+`cma_bipop`, `cma_sig1`, `cma_sig4`, `cma_sig0.5`, `cma_sig0.3`. The Exp 7 fallback for CMA-ES is therefore `cma_sig0.3`.
+One consequence to be aware of: H5 is about larger lambda, but the best or worst CMA-ES variant picked by this rule could
+be a sigma0 or restart setting. That was already true of IPOP/BIPOP and is stated here so it is not a surprise.
+BO candidates are unchanged.
+
+**Runtime.** CMA-ES only: seconds for both arms (10 configs x 50 seeds, 0.1 s each).
+
