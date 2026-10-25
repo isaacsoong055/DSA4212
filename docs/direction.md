@@ -55,7 +55,7 @@ Commit this table to the repo before the big runs, so the analysis is defensible
 
 A contradicted prediction, explained with your diagnostics, shows more understanding than a clean confirmation.
 
-**Addendum (2026-10-25), BO chain.** So that BO has its own failure, mechanism and test, like CMA-ES (H1, M1, H2), `docs/predictions_addendum.md` adds B1 (post hoc: default BO fails at discovery, with a lengthscale far above w; seen in Exp 0), M4 (forward-looking: exploration helps BO only through discovery, not by shortening the lengthscale) and M5 (forward-looking: the existing `bo_map` arm separates "long lengthscale causes the failure" from "it is a symptom"). H4 is the test between them. No new runs: M4 and M5 use the lengthscales and sample positions already logged in Exp C.
+**Addendum (2026-10-25), BO chain.** `docs/predictions_addendum.md` adds BO1 to BO5 so that BO has its own failure, mechanism and test chain, like CMA-ES (H1, M1, H2). BO1 is post hoc (Exp 0 was seen first); BO2 to BO5 are forward-looking. The addendum also holds the prediction-to-experiment map. No H or M prediction was changed.
 
 ## 4. Step 1: build the landscapes
 
@@ -103,14 +103,22 @@ Outputs: success rate with a confidence interval, regret curves, a sigma-vs-gene
 
 Change one factor at a time. Every variant gets the same N and seeds, and all restart evaluations count against N.
 
-| Exp | Factor | Settings | Measure | Notes |
-| --- | --- | --- | --- | --- |
-| A | CMA-ES lambda | 1x, 2x, 4x default (d=2: about 6, 12, 24) | Success vs lambda, generations completed | Check the largest lambda still gets 10-20 generations. Optional 8x/16x at larger N, CMA-ES only, kept off BO plots |
-| B | Restarts | None, IPOP, BIPOP | Success rate, which restart succeeded | Total budget fixed at N |
-| C | BO exploration | EI with xi in {0, 0.01, 0.1}; LCB with beta in {0.5, 2, 8}; Thompson sampling | Success rate, sample spread, fitted lengthscale | Refit hyperparameters every 5-10 iterations for speed on the M2 |
-| D | Unimodal control | Best and worst settings from A-C on the sphere | Regret | Tests H5 |
-| E | Landscape knobs | w in {0.1, 0.3, 0.6, 1.0}; near vs far | Success vs w for the baseline and best variant of each method | Headline figure |
-| V | Validation | Best and worst variant from A-C on Rastrigin and Schwefel, 20-30 seeds | Success rate | Tests H6 |
+Experiments are numbered in the order they run and grouped by method (renamed 2026-10-25 from A-E and V; old names appear only in older sections of `docs/pilot_log.md`).
+
+| Exp | Block | Factor | Settings | Measure | Notes |
+| --- | --- | --- | --- | --- | --- |
+| 0 | both | Baselines | default CMA-ES, default BO, random sampling | Success rate, diagnostics | Done |
+| 1 | CMA-ES | Population size lambda | 1x, 2x, 4x default (d=2: 6, 12, 24) | Success vs lambda, generations completed | Check the largest lambda still gets 10-20 generations. Optional 8x/16x at larger N, CMA-ES only, kept off BO plots |
+| 2 | CMA-ES | Restarts | None, IPOP, BIPOP | Success rate, which restart succeeded | Total budget fixed at N |
+| 3 | BO | Exploration vs exploitation | EI with xi in {0, 0.01, 0.1, 0.5, 1, 2}; LCB with beta in {0.5, 2, 8, 32}; Thompson sampling; `bo_map` (different fitting recipe, see below) | Success rate, sample spread, fitted lengthscale | n_init fixed at 10. xi is in units of f; the well is about 2.2 deep, so the grid reaches near-pure exploration. Refit every 5 iterations |
+| 4 | BO | Kernel type | Matern-5/2 (baseline), Matern-3/2, Matern-1/2, RBF | Success rate, success given a well sample, fitted lengthscale | Everything else at baseline (EI, xi = 0, n_init = 10) |
+| 5 | both | Unimodal control | Best and worst settings from Exps 1-4 on the sphere, per method | Regret | Tests H5 |
+| 6 | both | Landscape knobs | w in {0.1, 0.3, 0.6, 1.0}; near vs far | Success vs w for the baseline and best variant of each method | Headline figure |
+| 7 | both | Validation | Best and worst variant from Exps 1-4 on Rastrigin and Schwefel, CMA-ES and BO selected and evaluated separately, 20-30 seeds | Success rate | Tests H6 (CMA-ES) and BO5 (BO) |
+
+`bo_map` differs from `bo_default` in two things at once: a prior on the lengthscale (so it cannot sit at the bound) and a learned noise level instead of a fixed tiny one. It is therefore a different fitting recipe, not a single-factor change, and is reported as such.
+
+Prediction-to-experiment map: H1 (Exp 0), H2 and M1 (Exp 1), H3 and M2 (Exp 2), BO1 (Exp 0), H4, BO2 and BO3 (Exp 3), BO4 (Exp 4), H5 (Exp 5), H6, M3 and BO5 (Exp 7). Exp 6 has no pre-registered prediction.
 
 Budget note: keep N=300 for every CMA-ES vs BO comparison. A longer-budget CMA-ES-only run is fine for the large-lambda sweep, but never plot it on the same axes as BO.
 
@@ -189,7 +197,7 @@ If you fall behind, cut in this order:
 1. d=5 check
 2. Thompson sampling
 3. 8x and 16x lambda sweeps
-4. Exp E near-vs-far distance (keep the width sweep)
+4. Exp 6 near-vs-far distance (keep the width sweep)
 
 ## 12. Limitations and common pitfalls
 

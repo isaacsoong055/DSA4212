@@ -33,7 +33,7 @@ Outputs are cleared before saving; figures go to `docs/figures/nb_*.png` (`_fast
 .venv/bin/python run_experiments.py --fast
 
 # full runs: 50 seeds, N=300 -> results/raw/  (filters are optional)
-.venv/bin/python run_experiments.py --full --exp expA
+.venv/bin/python run_experiments.py --full --exp exp1
 .venv/bin/python run_experiments.py --full --method bo --landscape primary_far_w0.3
 
 # compact summaries for committing -> results/summary/ (add --fast for results/summary_fast/)

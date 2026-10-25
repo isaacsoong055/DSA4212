@@ -167,6 +167,7 @@ def run_cmaes(ls: Landscape, N: int, seed: int, cfg: dict, config_id: str) -> Ru
 
 # ----------------------------------------------------------------- BO
 
+KERNEL_NU = {"matern52": 2.5, "matern32": 1.5, "matern12": 0.5}
 LS_BOUNDS_UNIT = (0.005, 2.0)  # lengthscale bounds on the unit cube = [0.05, 20] domain units
 OUTPUTSCALE_BOUNDS = (1e-3, 1e3)
 FIXED_NOISE = 1e-6  # noise variance in standardised output units
@@ -178,20 +179,25 @@ def _kernel(model):
     return k.base_kernel if hasattr(k, "base_kernel") else k
 
 
-def _build_gp(X, Y, gp: str, bounds):
+def _build_gp(X, Y, gp: str, bounds, kernel: str = "matern52"):
     """Matern-5/2 ARD GP. 'mle_fixed': no priors, fixed tiny noise, bounded
     lengthscales. 'map_default': BoTorch's dim-scaled LogNormal prior and
-    learned noise with its default prior (same Matern-5/2 kernel)."""
+    learned noise with its default prior (same Matern-5/2 kernel). `kernel`
+    (matern52 | matern32 | matern12 | rbf) applies to 'mle_fixed' only."""
     import torch
     from botorch.models import SingleTaskGP
     from botorch.models.transforms import Normalize, Standardize
     from gpytorch.constraints import Interval
-    from gpytorch.kernels import MaternKernel, ScaleKernel
+    from gpytorch.kernels import MaternKernel, RBFKernel, ScaleKernel
 
     d = X.shape[-1]
     common = dict(input_transform=Normalize(d, bounds=bounds), outcome_transform=Standardize(1))
     if gp == "mle_fixed":
-        base = MaternKernel(nu=2.5, ard_num_dims=d, lengthscale_constraint=Interval(*LS_BOUNDS_UNIT))
+        ls_con = Interval(*LS_BOUNDS_UNIT)
+        if kernel == "rbf":
+            base = RBFKernel(ard_num_dims=d, lengthscale_constraint=ls_con)
+        else:
+            base = MaternKernel(nu=KERNEL_NU[kernel], ard_num_dims=d, lengthscale_constraint=ls_con)
         covar = ScaleKernel(base, outputscale_constraint=Interval(*OUTPUTSCALE_BOUNDS))
         base.lengthscale = LS_INIT_UNIT
         covar.outputscale = 1.0
@@ -216,7 +222,7 @@ def _count_jitter(caught) -> int:
 
 
 def run_bo(ls: Landscape, N: int, seed: int, cfg: dict, config_id: str) -> RunLog:
-    """GP-BO. cfg: acq ('ei'|'lcb'|'ts'), xi, beta, n_init, refit_every, gp,
+    """GP-BO. cfg: acq ('ei'|'lcb'|'ts'), xi, beta, n_init, refit_every, gp, kernel,
     num_restarts, raw_samples, ts_candidates."""
     import torch
     from botorch.acquisition import LogExpectedImprovement, UpperConfidenceBound
@@ -246,7 +252,7 @@ def run_bo(ls: Landscape, N: int, seed: int, cfg: dict, config_id: str) -> RunLo
         Y = torch.tensor([[r["f"]] for r in log.rows], dtype=dt)
         with warnings.catch_warnings(record=True) as caught:
             warnings.simplefilter("always")
-            model = _build_gp(X, Y, cfg["gp"], bounds)
+            model = _build_gp(X, Y, cfg["gp"], bounds, cfg.get("kernel", "matern52"))
             if state is not None:
                 model.load_state_dict(state, strict=False)
             if state is None or it % cfg["refit_every"] == 0:

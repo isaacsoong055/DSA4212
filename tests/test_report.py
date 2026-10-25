@@ -45,7 +45,7 @@ def test_newcombe_matches_published_example():
 
 def test_predictions_parse_all_ids():
     ids = list(report.load_predictions()["ID"])
-    assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "B1", "M4", "M5"]
+    assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "BO1", "BO2", "BO3", "BO4", "BO5"]
 
 
 # ---- dormant cards (D, V, E best-variant) on smoke data; skipped when no smoke summaries exist
@@ -61,11 +61,11 @@ def quiet(monkeypatch):
 @smoke
 def test_regret_and_lambda_gain_figures_run(quiet, monkeypatch):
     cfgs = ["cma_default", "cma_lam12", "cma_lam24"]
-    monkeypatch.setitem(EXPERIMENTS, "expD", dict(configs=cfgs, landscapes=[PRIMARY]))
-    monkeypatch.setitem(EXPERIMENTS, "expV", dict(configs=cfgs, landscapes=[PRIMARY, "primary_far_w1.0"]))
+    monkeypatch.setitem(EXPERIMENTS, "exp5", dict(configs=cfgs, landscapes=[PRIMARY]))
+    monkeypatch.setitem(EXPERIMENTS, "exp7", dict(configs=cfgs, landscapes=[PRIMARY, "primary_far_w1.0"]))
     M = report.Mode(True)
-    report.experiment_card("expD", M)
-    report.experiment_card("expV", M)
+    report.experiment_card("exp5", M)
+    report.experiment_card("exp7", M)
 
 
 @smoke
@@ -81,16 +81,16 @@ def test_expE_best_variant_uses_only_fresh_seeds(quiet, monkeypatch):
 
     drawn = []
     monkeypatch.setattr(report.plt.Axes, "errorbar", lambda self, *a, **k: drawn.append(k.get("label")))
-    report.expE_figure(FakeMode(True), best={"cmaes": "cma_lam12"})
+    report.exp6_figure(FakeMode(True), best={"cmaes": "cma_lam12"})
     assert any(l and "best variant" in l for l in drawn)
     drawn.clear()
-    report.expE_figure(M, best={"cmaes": "cma_lam12"})  # no fresh seeds on disk: no best-variant line
+    report.exp6_figure(M, best={"cmaes": "cma_lam12"})  # no fresh seeds on disk: no best-variant line
     assert not any(l and "best variant" in l for l in drawn)
 
 
 @smoke
 def test_card_not_drawn_when_settings_missing(quiet, monkeypatch):
-    """Only the baselines exist (as in a fresh full run after Exp 0): Exp A/C/E must say 'not run yet'."""
+    """Only the baselines exist (as in a fresh full run after Exp 0): Exp 1/3/6 must say 'not run yet'."""
     M = report.Mode(True)
     runs = M.table("runs")
     only_base = runs[runs["config_id"].isin(["cma_default", "bo_default"]) & (runs["landscape"] == report.canon(PRIMARY))]
@@ -102,21 +102,21 @@ def test_card_not_drawn_when_settings_missing(quiet, monkeypatch):
     messages, figs = [], []
     monkeypatch.setattr(report, "not_run", lambda exp, M, why="": messages.append((exp, why)))
     monkeypatch.setattr(report, "_finish", lambda *a, **k: figs.append(a[1]))
-    for exp in ("expA", "expB", "expC", "expE_baseline"):
+    for exp in ("exp1", "exp2", "exp3", "exp6_baseline"):
         report.experiment_card(exp, FakeMode(True))
-    assert [m[0] for m in messages] == ["expA", "expB", "expC", "expE_baseline"] and not figs
-    report.experiment_card("expA", M)  # all settings exist in the smoke data: drawn
-    assert figs == ["nb_5_expA"]
+    assert [m[0] for m in messages] == ["exp1", "exp2", "exp3", "exp6_baseline"] and not figs
+    report.experiment_card("exp1", M)  # all settings exist in the smoke data: drawn
+    assert figs == ["nb_5_exp1"]
 
 
 @smoke
 def test_validation_card_always_draws_random_reference(quiet, monkeypatch):
     cfgs = ["cma_default", "cma_lam12", "cma_lam24", "random"]
-    monkeypatch.setitem(EXPERIMENTS, "expV", dict(configs=cfgs, landscapes=[PRIMARY]))
+    monkeypatch.setitem(EXPERIMENTS, "exp7", dict(configs=cfgs, landscapes=[PRIMARY]))
     calls = []
     real = report.random_reference
     monkeypatch.setattr(report, "random_reference", lambda ax, runs, l: calls.append(real(ax, runs, l)))
-    report.experiment_card("expV", report.Mode(True))
+    report.experiment_card("exp7", report.Mode(True))
     assert calls == [True]  # random runs exist on the landscape, so the reference was drawn
 
 

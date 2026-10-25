@@ -2,7 +2,7 @@
 
 Examples
   python run_experiments.py --fast
-  python run_experiments.py --full --exp expA
+  python run_experiments.py --full --exp exp1
   python run_experiments.py --fast --method cmaes --landscape primary_far_w0.3
   python run_experiments.py --aggregate [--fast]
   python run_experiments.py --archive exp0 --exp exp0

@@ -378,3 +378,34 @@ as `results/archive/raw_bo_exp0.zip` (0.69 MB, 50 runs, includes the five pilot 
 
 ## Open questions for the user
 None outstanding. (Experiments are not to be started until the user says so.)
+
+## Amendment 2026-10-25: experiment renaming and BO redesign (written BEFORE any Exp 1-7 run)
+
+**Renaming.** Experiments are now numbered in run order, CMA-ES together and BO together. Sections above this one keep
+the old letters. Mapping: A -> Exp 1 (lambda), B -> Exp 2 (restarts), C -> Exp 3 (BO exploration vs exploitation),
+new -> Exp 4 (BO kernel type), D -> Exp 5 (sphere), E -> Exp 6 (landscape knobs), V -> Exp 7 (validation). Where an
+older rule says "Exps A-C" read "Exps 1-4". Config ids are unchanged. Exp 0 results are unaffected (no result file
+carries an experiment letter).
+
+**Exp 3 grid widened (user decision, no result from Exp 3 existed).** The old EI grid xi in {0, 0.01, 0.1} was small
+against the well depth (about 2.2, fixed by A = 4, s = 10, w = 0.3), so it would barely change exploration. New
+grids, chosen from the landscape's scale and not from any result: EI xi in {0, 0.01, 0.1, 0.5, 1, 2}; LCB beta in
+{0.5, 2, 8, 32}; Thompson sampling; `bo_map`. n_init stays 10 for every arm. `bo_map` changes the lengthscale prior and
+the noise treatment together, so it is labelled a different fitting recipe. Added configs: `bo_ei_xi0.5`, `bo_ei_xi1`,
+`bo_ei_xi2`, `bo_lcb_b32`.
+
+**Exp 4 added (user decision).** Kernel type with everything else at the `bo_default` baseline (EI, xi = 0, n_init = 10,
+MLE with fixed tiny noise, same lengthscale bounds and start on the unit cube). Added configs: `bo_k_m32`
+(Matern-3/2), `bo_k_m12` (Matern-1/2), `bo_k_rbf` (RBF). The baseline Matern-5/2 is `bo_default` and is reused.
+The change to `_build_gp` keeps `bo_default` identical (kernel defaults to Matern-5/2).
+
+**Candidate lists for the best/worst rule, updated.** Candidates are the settings of Exps 1-4, per method, defaults
+included. CMA-ES order for ties (closest to default first): `cma_default`, `cma_lam12`, `cma_lam24`, `cma_ipop`,
+`cma_bipop`. BO order: `bo_default`, `bo_ei_xi0.01`, `bo_ei_xi0.1`, `bo_ei_xi0.5`, `bo_ei_xi1`, `bo_ei_xi2`,
+`bo_lcb_b2`, `bo_lcb_b0.5`, `bo_lcb_b8`, `bo_lcb_b32`, `bo_ts`, `bo_map`, `bo_k_m32`, `bo_k_m12`, `bo_k_rbf`. The
+last-listed fallback for Exp 6 is therefore CMA-ES `cma_bipop` and BO `bo_k_rbf`. Everything else in the earlier rules
+is unchanged. Exp 7 now has a BO prediction, BO5 (`docs/predictions_addendum.md`).
+
+**Runtime (estimates from the earlier timing pilot; check in before running).** Exps 1 and 2 are CMA-ES only (seconds).
+Exp 3 has 11 new BO arms: EI arms about 100 s per run, LCB about 35 s, TS about 80 s, MAP about 49 s, so about
+100 minutes on 6 workers. Exp 4 has 3 new arms of EI-like cost, about 40 minutes.

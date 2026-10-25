@@ -26,13 +26,13 @@ RED = "#e34948"
 SMOKE_TOL = 1e-8
 COLOUR = {"cmaes": BLUE, "bo": ORANGE, "random": GREY}
 LABEL = {"cma_default": "default (λ=6)", "cma_lam12": "λ=12", "cma_lam24": "λ=24", "cma_ipop": "IPOP",
-         "cma_bipop": "BIPOP", "bo_default": "EI ξ=0", "bo_ei_xi0.01": "EI ξ=0.01", "bo_ei_xi0.1": "EI ξ=0.1",
-         "bo_lcb_b0.5": "LCB β=0.5", "bo_lcb_b2": "LCB β=2", "bo_lcb_b8": "LCB β=8", "bo_ts": "Thompson",
-         "bo_map": "EI, MAP fit", "random": "random"}
-ORDER = ["exp0", "expA", "expB", "expC", "expD", "expE_baseline", "expV"]
-EXP_TITLE = {"exp0": "Exp 0: baselines", "expA": "Exp A: population size", "expB": "Exp B: restarts",
-             "expC": "Exp C: BO exploration", "expD": "Exp D: unimodal control",
-             "expE_baseline": "Exp E: basin width (baselines)", "expV": "Exp V: validation (Rastrigin, Schwefel)"}
+         "cma_bipop": "BIPOP", "bo_default": "EI ξ=0", "bo_ei_xi0.01": "EI ξ=0.01", "bo_ei_xi0.1": "EI ξ=0.1", "bo_ei_xi0.5": "EI ξ=0.5", "bo_ei_xi1": "EI ξ=1", "bo_ei_xi2": "EI ξ=2",
+         "bo_lcb_b0.5": "LCB β=0.5", "bo_lcb_b2": "LCB β=2", "bo_lcb_b8": "LCB β=8", "bo_lcb_b32": "LCB β=32", "bo_ts": "Thompson",
+         "bo_map": "EI, MAP fit", "bo_k_m32": "Matern-3/2", "bo_k_m12": "Matern-1/2", "bo_k_rbf": "RBF", "random": "random"}
+ORDER = ["exp0", "exp1", "exp2", "exp3", "exp4", "exp5", "exp6_baseline", "exp7"]
+EXP_TITLE = {"exp0": "Exp 0: baselines", "exp1": "Exp 1: population size", "exp2": "Exp 2: restarts",
+             "exp3": "Exp 3: BO exploration vs exploitation", "exp4": "Exp 4: BO kernel type", "exp5": "Exp 5: unimodal control",
+             "exp6_baseline": "Exp 6: basin width (baselines)", "exp7": "Exp 7: validation (Rastrigin, Schwefel)"}
 
 
 @lru_cache(maxsize=None)
@@ -80,7 +80,7 @@ def not_run(exp: str, M: Mode, why: str = "No saved results found.") -> None:
 
 
 def not_configured(exp: str) -> None:
-    display(Markdown(f"> **Not configured yet: {EXP_TITLE[exp]}.** Its settings depend on the Exp A-C results "
+    display(Markdown(f"> **Not configured yet: {EXP_TITLE[exp]}.** Its settings depend on the Exps 1-4 results "
                      f"and are added to `code/configs.py` by the rule in `docs/direction.md`."))
 
 
@@ -115,7 +115,7 @@ def status_table(M: Mode) -> None:
     rows = []
     for e in ORDER:
         if e not in EXPERIMENTS:
-            rows.append((EXP_TITLE[e], "not configured (depends on A-C results)", "-"))
+            rows.append((EXP_TITLE[e], "not configured (depends on the Exp 1-4 results)", "-"))
             continue
         pairs = [(c, canon(l)) for c in EXPERIMENTS[e]["configs"] for l in EXPERIMENTS[e]["landscapes"]]
         n = [0 if counts is None else int(counts.get(p, 0)) for p in pairs]
@@ -139,8 +139,8 @@ def load_predictions() -> pd.DataFrame:
     for name in ("predictions.md", "predictions_addendum.md"):
         for line in (ROOT / "docs" / name).read_text().splitlines():
             cells = [c.strip() for c in line.strip().strip("|").split("|")]
-            if len(cells) == 4 and re.fullmatch(r"[A-Z]\d+", cells[0]):
-                rows.append(cells)
+            if len(cells) >= 4 and re.fullmatch(r"[A-Z]+\d+", cells[0]):
+                rows.append(cells[:4])
     return pd.DataFrame(rows, columns=["ID", "Prediction", "Supported by", "Contradicted by"])
 
 
@@ -385,12 +385,12 @@ def _success_card(exp: str, baseline: str, M: Mode) -> None:
     display(effect_table(runs, configs, PRIMARY, baseline).style.hide(axis="index"))
 
 
-def expE_figure(M: Mode, best: dict | None = None) -> None:
+def exp6_figure(M: Mode, best: dict | None = None) -> None:
     """Far and near panels on one y-axis, fixed epsilon, random reference. `best` maps a method to
     its selected config id; its line is drawn only from the fresh seeds (2000-2049)."""
     runs = M.table("runs")
     if runs is None:
-        return not_run("expE_baseline", M)
+        return not_run("exp6_baseline", M)
     main = runs[runs["seed"].isin(SEEDS)]
     fresh = runs[runs["seed"].isin(FRESH_SEEDS)]
     panels = [("far", [0.1, 0.3, 0.6, 1.0]), ("near", [0.1, 0.3])]
@@ -425,9 +425,9 @@ def expE_figure(M: Mode, best: dict | None = None) -> None:
     axes[0].legend(frameon=False, loc="upper left")
     if not drawn:
         plt.close(fig)
-        return not_run("expE_baseline", M)
-    _finish(fig, "nb_5_expE", M)
-    display(Markdown("*Exp E has no pre-registered prediction (see `docs/predictions.md`). Near-well cells at w = 0.6 and "
+        return not_run("exp6_baseline", M)
+    _finish(fig, "nb_5_exp6", M)
+    display(Markdown("*Exp 6 has no pre-registered prediction (see `docs/predictions.md`). Near-well cells at w = 0.6 and "
                      "w = 1.0 are excluded because the near well's basin merges with the decoy there "
                      "(`docs/pilot_log.md`). Random sampling is the reference at each w.*"))
 
@@ -457,7 +457,7 @@ def regret_figure(M: Mode, exp: str) -> None:
     _finish(fig, f"nb_5_{exp}", M)
 
 
-def lambda_gain_figure(M: Mode, exp: str = "expV", base: str = "cma_default",
+def lambda_gain_figure(M: Mode, exp: str = "exp7", base: str = "cma_default",
                        others=("cma_lam12", "cma_lam24")) -> None:
     """Per validation function: success-rate gain over the default lambda with a Newcombe interval."""
     runs = main_runs(M)
@@ -497,10 +497,10 @@ def random_reference(ax, runs: pd.DataFrame, landscape: str) -> bool:
 
 def _validation_card(M: Mode) -> None:
     runs = main_runs(M)
-    lands = EXPERIMENTS["expV"]["landscapes"]
-    configs = [c for c in EXPERIMENTS["expV"]["configs"] if c != "random"]
+    lands = EXPERIMENTS["exp7"]["landscapes"]
+    configs = [c for c in EXPERIMENTS["exp7"]["configs"] if c != "random"]
     if runs is None or all(_sub(runs, configs, l).empty for l in lands):
-        return not_run("expV", M)
+        return not_run("exp7", M)
     fig, axes = plt.subplots(1, len(lands), figsize=(5.5 * len(lands), 4.4), sharey=True, layout="constrained", squeeze=False)
     for ax, l in zip(axes[0], lands):
         success_bars(ax, runs, configs, l)
@@ -527,13 +527,13 @@ def experiment_card(exp: str, M: Mode) -> None:
     if miss:
         shown = ", ".join(f"{LABEL.get(c, c)} on {l}" for c, l in miss[:3]) + (" ..." if len(miss) > 3 else "")
         return not_run(exp, M, f"{len(miss)} of its settings have no saved runs (e.g. {shown}).")
-    if exp == "expA" or exp == "expB":
+    if exp == "exp1" or exp == "exp2":
         _success_card(exp, "cma_default", M)
-    elif exp == "expC":
+    elif exp in ("exp3", "exp4"):
         _success_card(exp, "bo_default", M)
-    elif exp == "expD":
+    elif exp == "exp5":
         regret_figure(M, exp)
-    elif exp == "expE_baseline":
-        expE_figure(M)
-    elif exp == "expV":
+    elif exp == "exp6_baseline":
+        exp6_figure(M)
+    elif exp == "exp7":
         _validation_card(M)
