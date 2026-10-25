@@ -106,8 +106,25 @@ existing `bo_map` arm); d = 5 repeat of the success-vs-lambda result (`direction
   successes, 3 first entered the well within the 10-point initial design (evaluations 5, 5, 9), one at 20, one at 115.
 - **Reading:** both baselines fail by not discovering the well; BO's failure is discovery, not refinement.
 
-### Exp 1, B, C, D, E, V: not run yet. Add a subsection per experiment: table, CI, effect size, the prediction
-### it tests, whether supported, the diagnostic that explains it, caveat.
+### Exp 1: CMA-ES population size (full, 2026-10-25, seeds 1000-1049, N = 300, `primary_far_w0.3`, epsilon = 0.05)
+
+| setting | success | Wilson 95% | runs with a sample in the well (d < w) | best point in well basin | median generations |
+| --- | --- | --- | --- | --- | --- |
+| `cma_default` (lambda 6) | 0/50 | [0.000, 0.071] | 1 | 2 | 50 |
+| `cma_lam12` | 0/50 | [0.000, 0.071] | 7 | 7 | 25 |
+| `cma_lam24` | 0/50 | [0.000, 0.071] | 13 | 16 | 13 |
+
+- Wall 3 s for 100 new runs (default reused). Success identical at every lambda: no effect on success.
+- Median closest approach to the well centre 1.40, 1.03, 0.65. First well sample in generation <= 6 in every case
+  (<= 4 at lambda 24); entering runs had 1-3 well samples in total; none of them reached epsilon.
+- H2 (success rises with lambda): on the "contradicted" side (no change in success). M1 (gain only from early samples):
+  well entry rises with lambda and happens in the first few generations. Statuses are the user's to set.
+- Hypotheses (untested): bigger lambda buys more early draws (coverage, not selection averaging); touching the well is
+  not enough because sigma0 = 2 >> w = 0.3 lets the many decoy samples dominate the update. Exp 2 and the sigma traces
+  are where to look. Why this matters for the report: it separates *finding* the well from *exploiting* it.
+
+### Exps 2 to 7: not run yet. Add a subsection per experiment: table, CI, effect size, the prediction it tests, whether
+### supported, the diagnostic that explains it, caveat.
 
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
 
