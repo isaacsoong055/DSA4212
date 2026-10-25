@@ -124,6 +124,36 @@ def aggregate(raw_dir: Path = RAW_DIR, out_dir: Path = SUMMARY_DIR) -> None:
     print(f"wrote {len(runs)} runs to {out_dir}")
 
 
+def mean_trace(configs: list[str], landscape: str, seeds: list[int], N: int, out_dir: Path = SUMMARY_DIR) -> None:
+    """Re-run CMA-ES configs (deterministic given the seed) and record, per generation, the distance of the
+    search-distribution mean to the well centre and to the decoy centre. Writes mean_trace.csv (per run and
+    generation) and mean_trace_final.csv (per run: last mean, and whether any sample touched the well, d < w).
+    This is the per-generation evidence for the refinement mechanism (CMA4 in docs/predictions_addendum.md)."""
+    from configs import CONFIGS
+    from optimizers import run
+
+    ls = get_landscape(landscape)
+    x_g, c, w = ls.x_star, np.asarray(ls.meta["c"], float), ls.meta["w"]
+    per_gen, final = [], []
+    for cid in configs:
+        for seed in seeds:
+            log = run(ls, N, seed, CONFIGS[cid], cid)
+            dist = [d for d in log.meta["dist"] if d["restart"] == 0]
+            for d in dist:
+                m = np.asarray(d["mean"], float)
+                per_gen.append(dict(config_id=cid, seed=seed, gen=d["gen"], sigma=d["sigma"],
+                                    dist_well=float(np.linalg.norm(m - x_g)), dist_decoy=float(np.linalg.norm(m - c))))
+            xs = np.array([[r[f"x_{i}"] for i in range(ls.d)] for r in log.rows])
+            m = np.asarray(dist[-1]["mean"], float)
+            final.append(dict(config_id=cid, seed=seed, final_dist_well=float(np.linalg.norm(m - x_g)),
+                              final_dist_decoy=float(np.linalg.norm(m - c)),
+                              touched_well=bool((np.linalg.norm(xs - x_g, axis=1) < w).any())))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(per_gen).to_csv(out_dir / "mean_trace.csv", index=False)
+    pd.DataFrame(final).to_csv(out_dir / "mean_trace_final.csv", index=False)
+    print(f"wrote mean traces for {len(configs)} configs x {len(seeds)} seeds to {out_dir}")
+
+
 # ----------------------------------------------------------------- plots
 
 _GRID_CACHE: dict = {}

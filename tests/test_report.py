@@ -45,7 +45,31 @@ def test_newcombe_matches_published_example():
 
 def test_predictions_parse_all_ids():
     ids = list(report.load_predictions()["ID"])
-    assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "BO1", "BO2", "BO3", "BO4", "BO5", "CMA1", "CMA2", "CMA3"]
+    assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "BO1", "BO2", "BO3", "BO4", "BO5",
+                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5"]
+
+
+def test_ratio_config_scales_sigma_and_start_with_the_well():
+    """cma_ro_k3 on w = 0.6: sigma0 = 3 w = 1.8 and the first sample is about (10/3) w from the well centre."""
+    ls = get_landscape("primary_far_w0.6")
+    log = run(ls, 12, 1000, CONFIGS["cma_ro_k3"], "cma_ro_k3")
+    assert log.rows[0]["sigma"] == pytest.approx(1.8)
+    d0 = np.linalg.norm(np.array([log.rows[0]["x_0"], log.rows[0]["x_1"]]) - ls.x_star)
+    assert d0 < 10 / 3 * 0.6 + 4 * 1.8  # the first generation is sampled around x0, not exactly at it
+
+
+def test_oracle_start_default_runs_are_unchanged():
+    """The oracle/ratio options are off by default: cma_default still starts in U[-4, 4]^2 with sigma0 = 2."""
+    ls = get_landscape(PRIMARY)
+    log = run(ls, 6, 1000, CONFIGS["cma_default"], "cma_default")
+    assert log.rows[0]["sigma"] == 2.0
+
+
+def test_mean_trace_writes_both_files(tmp_path):
+    an.mean_trace(["cma_o_sig0.3"], PRIMARY, [1000, 1001], 60, tmp_path)
+    gens, final = pd.read_csv(tmp_path / "mean_trace.csv"), pd.read_csv(tmp_path / "mean_trace_final.csv")
+    assert set(gens["seed"]) == {1000, 1001} and len(final) == 2
+    assert {"dist_well", "dist_decoy"} <= set(gens.columns) and final["final_dist_well"].notna().all()
 
 
 # ---- dormant cards (D, V, E best-variant) on smoke data; skipped when no smoke summaries exist

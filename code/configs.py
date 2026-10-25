@@ -38,6 +38,12 @@ CONFIGS: dict[str, dict] = {
     "cma_o_sig1": dict(CMAES_BASE, sigma0=1.0, x0_from_well=1.0),
     "cma_o_sig2": dict(CMAES_BASE, sigma0=2.0, x0_from_well=1.0),
     "cma_o_sig4": dict(CMAES_BASE, sigma0=4.0, x0_from_well=1.0),
+    # Exp 3 ratio test: oracle start 10/3 w from the well (= 1.0 at w = 0.3, as in the oracle arm) and sigma0 = k * w, so
+    # the same k means the same sigma0 / w at every well width. Diagnostic only, never vs BO.
+    "cma_ro_k1": dict(CMAES_BASE, sigma0_in_w=1.0, x0_from_well_w=10 / 3),
+    "cma_ro_k3": dict(CMAES_BASE, sigma0_in_w=3.0, x0_from_well_w=10 / 3),
+    "cma_ro_k7": dict(CMAES_BASE, sigma0_in_w=7.0, x0_from_well_w=10 / 3),
+    "cma_ro_k20": dict(CMAES_BASE, sigma0_in_w=20.0, x0_from_well_w=10 / 3),
     # Exp 2: restarts
     "cma_ipop": dict(CMAES_BASE, restarts="ipop"),
     "cma_bipop": dict(CMAES_BASE, restarts="bipop"),
@@ -71,6 +77,8 @@ EXPERIMENTS = {
     "exp3": dict(configs=["cma_sig0.3", "cma_sig0.5", "cma_sig1", "cma_default", "cma_sig4"], landscapes=[PRIMARY]),
     "exp3_oracle": dict(configs=["cma_o_sig0.3", "cma_o_sig0.5", "cma_o_sig1", "cma_o_sig2", "cma_o_sig4"],
                         landscapes=[PRIMARY]),
+    "exp3_ratio": dict(configs=["cma_ro_k1", "cma_ro_k3", "cma_ro_k7", "cma_ro_k20"],
+                       landscapes=[f"primary_far_w{w}" for w in (0.1, 0.3, 0.6, 1.0)]),
     "exp4": dict(configs=["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_ei_xi0.5", "bo_ei_xi1", "bo_ei_xi2",
                           "bo_lcb_b0.5", "bo_lcb_b2", "bo_lcb_b8", "bo_lcb_b32", "bo_ts", "bo_map"],
                  landscapes=[PRIMARY]),

@@ -29,12 +29,14 @@ COLOUR = {"cmaes": BLUE, "bo": ORANGE, "random": GREY}
 LABEL = {"cma_default": "default (λ=6)", "cma_lam12": "λ=12", "cma_lam24": "λ=24", "cma_ipop": "IPOP",
          "cma_bipop": "BIPOP", "cma_sig0.3": "σ0=0.3", "cma_sig0.5": "σ0=0.5", "cma_sig1": "σ0=1", "cma_sig4": "σ0=4",
          "cma_o_sig0.3": "oracle σ0=0.3", "cma_o_sig0.5": "oracle σ0=0.5", "cma_o_sig1": "oracle σ0=1",
-         "cma_o_sig2": "oracle σ0=2", "cma_o_sig4": "oracle σ0=4", "bo_default": "EI ξ=0", "bo_ei_xi0.01": "EI ξ=0.01", "bo_ei_xi0.1": "EI ξ=0.1", "bo_ei_xi0.5": "EI ξ=0.5", "bo_ei_xi1": "EI ξ=1", "bo_ei_xi2": "EI ξ=2",
+         "cma_o_sig2": "oracle σ0=2", "cma_o_sig4": "oracle σ0=4", "cma_ro_k1": "σ0=1w", "cma_ro_k3": "σ0=3w",
+         "cma_ro_k7": "σ0=7w", "cma_ro_k20": "σ0=20w", "bo_default": "EI ξ=0", "bo_ei_xi0.01": "EI ξ=0.01", "bo_ei_xi0.1": "EI ξ=0.1", "bo_ei_xi0.5": "EI ξ=0.5", "bo_ei_xi1": "EI ξ=1", "bo_ei_xi2": "EI ξ=2",
          "bo_lcb_b0.5": "LCB β=0.5", "bo_lcb_b2": "LCB β=2", "bo_lcb_b8": "LCB β=8", "bo_lcb_b32": "LCB β=32", "bo_ts": "Thompson",
          "bo_map": "EI, MAP fit", "bo_k_m32": "Matern-3/2", "bo_k_m12": "Matern-1/2", "bo_k_rbf": "RBF", "random": "random"}
-ORDER = ["exp0", "exp1", "exp2", "exp3", "exp3_oracle", "exp4", "exp5", "exp6", "exp7_baseline", "exp8"]
+ORDER = ["exp0", "exp1", "exp2", "exp3", "exp3_oracle", "exp3_ratio", "exp4", "exp5", "exp6", "exp7_baseline", "exp8"]
 EXP_TITLE = {"exp0": "Exp 0: baselines", "exp1": "Exp 1: population size", "exp2": "Exp 2: restarts", "exp3": "Exp 3: CMA-ES initial step size (random start)",
              "exp3_oracle": "Exp 3: CMA-ES initial step size (oracle start 1.0 from the well)",
+             "exp3_ratio": "Exp 3: CMA-ES step size relative to well width (ratio test)",
              "exp4": "Exp 4: BO exploration vs exploitation", "exp5": "Exp 5: BO kernel type", "exp6": "Exp 6: unimodal control",
              "exp7_baseline": "Exp 7: basin width (baselines)", "exp8": "Exp 8: validation (Rastrigin, Schwefel)"}
 
@@ -382,6 +384,80 @@ def lengthscale_figure(M: Mode) -> None:
 
 # ----------------------------------------------------------------- experiment cards
 
+def mean_trace_figure(M: Mode) -> None:
+    """CMA4: distance of the search mean to the well per generation (oracle arm, sigma0 = 0.3 vs 2), plus the
+    share of runs whose final mean is within w of the well. Reads results/summary/mean_trace*.csv."""
+    gens, fin = M.table("mean_trace"), M.table("mean_trace_final")
+    if M.fast or gens is None or fin is None:
+        why = ("The mean trace has no smoke-test version; set `FAST = False` in the top cell to see its saved results."
+               if M.fast else "No saved results found.")
+        display(Markdown(f"> **Not run yet: Exp 3 mean trace (CMA4).** {why}  \n> Run: "
+                         f"`python run_experiments.py --trace`"))
+        return
+    w = get_landscape(PRIMARY).meta["w"]
+    arms = [("cma_o_sig0.3", BLUE), ("cma_o_sig2", ORANGE)]
+    fig, ax = plt.subplots(figsize=(7.5, 4.4), layout="constrained")
+    for cid, col in arms:
+        g = gens[gens["config_id"] == cid].groupby("gen")["dist_well"]
+        med, q1, q3 = g.median(), g.quantile(0.25), g.quantile(0.75)
+        ax.plot(med.index, med.values, color=col, lw=2, label=f"{LABEL[cid]} (median, IQR)")
+        ax.fill_between(med.index, q1.values, q3.values, color=col, alpha=0.2)
+    ax.axhline(w, color="k", ls=":", lw=1, label=f"well width w = {w}")
+    ax.set_yscale("log"); ax.set_xlabel("generation"); ax.set_ylabel("distance of the search mean to the well centre")
+    ax.set_title("oracle start 1.0 from the well: where the mean goes"); ax.legend(frameon=False)
+    _finish(fig, "nb_5_exp3_mean_trace", M)
+    rows = []
+    for cid, _ in arms:
+        f = fin[fin["config_id"] == cid]
+        t = f[f["touched_well"]]
+        rows.append({"setting": LABEL[cid], "runs": len(f),
+                     "final mean within w of the well": f"{int((f['final_dist_well'] < w).sum())}/{len(f)}",
+                     "runs that touched the well": len(t),
+                     "touched runs ending closer to the decoy centre than to the well":
+                         f"{int((t['final_dist_decoy'] < t['final_dist_well']).sum())}/{len(t)}"})
+    display(pd.DataFrame(rows).style.hide(axis="index"))
+
+
+def ratio_figure(M: Mode) -> None:
+    """CMA5: oracle-start success versus k = sigma0 / w, one line per well width (Wilson 95% CI)."""
+    runs = main_runs(M)
+    ks = {"cma_ro_k1": 1, "cma_ro_k3": 3, "cma_ro_k7": 7, "cma_ro_k20": 20}
+    ws = (0.1, 0.3, 0.6, 1.0)
+    if runs is None:
+        return not_run("exp3_ratio", M)
+    fig, ax = plt.subplots(figsize=(7.5, 4.4), layout="constrained")
+    drawn = False
+    for w, mk in zip(ws, "osD^"):
+        pts = []
+        for cid, k in ks.items():
+            g = runs[(runs["config_id"] == cid) & (runs["landscape"] == canon(f"primary_far_w{w}"))]
+            if len(g):
+                n, s = len(g), int(g["success"].sum())
+                lo, hi = an.wilson_ci(s, n)
+                pts.append((k * (1 + 0.04 * ws.index(w)), s / n, s / n - lo, hi - s / n))
+        if pts:
+            x, y, dl, dh = map(np.array, zip(*pts))
+            ax.errorbar(x, y, yerr=np.clip([dl, dh], 0, None), marker=mk, capsize=3, lw=1.6, label=f"w = {w}")
+            drawn = True
+    if not drawn:
+        plt.close(fig)
+        return not_run("exp3_ratio", M)
+    ax.set_xscale("log"); ax.set_xticks(list(ks.values()), [str(k) for k in ks.values()]); ax.set_ylim(-0.02, 1.05)
+    ax.set_xlabel("step size relative to well width, k = σ0 / w"); ax.set_ylabel("success rate (Wilson 95% CI)")
+    ax.set_title("oracle start at (10/3) w: does success depend on σ0 / w only?"); ax.legend(frameon=False)
+    _finish(fig, "nb_5_exp3_ratio", M)
+    rows = []
+    for cid, k in ks.items():
+        row = {"σ0 / w": k}
+        for w in ws:
+            g = runs[(runs["config_id"] == cid) & (runs["landscape"] == canon(f"primary_far_w{w}"))]
+            s, n = int(g["success"].sum()), len(g)
+            lo, hi = an.wilson_ci(s, n)
+            row[f"w = {w}"] = f"{s}/{n} [{lo:.2f}, {hi:.2f}]"
+        rows.append(row)
+    display(pd.DataFrame(rows).style.hide(axis="index"))
+
+
 def long_budget_card(M: Mode) -> None:
     """Exp 1 side check: the same lambda settings at N = 1500, next to their N = 300 result (CMA-ES only)."""
     path = SUMMARY_LONG_DIR / "runs.csv"
@@ -542,7 +618,7 @@ def _validation_card(M: Mode) -> None:
         success_bars(ax, runs, configs, l)
         random_reference(ax, runs, l)
         ax.set_title(f"{l} (epsilon = {get_landscape(l).epsilon})")
-    _finish(fig, "nb_5_expV", M)
+    _finish(fig, "nb_5_exp8", M)
     lambda_gain_figure(M)
 
 
@@ -567,6 +643,8 @@ def experiment_card(exp: str, M: Mode) -> None:
         _success_card(exp, "cma_default", M)
     elif exp == "exp3_oracle":
         _success_card(exp, "cma_o_sig2", M)
+    elif exp == "exp3_ratio":
+        ratio_figure(M)
     elif exp in ("exp4", "exp5"):
         _success_card(exp, "bo_default", M)
     elif exp == "exp6":

@@ -494,3 +494,30 @@ BO candidates are unchanged.
 
 **Runtime.** CMA-ES only: seconds for both arms (10 configs x 50 seeds, 0.1 s each).
 
+## Amendment 2026-10-25 (third): two follow-up tests of the CMA-ES explanation (written BEFORE they ran)
+
+Context: Exp 3 ran (oracle arm 33/50 at sigma0 = 0.3 down to 2/50 at sigma0 = 2; random-start arm at most 1/50). The
+dependence on sigma0 is measured; the mechanism and the "ratio" are still inferred. The user asked for two tests.
+
+**Test A: mean trace (CMA4).** No new runs. `run_experiments.py --trace` re-runs the five oracle configs on seeds 1000-1049
+(CMA-ES is deterministic given the seed; the saved CSVs already match re-runs) and writes `results/summary/mean_trace.csv`
+(per run and generation: distance of the search-distribution mean to the well centre and to the decoy centre) and
+`mean_trace_final.csv` (final mean, and whether any sample touched the well). Reported: median distance of the mean to
+the well per generation for sigma0 = 0.3 versus 2, the share of runs whose final mean is within w of the well, and, among
+sigma0 = 2 runs that touched the well, how many end closer to the decoy centre.
+
+**Test B: ratio collapse (CMA5), new factor combination, user-approved.** Config family `cma_ro_k{1,3,7,20}`
+(`exp3_ratio`): oracle start at (10/3) w from the well centre (1.0 at w = 0.3, as in the oracle arm; random direction,
+redrawn until the start is inside [-4.5, 4.5]^2), sigma0 = k w, k in {1, 3, 7, 20}, on `primary_far_w{0.1, 0.3, 0.6, 1.0}`,
+seeds 1000-1049, N = 300, epsilon 0.05, everything else default. The same k therefore means the same sigma0 / w at every
+width. This is a diagnostic like the oracle arm: never compared with BO, never candidates for the best/worst rule. At
+w = 0.3 the arms (sigma0 = 0.3, 0.9, 2.1, 6) overlap the earlier oracle arm; this is a consistency check. Note the
+absolute epsilon = 0.05 is the same at every width and corresponds to a success radius of roughly 0.16 w, so the success
+region scales with w; the bowl scale (s = 10) does not scale, so an exact collapse is not expected.
+Predictions CMA4 and CMA5 are in `docs/predictions_addendum.md`, committed before these ran.
+
+**Not done (stated so they are not forgotten).** Oracle distance sweep and a lambda x sigma0 grid (offered, not chosen);
+d = 5 repeat; a landscape without the decoy bowl to isolate the bowl's pull.
+
+**Runtime.** Test A about 30 s; test B 16 cells x 50 seeds, seconds.
+

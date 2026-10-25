@@ -33,6 +33,22 @@ experiment seeds (1000-1049); CMA2 and CMA3 are forward-looking.
 | CMA2 | From the baseline random start (U[-4,4]^2) no sigma0 gives high success: a small sigma0 rarely reaches the well (finding fails) and a large sigma0 cannot refine it. Every sigma0 arm stays below 12/50 successes (below the point where its Wilson interval lies wholly above random sampling's) | All five arms have fewer than 12/50 successes | At least one arm has 12/50 or more | Exp 3, random-start arm |
 | CMA3 | For default CMA-ES success rises as the well widens (sigma0 / w shrinks): success at w = 1.0 is higher than at w = 0.3, with non-overlapping Wilson intervals, and at w = 0.1 it is not higher than at w = 0.3. Random sampling is the reference at each w because a wider well also helps random search | w = 1.0 interval wholly above w = 0.3 interval | w = 1.0 interval overlaps w = 0.3's | Exp 7 |
 
+### Follow-up tests of the CMA-ES explanation (added 2026-10-25, after Exp 3 ran and BEFORE the two tests below ran)
+
+Exp 3 showed the dependence on sigma0 (CMA1, CMA2 on the supported side) but not the mechanism or the ratio. Two follow-ups,
+both CMA-ES only and run with the frozen settings. The thresholds below were set after seeing Exp 3's *success counts*
+(33/50 at sigma0 = 0.3, 2/50 at sigma0 = 2 in the oracle arm) but before any mean trace or any width-scaled run existed.
+
+| ID | Prediction | Supported by | Contradicted by | Tested in |
+| --- | --- | --- | --- | --- |
+| CMA4 | The refinement mechanism is visible in the search distribution's mean. In the oracle arm with sigma0 = 0.3 the mean ends within w of the well in at least 60% of runs; with sigma0 = 2 it ends within w in at most 15% of runs, and in the sigma0 = 2 runs that touched the well (a sample with d < w) the mean ends closer to the decoy centre than to the well in more than half of them | Both conditions hold | The sigma0 = 2 share within w exceeds 15%, or in the touched sigma0 = 2 runs the mean ends closer to the well in at least half; or the sigma0 = 0.3 share is below 60% | Exp 3, oracle arm, mean trace (`--trace`) |
+| CMA5 | Refinement depends on the ratio sigma0 / w, not on sigma0 or w separately. With an oracle start at (10/3) w and sigma0 = k w, success falls with k at every width (k = 1 above k = 20 with non-overlapping Wilson intervals at each of w = 0.1, 0.3, 0.6, 1.0), and at k = 1 the four widths are not separated (all four Wilson intervals overlap pairwise) | Both conditions hold | k = 1 is not above k = 20 at some width, or at k = 1 two widths have non-overlapping intervals (success then depends on w itself, not only on the ratio) | Exp 3 ratio test (`exp3_ratio`) |
+
+CMA5 assumes the success threshold (epsilon = 0.05) corresponds to roughly the same fraction of the well width at every w, which
+holds approximately (the success radius is about 0.16 w when the bowl term is small); the bowl scale s = 10 is fixed, so an exact
+collapse is not expected and moderate deviations at the extremes will be reported, not hidden. At w = 0.3 the ratio arms
+(sigma0 = 0.3, 0.9, 2.1, 6; start 1.0 away) overlap the Exp 3 oracle arm, which is a consistency check, not a new fact.
+
 CMA1 and CMA2 together separate *finding* from *refining*: if CMA1 holds and CMA2 holds, the failure at the baseline is a
 trade-off in sigma0 (too small to find, too large to refine) that no setting of sigma0 alone fixes from a random start.
 The oracle start uses knowledge of the well, so the oracle arm is a diagnostic only: it is never compared with BO and is
@@ -45,7 +61,7 @@ not a candidate in the best/worst rule. Exp 3's random-start arms are candidates
 | both | 0 baselines | H1 (CMA-ES), BO1 (BO) |
 | CMA-ES | 1 population size lambda | H2, M1 |
 | CMA-ES | 2 restarts | H3, M2 |
-| CMA-ES | 3 initial step size sigma0 | CMA1, CMA2 |
+| CMA-ES | 3 initial step size sigma0 (random start, oracle start, mean trace, ratio test) | CMA1, CMA2, CMA4, CMA5 |
 | BO | 4 exploration vs exploitation | H4, BO2, BO3 |
 | BO | 5 kernel type | BO4 |
 | both | 6 unimodal control | H5 |

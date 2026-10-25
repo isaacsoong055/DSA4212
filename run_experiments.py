@@ -72,6 +72,9 @@ def main():
     p.add_argument("--archive", metavar="NAME",
                    help="zip the raw BO runs (of --exp if given, else all) as results/archive/raw_bo_NAME.zip "
                         "with a manifest; never overwrites an existing archive")
+    p.add_argument("--trace", action="store_true",
+                   help="re-run the Exp 3 oracle configs and write per-generation mean traces "
+                        "(results/summary/mean_trace*.csv); CMA-ES only, about 30 s")
     p.add_argument("--exp", choices=list(EXPERIMENTS) + list(LONG_EXPERIMENTS))
     p.add_argument("--method", choices=["cmaes", "bo", "random"])
     p.add_argument("--landscape")
@@ -89,6 +92,11 @@ def main():
                      for f in (RAW_DIR / l).glob(f"bo__{c}__seed*.csv")]
         z, m = archive_bo(args.archive, files)
         print(f"wrote {z} ({z.stat().st_size / 1e6:.2f} MB) and {m}")
+        return
+    if args.trace:
+        from analysis import mean_trace
+        from configs import PRIMARY
+        mean_trace(EXPERIMENTS["exp3_oracle"]["configs"], PRIMARY, SEEDS[:N_SEEDS_FULL], N_FULL)
         return
     if args.aggregate:
         from analysis import aggregate

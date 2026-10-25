@@ -110,7 +110,7 @@ Experiments are numbered in the order they run and grouped by method (renamed 20
 | 0 | both | Baselines | default CMA-ES, default BO, random sampling | Success rate, diagnostics | Done |
 | 1 | CMA-ES | Population size lambda | 1x, 2x, 4x default (d=2: 6, 12, 24) | Success vs lambda, generations completed | Check the largest lambda still gets 10-20 generations. Side check at N = 1500 (done, CMA-ES only, kept off BO plots) |
 | 2 | CMA-ES | Restarts | None, IPOP, BIPOP | Success rate, which restart succeeded | Total budget fixed at N. IPOP and BIPOP coincide at N = 300 (one restart per run) |
-| 3 | CMA-ES | Initial step size sigma0 | 0.3, 0.5, 1, 2 (default), 4, from the baseline random start; and the same five from an oracle start 1.0 from the well | Success vs sigma0 (and sigma0 / w) | Added 2026-10-25 after Exps 0-2 all gave 0/50 and a positive control pointed at sigma0 = 2 against w = 0.3. The oracle arm uses knowledge of the well: a diagnostic of refinement, not a method comparison, never plotted against BO |
+| 3 | CMA-ES | Initial step size sigma0 | 0.3, 0.5, 1, 2 (default), 4, from the baseline random start; and the same five from an oracle start 1.0 from the well | Success vs sigma0 (and sigma0 / w) | Added 2026-10-25 after Exps 0-2 all gave 0/50 and a positive control pointed at sigma0 = 2 against w = 0.3. The oracle arm uses knowledge of the well: a diagnostic of refinement, not a method comparison, never plotted against BO. Two follow-ups (added after the first Exp 3 results): a mean trace of the oracle arm (CMA4) and a ratio test, oracle start at (10/3) w with sigma0 = k w for k in {1, 3, 7, 20} on w in {0.1, 0.3, 0.6, 1.0} (CMA5), both diagnostics |
 | 4 | BO | Exploration vs exploitation | EI with xi in {0, 0.01, 0.1, 0.5, 1, 2}; LCB with beta in {0.5, 2, 8, 32}; Thompson sampling; `bo_map` (different fitting recipe, see below) | Success rate, sample spread, fitted lengthscale | n_init fixed at 10. xi is in units of f; the well is about 2.2 deep, so the grid reaches near-pure exploration. Refit every 5 iterations |
 | 5 | BO | Kernel type | Matern-5/2 (baseline), Matern-3/2, Matern-1/2, RBF | Success rate, success given a well sample, fitted lengthscale | Everything else at baseline (EI, xi = 0, n_init = 10) |
 | 6 | both | Unimodal control | Best and worst settings from Exps 1-5 on the sphere, per method | Regret | Tests H5 |
@@ -119,7 +119,7 @@ Experiments are numbered in the order they run and grouped by method (renamed 20
 
 `bo_map` differs from `bo_default` in two things at once: a prior on the lengthscale (so it cannot sit at the bound) and a learned noise level instead of a fixed tiny one. It is therefore a different fitting recipe, not a single-factor change, and is reported as such.
 
-Prediction-to-experiment map: H1 (Exp 0), H2 and M1 (Exp 1), H3 and M2 (Exp 2), CMA1 and CMA2 (Exp 3), CMA3 (Exp 7), BO1 (Exp 0), H4, BO2 and BO3 (Exp 4), BO4 (Exp 5), H5 (Exp 6), H6, M3 and BO5 (Exp 8). The full table is in `docs/predictions_addendum.md`.
+Prediction-to-experiment map: H1 (Exp 0), H2 and M1 (Exp 1), H3 and M2 (Exp 2), CMA1, CMA2, CMA4 and CMA5 (Exp 3), CMA3 (Exp 7), BO1 (Exp 0), H4, BO2 and BO3 (Exp 4), BO4 (Exp 5), H5 (Exp 6), H6, M3 and BO5 (Exp 8). The full table is in `docs/predictions_addendum.md`.
 
 Budget note: keep N=300 for every CMA-ES vs BO comparison. A longer-budget CMA-ES-only run is fine for the large-lambda sweep, but never plot it on the same axes as BO.
 

@@ -84,6 +84,8 @@ def run_cmaes(ls: Landscape, N: int, seed: int, cfg: dict, config_id: str) -> Ru
     cfg: popsize (None = default), restarts ('none'|'ipop'|'bipop'), sigma0,
     x0_halfwidth (first start ~ U[-h, h]^d), tolx, tolfun. Optional x0_from_well = r starts at
     distance r from the well centre in a random direction (oracle start, Exp 3 mechanism arm).
+    Optional sigma0_in_w = k sets sigma0 = k * w, and x0_from_well_w = m starts m * w from the well
+    (Exp 3 ratio test, so step size and start distance scale with the well width).
     Restarts redraw x0 uniformly in the full box [-5, 5]^d.
     With restarts='none' stop conditions are ignored and the run uses all N
     evaluations; the first generation at which they would have fired is
@@ -95,7 +97,17 @@ def run_cmaes(ls: Landscape, N: int, seed: int, cfg: dict, config_id: str) -> Ru
     log = RunLog(ls, N, "cmaes", config_id, seed)
     lam_def = cfg.get("popsize") or default_popsize(d)
     sigma0, mode = cfg["sigma0"], cfg["restarts"]
-    if cfg.get("x0_from_well") is not None:
+    if cfg.get("sigma0_in_w") is not None:  # step size as a multiple of the well width (Exp 3 ratio test)
+        sigma0 = cfg["sigma0_in_w"] * ls.meta["w"]
+    if cfg.get("x0_from_well_w") is not None:
+        # Oracle start at a multiple of w from the well centre, random direction, redrawn until inside the box.
+        rng_x0, r = _rng(seed, STREAM_X0), cfg["x0_from_well_w"] * ls.meta["w"]
+        while True:
+            u = rng_x0.normal(size=d)
+            x0 = ls.x_star + r * u / np.linalg.norm(u)
+            if np.all(np.abs(x0) <= 4.5):
+                break
+    elif cfg.get("x0_from_well") is not None:
         # Oracle start (Exp 3 mechanism arm only): at distance r from the well centre, random direction.
         u = _rng(seed, STREAM_X0).normal(size=d)
         x0 = ls.x_star + cfg["x0_from_well"] * u / np.linalg.norm(u)
