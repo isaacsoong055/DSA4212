@@ -5,6 +5,7 @@ Examples
   python run_experiments.py --full --exp exp1
   python run_experiments.py --fast --method cmaes --landscape primary_far_w0.3
   python run_experiments.py --aggregate [--fast]
+  python run_experiments.py --long --exp exp1_long     # Exp 1 side check: N=1500, CMA-ES only
   python run_experiments.py --archive exp0 --exp exp0
 """
 from __future__ import annotations
@@ -18,7 +19,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "code"))
 
-from configs import CONFIGS, EXPERIMENTS, N_FAST, N_FULL, N_SEEDS_FAST, N_SEEDS_FULL, SEEDS  # noqa: E402
+from configs import (CONFIGS, EXPERIMENTS, LONG_EXPERIMENTS, N_FAST, N_FULL, N_LONG, N_SEEDS_FAST,  # noqa: E402
+                     N_SEEDS_FULL, SEEDS)
 from logging_utils import run_path  # noqa: E402
 
 
@@ -44,12 +46,13 @@ def run_one(config_id: str, landscape: str, seed: int, N: int, raw_dir: str) -> 
 
 
 def build_jobs(args) -> list[tuple[str, str, int]]:
-    exps = [args.exp] if args.exp else list(EXPERIMENTS)
+    table = LONG_EXPERIMENTS if args.long else EXPERIMENTS
+    exps = [args.exp] if args.exp else list(table)
     seeds = SEEDS[: args.seeds or (N_SEEDS_FAST if args.fast else N_SEEDS_FULL)]
     jobs = set()
     for e in exps:
-        for c in EXPERIMENTS[e]["configs"]:
-            for ls in EXPERIMENTS[e]["landscapes"]:
+        for c in table[e]["configs"]:
+            for ls in table[e]["landscapes"]:
                 if args.method and CONFIGS[c]["method"] != args.method:
                     continue
                 if args.landscape and ls != args.landscape:
@@ -63,12 +66,13 @@ def main():
     mode = p.add_mutually_exclusive_group()
     mode.add_argument("--fast", action="store_true", help="5 seeds, N=100 (smoke test)")
     mode.add_argument("--full", action="store_true", help="50 seeds, N=300")
+    mode.add_argument("--long", action="store_true", help="50 seeds, N=1500, CMA-ES side check (results/raw_long/)")
     p.add_argument("--aggregate", action="store_true",
-                   help="write summaries from raw CSVs: results/summary/ (or results/summary_fast/ with --fast)")
+                   help="write summaries from raw CSVs: results/summary/ (or summary_fast/ with --fast, summary_long/ with --long)")
     p.add_argument("--archive", metavar="NAME",
                    help="zip the raw BO runs (of --exp if given, else all) as results/archive/raw_bo_NAME.zip "
                         "with a manifest; never overwrites an existing archive")
-    p.add_argument("--exp", choices=list(EXPERIMENTS))
+    p.add_argument("--exp", choices=list(EXPERIMENTS) + list(LONG_EXPERIMENTS))
     p.add_argument("--method", choices=["cmaes", "bo", "random"])
     p.add_argument("--landscape")
     p.add_argument("--seeds", type=int, help="override number of seeds (prefix of SEEDS)")
@@ -88,15 +92,17 @@ def main():
         return
     if args.aggregate:
         from analysis import aggregate
-        from logging_utils import RAW_DIR, RAW_FAST_DIR, SUMMARY_DIR, SUMMARY_FAST_DIR
-        aggregate(*((RAW_FAST_DIR, SUMMARY_FAST_DIR) if args.fast else (RAW_DIR, SUMMARY_DIR)))
+        from logging_utils import (RAW_DIR, RAW_FAST_DIR, RAW_LONG_DIR, SUMMARY_DIR, SUMMARY_FAST_DIR,
+                                   SUMMARY_LONG_DIR)
+        aggregate(*((RAW_FAST_DIR, SUMMARY_FAST_DIR) if args.fast else
+                    (RAW_LONG_DIR, SUMMARY_LONG_DIR) if args.long else (RAW_DIR, SUMMARY_DIR)))
         return
-    if not (args.fast or args.full):
-        p.error("choose --fast, --full or --aggregate")
+    if not (args.fast or args.full or args.long):
+        p.error("choose --fast, --full, --long or --aggregate")
 
-    N = N_FAST if args.fast else N_FULL
+    N = N_FAST if args.fast else N_LONG if args.long else N_FULL
     # Fast runs go to a separate tree so they never mix with full results.
-    raw_dir = Path(__file__).resolve().parent / "results" / ("raw_fast" if args.fast else "raw")
+    raw_dir = Path(__file__).resolve().parent / "results" / ("raw_fast" if args.fast else "raw_long" if args.long else "raw")
     jobs = [j for j in build_jobs(args)
             if not run_path(CONFIGS[j[0]]["method"], j[0], j[1], j[2], raw_dir).exists()]
     print(f"{len(jobs)} runs to do (N={N}, existing runs skipped)")

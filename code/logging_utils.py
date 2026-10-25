@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = ROOT / "results" / "raw"
 SUMMARY_DIR = ROOT / "results" / "summary"
 RAW_FAST_DIR = ROOT / "results" / "raw_fast"
+RAW_LONG_DIR = ROOT / "results" / "raw_long"          # Exp 1 side check, N = 1500, CMA-ES only
+SUMMARY_LONG_DIR = ROOT / "results" / "summary_long"
 SUMMARY_FAST_DIR = ROOT / "results" / "summary_fast"  # smoke-test summaries, never committed
 
 BASE_COLS = ["method", "config_id", "landscape", "seed", "eval_idx"]

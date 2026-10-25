@@ -409,3 +409,22 @@ is unchanged. Exp 7 now has a BO prediction, BO5 (`docs/predictions_addendum.md`
 **Runtime (estimates from the earlier timing pilot; check in before running).** Exps 1 and 2 are CMA-ES only (seconds).
 Exp 3 has 11 new BO arms: EI arms about 100 s per run, LCB about 35 s, TS about 80 s, MAP about 49 s, so about
 100 minutes on 6 workers. Exp 4 has 3 new arms of EI-like cost, about 40 minutes.
+
+## Exp 1 side check: longer budget (decided 2026-10-25 with the user, written BEFORE it runs)
+
+**Why.** Exp 1 (N = 300) gave 0/50 success at lambda = 6, 12 and 24. For lambda = 6 and 12 the search had contracted by
+the end (median final sigma 0.0025 and 0.076), so more budget cannot help them. For lambda = 24 it had not: median final
+sigma 1.13 after only 13 generations. Its 0/50 therefore does not show that lambda = 24 cannot succeed, only that it
+cannot within 300 evaluations. The side check separates "cut off by the budget" from "cannot succeed".
+
+**Design.** The same three configs (`cma_default`, `cma_lam12`, `cma_lam24`), same landscape (`primary_far_w0.3`),
+same epsilon (0.05), same seeds 1000-1049, **N = 1500 (5x)**, CMA-ES only. Run with
+`run_experiments.py --long --exp exp1_long`, raw files in `results/raw_long/`, summaries in `results/summary_long/`,
+kept apart from the N = 300 results so the two budgets cannot mix. This follows `direction.md` (longer-budget
+CMA-ES runs are allowed, never plotted on BO axes). It is a side check, not part of any CMA-ES vs BO comparison, and
+no BO run is compared against it. N = 1500 was chosen as a round 5x; it was not tuned.
+
+**What is expected, stated before the run (not a pre-registered H or M).** If lambda = 24 is budget-limited, its
+success at N = 1500 should be above 0; lambda = 6 and 12 should stay near 0 because they have already collapsed. If all
+three stay at 0, the failure is not a budget effect. Either outcome is reported in the notebook and the report with the
+reason the check was added. No other budgets will be tried (one extra budget, fixed in advance).

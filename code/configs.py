@@ -10,6 +10,7 @@ PILOT_SEEDS = list(range(9000, 9200))  # epsilon pilot (random sampling only)
 FRESH_SEEDS = list(range(2000, 2050))  # Exp 6 best-variant line only (selection rule in pilot_log.md)
 
 N_FULL, N_FAST = 300, 100
+N_LONG = 1500   # Exp 1 side check only (CMA-ES, never plotted on BO axes)
 N_SEEDS_FULL, N_SEEDS_FAST = 50, 5
 
 CMAES_BASE = dict(method="cmaes", popsize=None, restarts="none", sigma0=2.0,
@@ -63,4 +64,10 @@ EXPERIMENTS = {
                           # near well only at w <= 0.3: at w >= 0.6 its basin merges with the decoy
                           landscapes=[f"primary_far_w{w}" for w in (0.1, 0.3, 0.6, 1.0)]
                                      + [f"primary_near_w{w}" for w in (0.1, 0.3)]),
+}
+
+# Side check for Exp 1 (decided 2026-10-25, see pilot_log.md): the same three lambda settings at a 5x budget, so a
+# lambda that is cut off by the N = 300 budget can be told apart from one that cannot succeed. CMA-ES only.
+LONG_EXPERIMENTS = {
+    "exp1_long": dict(configs=["cma_default", "cma_lam12", "cma_lam24"], landscapes=[PRIMARY]),
 }
