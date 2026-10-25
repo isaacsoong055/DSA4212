@@ -156,7 +156,41 @@ Why: at N = 300 lambda 6 and 12 had contracted (median final sigma 0.0025, 0.076
   over 300 evals) -> restarts look like fresh starts for finding the well (M2 first clause). M2 second clause not
   assessable (no successes). H3: equal success (0 = 0), "contradicted" side on success. Statuses are the user's to set.
 
-### Exps 4 to 7: not run yet. Add a subsection per experiment: table, CI, effect size, the prediction it tests, whether
+### Exp 3: CMA-ES initial step size sigma0 (full, 2026-10-25, seeds 1000-1049, N = 300, `primary_far_w0.3`, epsilon 0.05)
+
+Wall 4 s per arm. Predictions CMA1 and CMA2 were committed (`f0b688c`) before these runs.
+
+Random-start arm (baseline start U[-4,4]^2):
+
+| sigma0 | success | Wilson 95% | runs with a sample in the well | median closest approach |
+| --- | --- | --- | --- | --- |
+| 0.3 | 0/50 | [0.000, 0.071] | 0 | 2.26 |
+| 0.5 | 0/50 | [0.000, 0.071] | 0 | 2.09 |
+| 1 | 1/50 | [0.004, 0.105] | 2 | 2.16 |
+| 2 (`cma_default`) | 0/50 | [0.000, 0.071] | 1 | 1.40 |
+| 4 | 0/50 | [0.000, 0.071] | 4 | 0.93 |
+
+Oracle-start arm (first start 1.0 from the well centre, random direction; diagnostic only, never vs BO):
+
+| sigma0 | success | Wilson 95% | diff vs sigma0 = 2 (Newcombe) | runs with a sample in the well |
+| --- | --- | --- | --- | --- |
+| 0.3 | 33/50 | [0.522, 0.776] | +0.62 [+0.45, +0.74] | 35 |
+| 0.5 | 31/50 | [0.482, 0.741] | +0.58 [+0.41, +0.70] | 39 |
+| 1 | 10/50 | [0.112, 0.330] | +0.16 [+0.03, +0.29] | 23 |
+| 2 | 2/50 | [0.011, 0.135] | baseline | 11 |
+| 4 | 1/50 | [0.004, 0.105] | -0.02 [-0.12, +0.07] | 11 |
+
+- **CMA2 (random start, no sigma0 gives high success, all arms < 12/50): measurements on the supported side** (max 1/50).
+- **CMA1 (oracle start, success falls as sigma0 grows, interval at 0.3 above that at 2): on the supported side.**
+  Same direction as the pilot positive control (pilot seeds, post hoc); now confirmed on experiment seeds.
+- Reading: finding and refining pull sigma0 in opposite directions. Small sigma0 never reaches the well from a random
+  start (0/50 touch it); large sigma0 touches it more (4/50 at sigma0 = 4) but cannot refine it; with the well nearby a
+  small sigma0 (~w) refines it in ~2/3 of runs. This explains why lambda and restarts (which only change touching) did not
+  move success. Caveat: mechanism inferred from the dependence on sigma0, not from per-generation sigma/mean traces.
+- Not every oracle run at sigma0 = 0.3 succeeds (33/50; 35 touch the well): a tight cloud 1.0 away does not always reach it.
+- Statuses in `docs/scoreboard.csv` are the user's to set. Figures: `docs/figures/nb_5_exp3.png`, `nb_5_exp3_oracle.png`.
+
+### Exps 4 to 8: not run yet. Add a subsection per experiment: table, CI, effect size, the prediction it tests, whether
 ### supported, the diagnostic that explains it, caveat.
 
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
