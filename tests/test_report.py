@@ -118,3 +118,9 @@ def test_validation_card_always_draws_random_reference(quiet, monkeypatch):
     monkeypatch.setattr(report, "random_reference", lambda ax, runs, l: calls.append(real(ax, runs, l)))
     report.experiment_card("expV", report.Mode(True))
     assert calls == [True]  # random runs exist on the landscape, so the reference was drawn
+
+
+@pytest.mark.parametrize("k,n", [(0, 5), (0, 50), (50, 50), (1, 50), (25, 50), (0, 1000)])
+def test_wilson_interval_always_contains_the_rate(k, n):
+    lo, hi = an.wilson_ci(k, n)
+    assert 0 <= lo <= k / n <= hi <= 1  # error bars (rate - lo, hi - rate) are never negative

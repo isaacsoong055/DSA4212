@@ -21,7 +21,8 @@ def wilson_ci(k: int, n: int, conf: float = 0.95) -> tuple[float, float]:
     p = k / n
     centre = (p + z**2 / (2 * n)) / (1 + z**2 / n)
     half = z * np.sqrt(p * (1 - p) / n + z**2 / (4 * n**2)) / (1 + z**2 / n)
-    return (max(0.0, centre - half), min(1.0, centre + half))
+    # the Wilson interval contains p; clamp away last-digit rounding so error bars are never negative
+    return (max(0.0, min(p, centre - half)), min(1.0, max(p, centre + half)))
 
 
 def newcombe_diff(k1: int, n1: int, k2: int, n2: int, conf: float = 0.95) -> tuple[float, float, float]:

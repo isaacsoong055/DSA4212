@@ -262,7 +262,7 @@ def success_bars(ax, runs: pd.DataFrame, configs, landscape: str) -> pd.DataFram
     tab = tab.loc[order]
     x = np.arange(len(tab))
     ax.bar(x, tab["rate"], color=[colour_for(c) for c in tab.index], width=0.55)
-    ax.errorbar(x, tab["rate"], yerr=[tab["rate"] - tab["ci_lo"], tab["ci_hi"] - tab["rate"]],
+    ax.errorbar(x, tab["rate"], yerr=np.clip([tab["rate"] - tab["ci_lo"], tab["ci_hi"] - tab["rate"]], 0, None),
                 fmt="none", ecolor="k", capsize=4)
     for xi, (k, n, hi) in enumerate(zip(tab["k"], tab["n"], tab["ci_hi"])):
         ax.text(xi, hi + 0.02, f"{int(k)}/{int(n)}", ha="center", fontsize=9)
@@ -407,7 +407,7 @@ def expE_figure(M: Mode, best: dict | None = None) -> None:
                 pts.append((w * off, k / n, k / n - lo, hi - k / n))
         if pts:
             x, y, dl, dh = map(np.array, zip(*pts))
-            ax.errorbar(x, y, yerr=[dl, dh], capsize=3, lw=1.8, **kw)
+            ax.errorbar(x, y, yerr=np.clip([dl, dh], 0, None), capsize=3, lw=1.8, **kw)
         return bool(pts)
 
     for ax, (loc, ws) in zip(axes, panels):
@@ -470,7 +470,7 @@ def lambda_gain_figure(M: Mode, exp: str = "expV", base: str = "cma_default",
         t = t[t["metric"] == "success"].set_index("config_id")
         for i, c in enumerate([c for c in others if c in t.index and base in t.index]):
             d, lo, hi = an.newcombe_diff(int(t.loc[base, "k"]), int(t.loc[base, "n"]), int(t.loc[c, "k"]), int(t.loc[c, "n"]))
-            ax.errorbar(i, d, yerr=[[d - lo], [hi - d]], fmt="o", color=BLUE, capsize=5)
+            ax.errorbar(i, d, yerr=np.clip([[d - lo], [hi - d]], 0, None), fmt="o", color=BLUE, capsize=5)
         ax.axhline(0, color="k", lw=1)
         ax.set_xticks(range(len(others)), [LABEL.get(c, c) for c in others]); ax.set_xlim(-0.5, len(others) - 0.5)
         ax.set_title(l); ax.set_xlabel("setting")

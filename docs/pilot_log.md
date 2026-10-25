@@ -332,6 +332,38 @@ No full A-C results exist; no variant has been chosen. This fixes how the best a
    and an existing zip is never rewritten. The five pilot BO runs are archived as `raw_bo_pilot5.zip`; the
    Exp 0 BO runs will be `raw_bo_exp0.zip` (it contains those same five runs).
 
+## Sphere sanity check result (run 2026-10-22, `pilot/sphere_sanity.py`, pilot seeds 9000-9019, N = 300, d = 2)
+
+A check, not a finding; nothing tuned. "Solved" = regret <= 0.05; evaluations-to-solve counts evaluations.
+
+| method | solved by N=300 | evals to solve: median (best, worst) | final regret: median, worst | per-run wall |
+| --- | --- | --- | --- | --- |
+| CMA-ES default | 20/20 | 51 (23, 75) | 4.6e-10, 9.2e-9 | ~0.1 s |
+| BO default (EI, xi = 0) | 20/20 | 12 (11, 189) | 1.6e-6, 1.5e-3 | median 119 s |
+
+**BO preset criterion (>= 19/20 solved before the budget is exhausted): PASS (20/20).** The BO half took
+442.7 s wall on 6 workers under `caffeinate -dimsu` (the pre-run estimate was 6-7 min). One BO run (seed 9014)
+needed 189 evaluations and ended at regret 1.5e-3; every other BO run solved within 16 evaluations.
+Output files: `results/summary/sphere_sanity_cmaes.csv`, `results/summary/sphere_sanity_bo.csv`.
+
+## Exp 0 run record (2026-10-22, `run_experiments.py --full --exp exp0`, seeds 1000-1049, N = 300)
+
+Wall 789 s for the 145 new runs on 6 workers under `caffeinate -dimsu` (CMA-ES and BO seeds 1000-1004 reused from the
+pilot). Facts only; no prediction is scored here (statuses in `docs/scoreboard.csv` are the user's).
+
+| method | success k/50 (Wilson 95%) | stuck in decoy | unfinished | median regret |
+| --- | --- | --- | --- | --- |
+| CMA-ES default | 0 [0.000, 0.071] | 48 | 2 | 2.208 |
+| BO default | 5 [0.043, 0.214] | 45 | 0 | 2.208 |
+| random sampling | 2 [0.011, 0.135] | 11 | 37 | 1.114 |
+
+Gates: every run has exactly 300 evaluations (150/150); random sampling at epsilon = 0.05 succeeds 2/50 (the
+200-seed pilot gave 5/200); BO Cholesky jitter fallbacks 0 across 50 runs; BO final lengthscale at the upper bound
+in 42/50 runs. The two CMA-ES "unfinished" runs (seeds 1006, 1029) are early samples (generation 6 and 0) that landed on
+the well flank, after which sigma collapsed onto the decoy, so the label means "best point lies in the well's
+basin", not "the run was converging there". BO wall per run: median 101.5 s (range 36.6-149.9). BO runs archived
+as `results/archive/raw_bo_exp0.zip` (0.69 MB, 50 runs, includes the five pilot runs).
+
 ## Decisions on the remaining open questions (user, 2026-10-22: "accept all")
 
 1. **BO lengthscale upper bound (20 domain units): kept, frozen.** It is part of the baseline configuration; the
