@@ -12,3 +12,4 @@ results/raw_fast/
 results/summary_fast/
 docs/figures/*_fast.png
 docs/.Rhistory
+results/raw_long/

@@ -124,3 +124,10 @@ def test_validation_card_always_draws_random_reference(quiet, monkeypatch):
 def test_wilson_interval_always_contains_the_rate(k, n):
     lo, hi = an.wilson_ci(k, n)
     assert 0 <= lo <= k / n <= hi <= 1  # error bars (rate - lo, hi - rate) are never negative
+
+
+def test_long_budget_card_says_not_run_in_fast_mode(monkeypatch):
+    shown = []
+    monkeypatch.setattr(report, "display", lambda *a, **k: shown.extend(getattr(x, "data", "") for x in a))
+    report.long_budget_card(report.Mode(True))
+    assert "Not run yet" in shown[0] and "--long" in shown[0]

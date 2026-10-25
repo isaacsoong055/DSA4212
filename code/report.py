@@ -18,8 +18,9 @@ from IPython.display import Markdown, display
 import analysis as an
 from analysis import BLUE, GREY, ORANGE, OUTCOME_COLOURS, OUTCOMES
 from benchmarks import get_landscape
-from configs import CONFIGS, EXPERIMENTS, FRESH_SEEDS, N_FAST, N_FULL, N_SEEDS_FAST, N_SEEDS_FULL, PRIMARY, SEEDS
-from logging_utils import ROOT, SUMMARY_DIR, SUMMARY_FAST_DIR, RAW_DIR, RAW_FAST_DIR, run_path
+from configs import (CONFIGS, EXPERIMENTS, FRESH_SEEDS, LONG_EXPERIMENTS, N_FAST, N_FULL, N_LONG, N_SEEDS_FAST,
+                     N_SEEDS_FULL, PRIMARY, SEEDS)
+from logging_utils import ROOT, SUMMARY_DIR, SUMMARY_FAST_DIR, SUMMARY_LONG_DIR, RAW_DIR, RAW_FAST_DIR, run_path
 from optimizers import LS_BOUNDS_UNIT, run
 
 RED = "#e34948"
@@ -372,6 +373,32 @@ def lengthscale_figure(M: Mode) -> None:
 
 
 # ----------------------------------------------------------------- experiment cards
+
+def long_budget_card(M: Mode) -> None:
+    """Exp 1 side check: the same lambda settings at N = 1500, next to their N = 300 result (CMA-ES only)."""
+    path = SUMMARY_LONG_DIR / "runs.csv"
+    if M.fast or not path.exists():
+        why = "The side check has no smoke-test version." if M.fast else "No saved results found."
+        display(Markdown(f"> **Not run yet: Exp 1 side check (N = {N_LONG}).** {why}  \n"
+                         f"> Run: `python run_experiments.py --long --exp exp1_long && "
+                         f"python run_experiments.py --aggregate --long`"))
+        return
+    long_runs, short_runs = pd.read_csv(path), main_runs(M)
+    rows = []
+    for cid in LONG_EXPERIMENTS["exp1_long"]["configs"]:
+        row = [LABEL[cid]]
+        for runs in (short_runs, long_runs):
+            g = runs[(runs["config_id"] == cid) & (runs["landscape"] == canon(PRIMARY)) & runs["seed"].isin(SEEDS)]
+            k, n = int(g["success"].sum()), len(g)
+            lo, hi = an.wilson_ci(k, n)
+            row += [f"{k}/{n} [{lo:.3f}, {hi:.3f}]", int(g["best_in_basin"].sum()), int(g["n_gens"].median()),
+                    f"{g['final_sigma'].median():.3g}"]
+        rows.append(row)
+    cols = pd.MultiIndex.from_tuples([("", "setting")] + [(f"N = {n}", c) for n in (N_FULL, N_LONG)
+                                      for c in ("success (Wilson 95%)", "best point in well basin",
+                                                "median generations", "median final sigma")])
+    display(pd.DataFrame(rows, columns=cols).style.hide(axis="index"))
+
 
 def _success_card(exp: str, baseline: str, M: Mode) -> None:
     runs = main_runs(M)

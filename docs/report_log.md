@@ -123,6 +123,22 @@ existing `bo_map` arm); d = 5 repeat of the success-vs-lambda result (`direction
   not enough because sigma0 = 2 >> w = 0.3 lets the many decoy samples dominate the update. Exp 2 and the sigma traces
   are where to look. Why this matters for the report: it separates *finding* the well from *exploiting* it.
 
+#### Exp 1 side check: N = 1500 (5x), same configs and seeds, CMA-ES only (2026-10-25, `--long --exp exp1_long`)
+
+Why: at N = 300 lambda 6 and 12 had contracted (median final sigma 0.0025, 0.076) but lambda 24 had not (1.13, only
+13 generations), so its 0/50 could be budget cut-off. Decided with the user and written to `pilot_log.md` before the run.
+
+| setting | success N = 300 | success N = 1500 | best point in well basin (300 / 1500) | median generations (1500) | median final sigma (1500) |
+| --- | --- | --- | --- | --- | --- |
+| `cma_default` | 0/50 | 0/50 | 2 / 2 | 250 | ~0 |
+| `cma_lam12` | 0/50 | 0/50 | 7 / 7 | 125 | ~0 |
+| `cma_lam24` | 0/50 | 0/50 | 16 / 16 | 63 | 0.0034 |
+
+- Conclusion: **not a budget effect.** The extra 1200 evaluations found the well in no new run, and runs that touched
+  it early still did not refine it. Consistent with M1 (decided in the first generations).
+- Kept apart: `results/raw_long/`, `results/summary_long/`; never on BO axes; no BO comparison uses it. Only one extra
+  budget was tried (fixed in advance). Explain this check, and why it exists, in the report text.
+
 ### Exps 2 to 7: not run yet. Add a subsection per experiment: table, CI, effect size, the prediction it tests, whether
 ### supported, the diagnostic that explains it, caveat.
 
