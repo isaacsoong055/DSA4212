@@ -521,3 +521,13 @@ d = 5 repeat; a landscape without the decoy bowl to isolate the bowl's pull.
 
 **Runtime.** Test A about 30 s; test B 16 cells x 50 seeds, seconds.
 
+## Result record and finding 2026-10-25: Exp 3 follow-ups A and B, and the cma library's std cap
+
+Both follow-ups ran after the predictions were committed (`d7e3a76`). A (CMA4): supported side. B (CMA5): contradicted on
+both conditions (see `docs/report_log.md` for the numbers). **Finding while checking the surprising B result:** several
+cells had identical success counts; the cause is that `cma` caps the effective standard deviation (`maxstd`, set from the
+bound range; about 4 for [-5, 5]). With the same start and seed, sigma0 = 4, 5, 6, 7, 10, 20 produce identical samples and
+sigma0 = 3 does not (`cma.CMAEvolutionStrategy`, first `ask()`). Consequences: in `exp3_ratio` the arms k = 7 and k = 20 are
+identical runs at w = 0.6 and w = 1.0 (50/50 seeds) and k = 20 at w = 0.3 is effectively 4; Exps 0-3 are unaffected
+because their largest sigma0 is 4. No frozen config was changed; the labels in the report must say "nominal sigma0".
+

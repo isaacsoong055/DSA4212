@@ -190,6 +190,38 @@ Oracle-start arm (first start 1.0 from the well centre, random direction; diagno
 - Not every oracle run at sigma0 = 0.3 succeeds (33/50; 35 touch the well): a tight cloud 1.0 away does not always reach it.
 - Statuses in `docs/scoreboard.csv` are the user's to set. Figures: `docs/figures/nb_5_exp3.png`, `nb_5_exp3_oracle.png`.
 
+#### Exp 3 follow-up A: mean trace (CMA4), 2026-10-25, `run_experiments.py --trace`
+
+Median distance of the search mean to the well, oracle arm: sigma0 = 0.3: 1.0 (gen 0), 0.29 (5), 0.09 (10), 0.01 (20);
+sigma0 = 2: 1.0, 4.12 (5), then ~4.2 = the well-to-decoy-centre distance (4.24). Final mean within w of the well: 33/50
+(sigma0 0.3), 31/50 (0.5), 10/50 (1), 1/50 (2), 0/50 (4). Among the 11 sigma0 = 2 runs that touched the well, 10 end with
+the mean nearer the decoy centre. **CMA4: all conditions met (66%, 2%, 10/11): supported side.** Mechanism now observed:
+a well sample is not enough; the other selected points sit on the bowl and drag the mean to the decoy.
+Files: `results/summary/mean_trace.csv`, `mean_trace_final.csv`, `docs/figures/nb_5_exp3_mean_trace.png`.
+
+#### Exp 3 follow-up B: ratio test (CMA5), 2026-10-25, `--exp exp3_ratio`
+
+Oracle start at (10/3) w, sigma0 = k w. Success /50:
+
+| k | w = 0.1 | w = 0.3 | w = 0.6 | w = 1.0 |
+| --- | --- | --- | --- | --- |
+| 1 | 44 | 33 | 17 | 24 |
+| 3 | 25 | 12 | 14 | 36 |
+| 7 | 1 | 0 | 14 | 40 |
+| 20 | 0 | 1 | 14 | 40 |
+
+- **CMA5 contradicted** on both conditions: k = 1 not above k = 20 at w = 0.6 (overlap) and reversed at w = 1.0 (24 vs 40);
+  k = 1 intervals at w = 0.1 [0.76, 0.94] and w = 0.6 [0.22, 0.48] do not overlap. Narrow wells behave as in Exp 3 (large
+  sigma0 fatal); wide wells tolerate or prefer a large sigma0. Success is NOT a function of sigma0 / w alone.
+- Hypothesis (untested): a wide well is found by a broad cloud and has a funnel it can follow; at w = 1.0 a small sigma0 starts
+  3.3 away and fails to find. Well size relative to box and bowl matters too (bowl scale fixed at s = 10).
+- **Slip check and library finding (report this):** identical counts at w >= 0.6 (14/14/14; 40/40). k = 7 and k = 20 have identical
+  sample paths in 50/50 seeds there. Cause: the `cma` library caps the effective std (`maxstd`, from the bound range, ~4 for
+  [-5, 5]); sigma0 = 4, 5, 6, 7, 10, 20 draw the same first samples, sigma0 = 3 does not. So labelled k is not the effective
+  ratio above sigma0 = 4 (w = 0.6: k7 and k20 are both ~ratio 6.7; w = 1.0: both ratio 4; k20 at w = 0.3 is ~4 not 6). Exps 1-3
+  unaffected (max sigma0 = 4). Logged sigma is the nominal value. A cleaner grid would stay <= 4 at every width.
+- Files: `docs/figures/nb_5_exp3_ratio.png`. Statuses are the user's to set.
+
 ### Exps 4 to 8: not run yet. Add a subsection per experiment: table, CI, effect size, the prediction it tests, whether
 ### supported, the diagnostic that explains it, caveat.
 
