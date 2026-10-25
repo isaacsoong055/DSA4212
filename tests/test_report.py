@@ -45,7 +45,7 @@ def test_newcombe_matches_published_example():
 
 def test_predictions_parse_all_ids():
     ids = list(report.load_predictions()["ID"])
-    assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "B1", "M4"]
+    assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "B1", "M4", "M5"]
 
 
 # ---- dormant cards (D, V, E best-variant) on smoke data; skipped when no smoke summaries exist
