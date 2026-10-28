@@ -555,3 +555,23 @@ The raw BO runs are archived as `results/archive/raw_bo_exp4.zip` (all 11 new se
 and never rewritten). The kernel arms of Exp 6 are not run yet. Prediction mapping (`predictions.md` is untouched, the
 addendum table keeps the earlier numbers): H4 and BO2 to Exp 4, BO2 also to Exp 5, BO3 (the `bo_map` arm) and BO4 to
 Exp 6, H5 to Exp 7, CMA3 to Exp 8, H6, M3 and BO5 to Exp 9.
+
+## Note 2026-10-28: BO discovery table (exploratory, defined after Exp 4 was seen)
+
+`analysis.bo_discovery` / `run_experiments.py --discovery` summarise the saved BO runs: runs that sampled within w of the
+well centre ("touched", the CMA-ES definition from the Exp 3 follow-ups), success given touched, first-touch evaluation,
+the fitted lengthscale before the first touch, and the share of samples at the box edge. The definition was fixed after the
+Exp 4 success rates were seen, so every claim from it is labelled exploratory in the notebook. It reads only saved runs and
+changes no config. The touch test uses `x_star` of the landscape ((2.987, 2.987), the minimum of the combined function),
+not the nominal well centre (3, 3).
+
+## Amendment 2026-10-28: BO oracle arms (`exp4_oracle`), pre-registration BO6
+
+Added after Exp 4 and its follow-up: a diagnostic of whether large xi leaves a well it has been given. `run_bo` gets the
+option `x_init_from_well` (default None: bo_default and all existing configs are unchanged; checked: the other nine initial
+points are identical to the baseline's). Configs `bo_o_xi0`, `bo_o_xi0.1`, `bo_o_xi2` replace the first initial point by one
+0.2 from the well centre. The distance 0.2 was chosen from the first well samples in Exp 4 (f about -1.5), before the
+arms ran. Like the CMA-ES oracle arms: a diagnostic, never compared with the real runs, never a best/worst candidate.
+The CMA-ES oracle (1.0 from the well) would be meaningless for BO because the well is invisible to a GP at that distance
+(about 1.5% of its depth), which is why the BO oracle starts inside the well. Prediction BO6 is in
+`docs/predictions_addendum.md`, committed before the runs.

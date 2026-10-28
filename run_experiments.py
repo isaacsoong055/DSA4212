@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "code"))
 
 from configs import (CONFIGS, EXPERIMENTS, LONG_EXPERIMENTS, N_FAST, N_FULL, N_LONG, N_SEEDS_FAST,  # noqa: E402
                      N_SEEDS_FULL, SEEDS)
-from logging_utils import run_path  # noqa: E402
+from logging_utils import RAW_DIR, run_path  # noqa: E402
 
 
 def _init_worker():
@@ -75,6 +75,9 @@ def main():
     p.add_argument("--trace", action="store_true",
                    help="re-run the Exp 3 oracle configs and write per-generation mean traces "
                         "(results/summary/mean_trace*.csv); CMA-ES only, about 30 s")
+    p.add_argument("--discovery", action="store_true",
+                   help="from the saved Exp 4-6 BO runs write results/summary/bo_discovery.csv (touched the well, "
+                        "success given touch, lengthscale before discovery, edge share); seconds")
     p.add_argument("--exp", choices=list(EXPERIMENTS) + list(LONG_EXPERIMENTS))
     p.add_argument("--method", choices=["cmaes", "bo", "random"])
     p.add_argument("--landscape")
@@ -84,7 +87,6 @@ def main():
 
     if args.archive:
         from archive import archive_bo
-        from logging_utils import RAW_DIR
         files = None
         if args.exp:
             files = [f for c in EXPERIMENTS[args.exp]["configs"] if CONFIGS[c]["method"] == "bo"
@@ -93,6 +95,14 @@ def main():
         z, m = archive_bo(args.archive, files)
         print(f"wrote {z} ({z.stat().st_size / 1e6:.2f} MB) and {m}")
         return
+    if args.discovery:
+        from analysis import bo_after_discovery, bo_discovery
+        from configs import PRIMARY
+        cfgs = list(dict.fromkeys(c for e in ("exp4", "exp5", "exp6") for c in EXPERIMENTS[e]["configs"]))
+        cfgs = [c for c in cfgs if (RAW_DIR / PRIMARY / f"bo__{c}__seed1000.csv").exists()]
+        bo_discovery(cfgs, PRIMARY, SEEDS[:N_SEEDS_FULL])
+        bo_after_discovery(cfgs, PRIMARY, SEEDS[:N_SEEDS_FULL])
+        return
     if args.trace:
         from analysis import mean_trace
         from configs import PRIMARY
@@ -100,7 +110,7 @@ def main():
         return
     if args.aggregate:
         from analysis import aggregate
-        from logging_utils import (RAW_DIR, RAW_FAST_DIR, RAW_LONG_DIR, SUMMARY_DIR, SUMMARY_FAST_DIR,
+        from logging_utils import (RAW_FAST_DIR, RAW_LONG_DIR, SUMMARY_DIR, SUMMARY_FAST_DIR,
                                    SUMMARY_LONG_DIR)
         aggregate(*((RAW_FAST_DIR, SUMMARY_FAST_DIR) if args.fast else
                     (RAW_LONG_DIR, SUMMARY_LONG_DIR) if args.long else (RAW_DIR, SUMMARY_DIR)))

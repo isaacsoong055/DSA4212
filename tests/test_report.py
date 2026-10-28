@@ -46,7 +46,7 @@ def test_newcombe_matches_published_example():
 def test_predictions_parse_all_ids():
     ids = list(report.load_predictions()["ID"])
     assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "BO1", "BO2", "BO3", "BO4", "BO5",
-                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5"]
+                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5", "BO6"]
 
 
 def test_ratio_config_scales_sigma_and_start_with_the_well():
@@ -155,3 +155,34 @@ def test_long_budget_card_says_not_run_in_fast_mode(monkeypatch):
     monkeypatch.setattr(report, "display", lambda *a, **k: shown.extend(getattr(x, "data", "") for x in a))
     report.long_budget_card(report.Mode(True))
     assert "Not run yet" in shown[0] and "--long" in shown[0]
+
+
+def test_bo_discovery_counts_well_samples_and_lengthscale(tmp_path):
+    """bo_discovery on one saved smoke BO run: a touched run has a first-touch index, and success implies a touch."""
+    raw = tmp_path / "raw"
+    ls = get_landscape(PRIMARY)
+    log = run(ls, 30, 1000, CONFIGS["bo_default"], "bo_default")
+    write_run(log.rows, run_path("bo", "bo_default", PRIMARY, 1000, raw), ls.d)
+    out = an.bo_discovery(["bo_default"], PRIMARY, [1000], raw, tmp_path)
+    r = out.iloc[0]
+    assert r.n == 1 and r.touched in (0, 1) and r.success_given_touch <= r.touched and r.success <= r.touched
+    assert (tmp_path / "bo_discovery.csv").exists()
+
+
+def test_bo_after_discovery_writes_curves_and_split(tmp_path):
+    """Smoke: the discovery curve is non-decreasing and ends at the share of runs that touched the well."""
+    raw = tmp_path / "raw"
+    ls = get_landscape(PRIMARY)
+    for seed in (1000, 1001):
+        write_run(run(ls, 30, seed, CONFIGS["bo_default"], "bo_default").rows, run_path("bo", "bo_default", PRIMARY, seed, raw), ls.d)
+    an.bo_after_discovery(["bo_default"], PRIMARY, [1000, 1001], raw, tmp_path)
+    c = pd.read_csv(tmp_path / "bo_discovery_curves.csv")["share_found"]
+    assert c.is_monotonic_increasing and len(c) == 30 and (tmp_path / "bo_after_discovery.csv").exists()
+
+
+def test_bo_oracle_start_replaces_only_the_first_initial_point():
+    ls = get_landscape(PRIMARY)
+    base = run(ls, 12, 1000, CONFIGS["bo_default"], "bo_default").rows
+    orc = run(ls, 12, 1000, CONFIGS["bo_o_xi0"], "bo_o_xi0").rows
+    d0 = np.linalg.norm(np.array([orc[0]["x_0"], orc[0]["x_1"]]) - ls.x_star)
+    assert d0 == pytest.approx(0.2) and [r["x_0"] for r in orc[1:10]] == [r["x_0"] for r in base[1:10]]

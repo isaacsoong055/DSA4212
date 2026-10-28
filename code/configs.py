@@ -60,6 +60,11 @@ CONFIGS: dict[str, dict] = {
     "bo_lcb_b8": dict(BO_BASE, acq="lcb", beta=8.0),
     "bo_lcb_b32": dict(BO_BASE, acq="lcb", beta=32.0),
     "bo_ts": dict(BO_BASE, acq="ts", ts_candidates=2048),  # 4096 dominated runtime (pilot_log.md)
+    # Exp 4 oracle (diagnostic, never compared with the real runs): the first initial point is 0.2 from the well centre
+    # (where the first well samples of Exp 4 sat, f about -1.5), so the well is "found" at evaluation 0.
+    "bo_o_xi0": dict(BO_BASE, x_init_from_well=0.2),
+    "bo_o_xi0.1": dict(BO_BASE, xi=0.1, x_init_from_well=0.2),
+    "bo_o_xi2": dict(BO_BASE, xi=2.0, x_init_from_well=0.2),
     # Exp 6: BO surrogate (baseline is bo_default = Matern-5/2). bo_map was run with Exp 4 and is reported here
     "bo_map": dict(BO_BASE, gp="map_default"),  # lengthscale prior AND learned noise: not a one-factor change
     "bo_k_m32": dict(BO_BASE, kernel="matern32"),
@@ -86,6 +91,7 @@ EXPERIMENTS = {
                  landscapes=[PRIMARY]),
     "exp6": dict(configs=["bo_default", "bo_map", "bo_k_m32", "bo_k_m12", "bo_k_rbf"], landscapes=[PRIMARY]),
     # Exp 4 and Exp 5 were launched as one batch (--exp exp4_5) before the split; bo_map in the same batch
+    "exp4_oracle": dict(configs=["bo_o_xi0", "bo_o_xi0.1", "bo_o_xi2"], landscapes=[PRIMARY]),
     "exp4_5": dict(configs=["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_ei_xi0.5", "bo_ei_xi1", "bo_ei_xi2",
                             "bo_lcb_b0.5", "bo_lcb_b2", "bo_lcb_b8", "bo_lcb_b32", "bo_ts", "bo_map"],
                    landscapes=[PRIMARY]),

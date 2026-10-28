@@ -32,7 +32,7 @@ LABEL = {"cma_default": "default (λ=6)", "cma_lam12": "λ=12", "cma_lam24": "λ
          "cma_o_sig2": "oracle σ0=2", "cma_o_sig4": "oracle σ0=4", "cma_ro_k1": "σ0=1w", "cma_ro_k3": "σ0=3w",
          "cma_ro_k7": "σ0=7w", "cma_ro_k20": "σ0=20w", "bo_default": "EI ξ=0", "bo_ei_xi0.01": "EI ξ=0.01", "bo_ei_xi0.1": "EI ξ=0.1", "bo_ei_xi0.5": "EI ξ=0.5", "bo_ei_xi1": "EI ξ=1", "bo_ei_xi2": "EI ξ=2",
          "bo_lcb_b0.5": "LCB β=0.5", "bo_lcb_b2": "LCB β=2", "bo_lcb_b8": "LCB β=8", "bo_lcb_b32": "LCB β=32", "bo_ts": "Thompson",
-         "bo_map": "EI, MAP fit", "bo_k_m32": "Matern-3/2", "bo_k_m12": "Matern-1/2", "bo_k_rbf": "RBF", "random": "random"}
+         "bo_map": "EI, MAP fit", "bo_o_xi0": "oracle EI ξ=0", "bo_o_xi0.1": "oracle EI ξ=0.1", "bo_o_xi2": "oracle EI ξ=2", "bo_k_m32": "Matern-3/2", "bo_k_m12": "Matern-1/2", "bo_k_rbf": "RBF", "random": "random"}
 ORDER = ["exp0", "exp1", "exp2", "exp3", "exp3_oracle", "exp3_ratio", "exp4", "exp5", "exp6", "exp7", "exp8_baseline", "exp9"]
 EXP_TITLE = {"exp0": "Exp 0: baselines", "exp1": "Exp 1: population size", "exp2": "Exp 2: restarts", "exp3": "Exp 3: CMA-ES initial step size (random start)",
              "exp3_oracle": "Exp 3: CMA-ES initial step size (oracle start 1.0 from the well)",
@@ -384,6 +384,72 @@ def lengthscale_figure(M: Mode) -> None:
 
 
 # ----------------------------------------------------------------- experiment cards
+
+def discovery_card(exp: str, M: Mode) -> None:
+    """Exps 4-6: per setting, runs that sampled inside the well, success given that, first-touch evaluation, the fitted
+    lengthscale before the first touch and the share of samples at the box edge (results/summary/bo_discovery.csv)."""
+    d = M.table("bo_discovery")
+    if M.fast or d is None:
+        why = "It has no smoke-test version; set `FAST = False` to see its saved results." if M.fast else "No saved results found."
+        return display(Markdown(f"> **Not run yet: BO discovery table.** {why}  \n> Run: `python run_experiments.py --discovery`"))
+    d = d[d["config_id"].isin(EXPERIMENTS[exp]["configs"])]
+    if d.empty:
+        return
+    t = pd.DataFrame({"setting": d["config_id"].map(lambda c: LABEL.get(c, c)),
+                      "success": d["success"].astype(str) + "/" + d["n"].astype(str),
+                      "vs default (Newcombe 95%)": [f"{a:+.2f} [{lo:+.2f}, {hi:+.2f}]" if c != "bo_default" else "-"
+                                                    for c, a, lo, hi in zip(d["config_id"], d["diff_vs_baseline"], d["diff_lo"], d["diff_hi"])],
+                      "sampled in well": d["touched"], "success given that": d["success_given_touch"].astype(str) + "/" + d["touched"].astype(str),
+                      "first sample in well (eval)": d["first_touch_median"], "samples in well (median)": d["touches_median"],
+                      "lengthscale before first (max 20)": d["pre_touch_lengthscale"].round(2),
+                      "samples at box edge": d["edge_share"].round(2)})
+    display(t.reset_index(drop=True))
+
+
+def xi_mechanism_figure(M: Mode) -> None:
+    """Exp 4 mechanism: (A) share of runs that have sampled the well by evaluation t; (B) where the samples go after the
+    first well sample (runs that find the well by search); (C) pooled sample density for three settings. Reads
+    results/summary/bo_discovery_curves.csv, bo_after_discovery.csv and the saved BO runs."""
+    curves, after = M.table("bo_discovery_curves"), M.table("bo_after_discovery")
+    if M.fast or curves is None or after is None:
+        why = "It has no smoke-test version; set `FAST = False` to see its saved results." if M.fast else "No saved results found."
+        return display(Markdown(f"> **Not run yet: Exp 4 mechanism figure.** {why}  \n> Run: `python run_experiments.py --discovery`"))
+    ls = get_landscape(PRIMARY)
+    xs = ["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_ei_xi0.5", "bo_ei_xi1", "bo_ei_xi2"]
+    cols = plt.cm.viridis(np.linspace(0.05, 0.9, len(xs)))
+    fig = plt.figure(figsize=(11, 7.2), layout="constrained")
+    gs = fig.add_gridspec(2, 3)
+    ax = fig.add_subplot(gs[0, :2])
+    for c, col in zip(xs, cols):
+        g = curves[curves["config_id"] == c]
+        ax.plot(g["eval"], g["share_found"], color=col, lw=2, label=LABEL[c])
+    for c, ls_ in (("bo_lcb_b32", "--"), ("bo_ts", ":")):
+        g = curves[curves["config_id"] == c]
+        ax.plot(g["eval"], g["share_found"], color=GREY, lw=1.6, ls=ls_, label=LABEL[c])
+    ax.axvline(10, color="k", lw=0.8, ls=":"); ax.text(11, 0.02, "initial design", fontsize=8)
+    ax.set_xlabel("evaluation t"); ax.set_ylabel("share of 50 runs that have sampled\nwithin w of the well by t")
+    ax.set_title("A. when the well is found"); ax.legend(frameon=False, ncol=2, fontsize=8, loc="upper left")
+    ax = fig.add_subplot(gs[0, 2])
+    a = after[(after["group"] == "all") & after["config_id"].isin(xs[1:])].set_index("config_id").loc[xs[1:]]
+    pos = np.arange(len(a)); w_ = 0.38
+    ax.bar(pos - w_ / 2, a["edge_before"], w_, color=BLUE, label="at the box edge, before first well sample")
+    ax.bar(pos + w_ / 2, a["edge_after"], w_, color=ORANGE, label="at the box edge, after")
+    ax.plot(pos + w_ / 2, a["in_well_after"], "k_", ms=14, mew=2, label="within w of the well, after")
+    ax.set_xticks(pos, [LABEL[c].replace("EI ", "") for c in a.index]); ax.set_ylim(0, 1)
+    ax.set_ylabel("share of samples"); ax.set_title("B. where samples go\n(runs that find the well by search)")
+    ax.legend(frameon=False, fontsize=7, loc="upper right")
+    for k, c in enumerate(("bo_default", "bo_ei_xi0.1", "bo_ei_xi2")):
+        ax = fig.add_subplot(gs[1, k])
+        pts = np.concatenate([read_run(c, PRIMARY, s, M.raw_dir)[["x_0", "x_1"]].to_numpy()[10:] for s in SEEDS[:M.n_seeds]])
+        ax.hist2d(pts[:, 0], pts[:, 1], bins=40, range=[[-5, 5], [-5, 5]], cmap="Greys", norm=plt.matplotlib.colors.LogNorm())
+        ax.plot(*ls.x_star, "o", mfc="none", mec=ORANGE, ms=11, mew=2)
+        ax.set_aspect("equal"); ax.set_title(f"C. samples after the initial design: {LABEL[c]}", fontsize=9)
+    _finish(fig, "nb_5_exp4_mechanism", M)
+    t = after[after["config_id"].isin(xs[2:]) & (after["group"] != "all")].pivot(index="config_id", columns="group",
+                                                                                   values=["n", "n_touch", "edge_after", "in_well_after"])
+    t.index = [LABEL[c] for c in t.index]
+    display(t.round(2))
+
 
 def mean_trace_figure(M: Mode) -> None:
     """CMA4: distance of the search mean to the well per generation (oracle arm, sigma0 = 0.3 vs 2), plus the

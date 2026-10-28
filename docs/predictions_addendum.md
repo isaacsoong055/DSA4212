@@ -97,3 +97,30 @@ Exp 4 was split after its runs finished (see `docs/pilot_log.md`, 2026-10-28). E
 the numbers at the time of writing. Current numbers: H4 and BO2 are tested in Exp 4 (EI xi) and Exp 5 (LCB beta, Thompson
 sampling); BO3 (the `bo_map` arm) and BO4 are tested in Exp 6 (surrogate); H5 in Exp 7; CMA3 in Exp 8; H6, M3 and BO5 in
 Exp 9. No prediction text or criterion changed.
+
+## BO6: does a large xi leave a well it has been given? (added 2026-10-28, before the runs)
+
+Written after Exp 4 and its follow-up (`bo_after_discovery.csv`) were seen, so it is a follow-up test of a mechanism claim
+made from those results, not a forward-looking prediction. It is written, and the code is committed, before any
+`exp4_oracle` run exists.
+
+**Claim being tested (from Exp 4).** EI with xi >= 0.5 finds the well in about 85% of runs but succeeds in few (5/40, 3/42 of
+the runs that touched it). The explanation offered: after the first well sample, large-xi EI sends samples to the box edges
+instead of refining the well. The alternative: failure to refine comes from how the well was found (late, around evaluation
+120-160, with few evaluations left) and not from xi itself.
+
+**Diagnostic arms (`exp4_oracle`, never compared with the real runs, never a best/worst candidate).** `bo_o_xi0`,
+`bo_o_xi0.1`, `bo_o_xi2`: EI with xi = 0, 0.1, 2; everything as in Exp 4 except that the first of the 10 initial points is
+replaced by one 0.2 from the well centre (random direction; f about -1.4, as at the first well samples in Exp 4: the distance
+was chosen from those first touches, before this run). The budget is unchanged (that point is one of the 10), 50 seeds
+(1000-1049), N = 300, the same landscape. So every run starts with the well sampled once, and the question is what each xi
+does next.
+
+| ID | Prediction | Supported if | Contradicted if |
+|---|---|---|---|
+| BO6 | Given a well sample at evaluation 0, refinement still depends on xi: success at xi = 0 is clearly above success at xi = 2, and at xi = 2 the share of later samples within w of the well stays below 0.10 | xi = 0 success minus xi = 2 success >= +0.30 with the Newcombe interval above zero, and xi = 2 in-well share after the first well sample < 0.10 (median over runs) | The difference interval includes zero or xi = 2 succeeds at least as often as xi = 0, or xi = 2 puts 0.10 or more of its later samples in the well. Then large xi leaves a well it has been given only because of late or sparse discovery, and the Exp 4 explanation is wrong |
+
+Secondary, reported without a threshold: xi = 0.1 against the other two, success as a rate with Wilson intervals, the
+box-edge share and in-well share after evaluation 10, the evaluation of the first well sample (0 by construction), and the
+fitted lengthscale after the first 20 evaluations. Limits stated now: the arms differ from the real runs in having ~290 evaluations
+after the first well sample instead of ~150; the xi grid has three points; one landscape.

@@ -154,6 +154,86 @@ def mean_trace(configs: list[str], landscape: str, seeds: list[int], N: int, out
     print(f"wrote mean traces for {len(configs)} configs x {len(seeds)} seeds to {out_dir}")
 
 
+def bo_discovery(configs: list[str], landscape: str, seeds: list[int], raw_dir: Path = RAW_DIR,
+                 out_dir: Path = SUMMARY_DIR, baseline: str = "bo_default") -> pd.DataFrame:
+    """Per BO config, from the saved runs: how many runs sampled inside the well (touched: any point with d < w),
+    success given touch, evaluation index of the first touch, number of touches, fitted lengthscale before the first
+    touch (geometric mean over the two axes, median over runs; the upper bound is 20), share of post-initial-design
+    samples within 0.5 of the box edge, and the success difference to the baseline with a Newcombe interval.
+    Exploratory: the touch definition was fixed after Exp 4 was seen (it is the CMA-ES one). Writes bo_discovery.csv."""
+    ls = get_landscape(landscape)
+    x_g, w = ls.x_star, ls.meta["w"]
+    rows = []
+    for cid in configs:
+        recs = []
+        for seed in seeds:
+            df = pd.read_csv(Path(raw_dir) / landscape / f"bo__{cid}__seed{seed}.csv")
+            X = df[[f"x_{i}" for i in range(ls.d)]].to_numpy()
+            hit = np.where(np.linalg.norm(X - x_g, axis=1) < w)[0]
+            first = int(hit[0]) if len(hit) else None
+            ell = df["lengthscales"].dropna().map(lambda s: float(np.exp(np.mean(np.log([float(v) for v in s.split(";")])))))
+            pre = ell[df.loc[ell.index, "eval_idx"] < first] if first is not None else ell
+            succ = bool(ls.is_success(np.min(df["f"])))
+            recs.append(dict(touch=first is not None, first=first, n_touch=len(hit), success=succ,
+                             pre_ls=float(pre.median()) if len(pre) else np.nan,
+                             edge=float((np.abs(X[10:]).max(axis=1) > 4.5).mean())))
+        r = pd.DataFrame(recs)
+        rows.append(dict(config_id=cid, n=len(r), success=int(r.success.sum()), touched=int(r.touch.sum()),
+                         success_given_touch=int(r[r.touch].success.sum()),
+                         first_touch_median=r[r.touch]["first"].astype(float).median(), touches_median=r[r.touch].n_touch.median(),
+                         pre_touch_lengthscale=r.pre_ls.median(), edge_share=r.edge.mean()))
+    out = pd.DataFrame(rows)
+    b = out[out.config_id == baseline].iloc[0]
+    diff = [newcombe_diff(int(b.success), int(b.n), int(r.success), int(r.n)) for r in out.itertuples()]
+    out[["diff_vs_baseline", "diff_lo", "diff_hi"]] = diff
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out.to_csv(out_dir / "bo_discovery.csv", index=False)
+    print(f"wrote bo_discovery.csv for {len(configs)} configs x {len(seeds)} seeds to {out_dir}")
+    return out
+
+
+def bo_after_discovery(configs: list[str], landscape: str, seeds: list[int], raw_dir: Path = RAW_DIR,
+                       out_dir: Path = SUMMARY_DIR) -> None:
+    """Exp 4/5 mechanism, from the saved BO runs. Writes (a) bo_discovery_curves.csv: per setting and evaluation t, the
+    share of runs that have sampled within w of the well centre by t; (b) bo_after_discovery.csv: for the runs that find the
+    well by search (first touch after the 10-point initial design), split into all / successful / failed runs, where the
+    samples go: share of samples at the box edge before and after the first touch, share of later samples within w of the
+    well, evaluations left, number of well samples, and the fitted lengthscale after the first touch. Exploratory (touch definition fixed after Exp 4 was seen)."""
+    ls = get_landscape(landscape)
+    x_g, w = ls.x_star, ls.meta["w"]
+    curves, runs = [], []
+    for cid in configs:
+        firsts = []
+        for seed in seeds:
+            df = pd.read_csv(Path(raw_dir) / landscape / f"bo__{cid}__seed{seed}.csv")
+            X, f = df[[f"x_{i}" for i in range(ls.d)]].to_numpy(), df["f"].to_numpy()
+            d, edge = np.linalg.norm(X - x_g, axis=1), np.abs(X).max(axis=1) > 4.5
+            hit = np.where(d < w)[0]
+            firsts.append(hit[0] if len(hit) else np.inf)
+            if len(hit) and hit[0] >= 10:
+                a = hit[0]
+                ell = df["lengthscales"].dropna().map(lambda s: float(np.exp(np.mean(np.log([float(v) for v in s.split(";")])))))
+                after = ell[df.loc[ell.index, "eval_idx"] > a]
+                runs.append(dict(ls_after=float(after.median()) if len(after) else np.nan, config_id=cid, seed=seed, success=bool(ls.is_success(f.min())), first=a, n_touch=len(hit),
+                                 edge_before=edge[10:a].mean() if a > 10 else np.nan, edge_after=edge[a + 1:].mean(),
+                                 in_well_after=(d[a + 1:] < w).mean(), evals_left=len(d) - a - 1))
+        firsts = np.array(firsts)
+        curves += [dict(config_id=cid, eval=t, share_found=float((firsts <= t).mean())) for t in range(len(df))]
+    R = pd.DataFrame(runs)
+    rows = []
+    for cid, g in (R.groupby("config_id", sort=False) if len(R) else []):
+        for name, h in (("all", g), ("successful", g[g.success]), ("failed", g[~g.success])):
+            if len(h):
+                rows.append(dict(config_id=cid, group=name, n=len(h), first_touch=h["first"].median(), n_touch=h.n_touch.median(),
+                                 edge_before=h.edge_before.mean(), edge_after=h.edge_after.mean(),
+                                 in_well_after=h.in_well_after.mean(), evals_left=h.evals_left.mean(),
+                                 ls_after=h.ls_after.median()))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(curves).to_csv(out_dir / "bo_discovery_curves.csv", index=False)
+    pd.DataFrame(rows).to_csv(out_dir / "bo_after_discovery.csv", index=False)
+    print(f"wrote bo_discovery_curves.csv and bo_after_discovery.csv for {len(configs)} configs to {out_dir}")
+
+
 # ----------------------------------------------------------------- plots
 
 _GRID_CACHE: dict = {}

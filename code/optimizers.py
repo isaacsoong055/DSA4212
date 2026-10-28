@@ -241,7 +241,7 @@ def _count_jitter(caught) -> int:
 
 def run_bo(ls: Landscape, N: int, seed: int, cfg: dict, config_id: str) -> RunLog:
     """GP-BO. cfg: acq ('ei'|'lcb'|'ts'), xi, beta, n_init, refit_every, gp, kernel,
-    num_restarts, raw_samples, ts_candidates."""
+    num_restarts, raw_samples, ts_candidates. Optional x_init_from_well = r puts the first initial point r from the well."""
     import torch
     from botorch.acquisition import LogExpectedImprovement, UpperConfidenceBound
     from botorch.exceptions import ModelFittingError
@@ -260,7 +260,13 @@ def run_bo(ls: Landscape, N: int, seed: int, cfg: dict, config_id: str) -> RunLo
     def to_box(u):
         return bounds[0] + (bounds[1] - bounds[0]) * u.to(dt)
 
-    for x in to_box(sobol.draw(cfg["n_init"])):
+    init = to_box(sobol.draw(cfg["n_init"]))
+    if cfg.get("x_init_from_well") is not None:
+        # Diagnostic arm (Exp 4 oracle): the first initial point is replaced by one at this distance from the well
+        # centre, random direction. The other n_init - 1 points and the budget are unchanged.
+        u = _rng(seed, STREAM_X0).normal(size=d)
+        init[0] = torch.tensor(ls.x_star + cfg["x_init_from_well"] * u / np.linalg.norm(u), dtype=dt)
+    for x in init:
         log.eval(x.numpy(), opt_time_s=0.0)
 
     state, it, n_fit_fail, n_jitter_total = None, 0, 0, 0

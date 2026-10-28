@@ -226,6 +226,31 @@ Oracle start at (10/3) w, sigma0 = k w. Success /50:
 ### Exps 4 to 8: not run yet. Add a subsection per experiment: table, CI, effect size, the prediction it tests, whether
 ### supported, the diagnostic that explains it, caveat.
 
+### Exps 4 and 5 (full runs, N = 300, 50 seeds; run together 2026-10-26) and the `bo_map` arm of Exp 6
+
+Success out of 50 (Newcombe difference vs EI xi = 0, unpaired): xi = 0: 5; 0.01: 8 (+0.06 [-0.08, +0.20]); **0.1: 17 (+0.24
+[+0.08, +0.39])**; 0.5: 12 (+0.14 [-0.01, +0.29]); 1: 5; 2: 3. LCB beta 0.5 / 2 / 8 / 32: 3 / 4 / 4 / 3; Thompson: 3; `bo_map`: 4.
+All of the LCB, Thompson and `bo_map` differences are -0.04 to -0.02 with intervals about [-0.16, +0.10].
+
+Discovery table (`results/summary/bo_discovery.csv`, `python run_experiments.py --discovery`; exploratory, definition
+chosen after the results; "touched" = any sample within w of the well centre):
+- Runs that touched the well: xi = 0: 5; 0.01: 12; 0.1: 45; 0.5: 42; 1: 40; 2: 42; LCB: 3, 4, 4, 4; Thompson: 4; `bo_map`: 4.
+- Success given touched: always the same as success for low-touch settings (every success touched); for xi >= 0.1 it falls
+  with xi: 17/45, 12/42, 5/40, 3/42.
+- First touch (median eval): xi >= 0.1: 116-156 (of 300); default, LCB, Thompson, `bo_map`: 5-9, because three seeds
+  (1010, 1027, 1041) have the well in the shared 10-point initial design in every setting. LCB, Thompson and `bo_map` add
+  at most one more run (seed 1029); the default adds two (1004, 1029); xi >= 0.1 adds 38-42.
+- Samples at the box edge (> 4.5 from the centre, after the initial design): 3% default, 34-41% for xi >= 0.1, 0-2% for LCB,
+  Thompson and `bo_map`.
+- Lengthscale before the first touch (geometric mean of the two axes, median): 20 (the bound) in every EI, LCB and Thompson
+  setting; 3.8 for `bo_map`.
+- Readings (hypotheses, written in the notebook): found-but-not-refined for large xi (late discovery, few samples in the
+  well, budget spent on edges); LCB and Thompson do not discover by search; a shorter lengthscale (`bo_map`) did not raise
+  discovery (BO3 consistent side; weak test because the noise treatment changes too). BO2: pre-discovery lengthscale is as
+  long as the baseline's everywhere (consistent), but success does not track touching at large xi (inconsistent). H4:
+  rises 0 -> 0.1, then falls; flat in beta. Statuses are the user's.
+- Exp 6 kernel arms: not run yet.
+
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
 
 - **Both default optimisers are near random-search level on the primary landscape (Exp 0).** CMA-ES 0/50 is
