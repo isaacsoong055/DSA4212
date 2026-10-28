@@ -90,3 +90,10 @@ variants (xi, beta, Thompson) and does not apply to `bo_map` by construction.
 - Kernels for Exp 5: Matern-3/2, Matern-1/2, RBF against the Matern-5/2 baseline. The lengthscale bounds and starting
   value are the same on the unit cube for all kernels, so lengthscale values are not strictly comparable across kernels
   (a caveat for the report).
+
+## Renumbering note (2026-10-28)
+
+Exp 4 was split after its runs finished (see `docs/pilot_log.md`, 2026-10-28). Experiment numbers in the tables above are
+the numbers at the time of writing. Current numbers: H4 and BO2 are tested in Exp 4 (EI xi) and Exp 5 (LCB beta, Thompson
+sampling); BO3 (the `bo_map` arm) and BO4 are tested in Exp 6 (surrogate); H5 in Exp 7; CMA3 in Exp 8; H6, M3 and BO5 in
+Exp 9. No prediction text or criterion changed.

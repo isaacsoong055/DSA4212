@@ -7,7 +7,7 @@ from __future__ import annotations
 # Seed lists are fixed in advance and only ever extended by appending.
 SEEDS = list(range(1000, 1200))        # experiment seeds; full runs use a prefix
 PILOT_SEEDS = list(range(9000, 9200))  # epsilon pilot (random sampling only)
-FRESH_SEEDS = list(range(2000, 2050))  # Exp 7 best-variant line only (selection rule in pilot_log.md)
+FRESH_SEEDS = list(range(2000, 2050))  # Exp 8 best-variant line only (selection rule in pilot_log.md)
 
 N_FULL, N_FAST = 300, 100
 N_LONG = 1500   # Exp 1 side check only (CMA-ES, never plotted on BO axes)
@@ -47,20 +47,21 @@ CONFIGS: dict[str, dict] = {
     # Exp 2: restarts
     "cma_ipop": dict(CMAES_BASE, restarts="ipop"),
     "cma_bipop": dict(CMAES_BASE, restarts="bipop"),
-    # Exp 4: BO exploration vs exploitation (bo_default is EI with xi=0). xi is in units of f; the well is ~2.2
+    # Exp 4: BO explore/exploit inside EI (bo_default is EI with xi=0). xi is in units of f; the well is ~2.2
     # deep, so the grid reaches near-pure exploration (grid fixed 2026-10-25 from the landscape, not from results)
     "bo_ei_xi0.01": dict(BO_BASE, xi=0.01),
     "bo_ei_xi0.1": dict(BO_BASE, xi=0.1),
     "bo_ei_xi0.5": dict(BO_BASE, xi=0.5),
     "bo_ei_xi1": dict(BO_BASE, xi=1.0),
     "bo_ei_xi2": dict(BO_BASE, xi=2.0),
+    # Exp 5: other acquisition families (run together with Exp 4 on 2026-10-26; split at reporting time on 2026-10-28)
     "bo_lcb_b0.5": dict(BO_BASE, acq="lcb", beta=0.5),
     "bo_lcb_b2": dict(BO_BASE, acq="lcb", beta=2.0),
     "bo_lcb_b8": dict(BO_BASE, acq="lcb", beta=8.0),
     "bo_lcb_b32": dict(BO_BASE, acq="lcb", beta=32.0),
     "bo_ts": dict(BO_BASE, acq="ts", ts_candidates=2048),  # 4096 dominated runtime (pilot_log.md)
+    # Exp 6: BO surrogate (baseline is bo_default = Matern-5/2). bo_map was run with Exp 4 and is reported here
     "bo_map": dict(BO_BASE, gp="map_default"),  # lengthscale prior AND learned noise: not a one-factor change
-    # Exp 5: BO kernel type (baseline is bo_default = Matern-5/2)
     "bo_k_m32": dict(BO_BASE, kernel="matern32"),
     "bo_k_m12": dict(BO_BASE, kernel="matern12"),
     "bo_k_rbf": dict(BO_BASE, kernel="rbf"),
@@ -79,11 +80,16 @@ EXPERIMENTS = {
                         landscapes=[PRIMARY]),
     "exp3_ratio": dict(configs=["cma_ro_k1", "cma_ro_k3", "cma_ro_k7", "cma_ro_k20"],
                        landscapes=[f"primary_far_w{w}" for w in (0.1, 0.3, 0.6, 1.0)]),
-    "exp4": dict(configs=["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_ei_xi0.5", "bo_ei_xi1", "bo_ei_xi2",
-                          "bo_lcb_b0.5", "bo_lcb_b2", "bo_lcb_b8", "bo_lcb_b32", "bo_ts", "bo_map"],
+    "exp4": dict(configs=["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_ei_xi0.5", "bo_ei_xi1", "bo_ei_xi2"],
                  landscapes=[PRIMARY]),
-    "exp5": dict(configs=["bo_default", "bo_k_m32", "bo_k_m12", "bo_k_rbf"], landscapes=[PRIMARY]),
-    "exp7_baseline": dict(configs=["cma_default", "bo_default", "random"],
+    "exp5": dict(configs=["bo_default", "bo_lcb_b0.5", "bo_lcb_b2", "bo_lcb_b8", "bo_lcb_b32", "bo_ts"],
+                 landscapes=[PRIMARY]),
+    "exp6": dict(configs=["bo_default", "bo_map", "bo_k_m32", "bo_k_m12", "bo_k_rbf"], landscapes=[PRIMARY]),
+    # Exp 4 and Exp 5 were launched as one batch (--exp exp4_5) before the split; bo_map in the same batch
+    "exp4_5": dict(configs=["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_ei_xi0.5", "bo_ei_xi1", "bo_ei_xi2",
+                            "bo_lcb_b0.5", "bo_lcb_b2", "bo_lcb_b8", "bo_lcb_b32", "bo_ts", "bo_map"],
+                   landscapes=[PRIMARY]),
+    "exp8_baseline": dict(configs=["cma_default", "bo_default", "random"],
                           # near well only at w <= 0.3: at w >= 0.6 its basin merges with the decoy
                           landscapes=[f"primary_far_w{w}" for w in (0.1, 0.3, 0.6, 1.0)]
                                      + [f"primary_near_w{w}" for w in (0.1, 0.3)]),

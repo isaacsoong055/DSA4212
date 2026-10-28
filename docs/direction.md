@@ -55,7 +55,7 @@ Commit this table to the repo before the big runs, so the analysis is defensible
 
 A contradicted prediction, explained with your diagnostics, shows more understanding than a clean confirmation.
 
-**Addendum (2026-10-25).** `docs/predictions_addendum.md` adds BO1 to BO5 so that BO has its own failure, mechanism and test chain, like CMA-ES (H1, M1, H2), and CMA1 to CMA3 for the step-size experiment (Exp 3) and the width sweep (Exp 7). BO1 is post hoc (Exp 0 was seen first); CMA1 comes from a pilot diagnostic and is tested on fresh experiment seeds; the rest are forward-looking. The addendum also holds the prediction-to-experiment map. No H or M prediction was changed.
+**Addendum (2026-10-25).** `docs/predictions_addendum.md` adds BO1 to BO5 so that BO has its own failure, mechanism and test chain, like CMA-ES (H1, M1, H2), and CMA1 to CMA3 for the step-size experiment (Exp 3) and the width sweep (Exp 8). BO1 is post hoc (Exp 0 was seen first); CMA1 comes from a pilot diagnostic and is tested on fresh experiment seeds; the rest are forward-looking. The addendum also holds the prediction-to-experiment map. No H or M prediction was changed.
 
 ## 4. Step 1: build the landscapes
 
@@ -111,15 +111,16 @@ Experiments are numbered in the order they run and grouped by method (renamed 20
 | 1 | CMA-ES | Population size lambda | 1x, 2x, 4x default (d=2: 6, 12, 24) | Success vs lambda, generations completed | Check the largest lambda still gets 10-20 generations. Side check at N = 1500 (done, CMA-ES only, kept off BO plots) |
 | 2 | CMA-ES | Restarts | None, IPOP, BIPOP | Success rate, which restart succeeded | Total budget fixed at N. IPOP and BIPOP coincide at N = 300 (one restart per run) |
 | 3 | CMA-ES | Initial step size sigma0 | 0.3, 0.5, 1, 2 (default), 4, from the baseline random start; and the same five from an oracle start 1.0 from the well | Success vs sigma0 (and sigma0 / w) | Added 2026-10-25 after Exps 0-2 all gave 0/50 and a positive control pointed at sigma0 = 2 against w = 0.3. The oracle arm uses knowledge of the well: a diagnostic of refinement, not a method comparison, never plotted against BO. Two follow-ups (added after the first Exp 3 results): a mean trace of the oracle arm (CMA4) and a ratio test, oracle start at (10/3) w with sigma0 = k w for k in {1, 3, 7, 20} on w in {0.1, 0.3, 0.6, 1.0} (CMA5), both diagnostics |
-| 4 | BO | Exploration vs exploitation | EI with xi in {0, 0.01, 0.1, 0.5, 1, 2}; LCB with beta in {0.5, 2, 8, 32}; Thompson sampling; `bo_map` (different fitting recipe, see below) | Success rate, sample spread, fitted lengthscale | n_init fixed at 10. xi is in units of f; the well is about 2.2 deep, so the grid reaches near-pure exploration. Refit every 5 iterations |
-| 5 | BO | Kernel type | Matern-5/2 (baseline), Matern-3/2, Matern-1/2, RBF | Success rate, success given a well sample, fitted lengthscale | Everything else at baseline (EI, xi = 0, n_init = 10) |
-| 6 | both | Unimodal control | Best and worst settings from Exps 1-5 on the sphere, per method | Regret | Tests H5 |
-| 7 | both | Landscape knobs | w in {0.1, 0.3, 0.6, 1.0}; near vs far | Success vs w for the baseline and best variant of each method | Headline figure. Tests CMA3 (success rises as w approaches sigma0) |
-| 8 | both | Validation | Best and worst variant from Exps 1-5 on Rastrigin and Schwefel, CMA-ES and BO selected and evaluated separately, 20-30 seeds | Success rate | Tests H6 (CMA-ES) and BO5 (BO) |
+| 4 | BO | Explore/exploit inside EI | EI with xi in {0, 0.01, 0.1, 0.5, 1, 2} | Success rate, success given a well sample, sample spread, fitted lengthscale | n_init fixed at 10. xi is in units of f; the well is about 2.2 deep, so the grid reaches near-pure exploration. Refit every 5 iterations. Run in one batch with Exp 5 and `bo_map` (`--exp exp4_5`), split for reporting 2026-10-28 |
+| 5 | BO | Acquisition family | LCB with beta in {0.5, 2, 8, 32}; Thompson sampling; EI xi = 0 as baseline | Same as Exp 4 | A different factor from xi (the acquisition function itself) |
+| 6 | BO | Surrogate | Kernels Matern-5/2 (baseline), Matern-3/2, Matern-1/2, RBF; and `bo_map` (different fitting recipe, see below) | Success rate, success given a well sample, fitted lengthscale | Everything else at baseline (EI, xi = 0, n_init = 10). The `bo_map` arm was run with Exp 4 |
+| 7 | both | Unimodal control | Best and worst settings from Exps 1-6 on the sphere, per method | Regret | Tests H5 |
+| 8 | both | Landscape knobs | w in {0.1, 0.3, 0.6, 1.0}; near vs far | Success vs w for the baseline and best variant of each method | Headline figure. Tests CMA3 (success rises as w approaches sigma0) |
+| 9 | both | Validation | Best and worst variant from Exps 1-6 on Rastrigin and Schwefel, CMA-ES and BO selected and evaluated separately, 20-30 seeds | Success rate | Tests H6 (CMA-ES) and BO5 (BO) |
 
 `bo_map` differs from `bo_default` in two things at once: a prior on the lengthscale (so it cannot sit at the bound) and a learned noise level instead of a fixed tiny one. It is therefore a different fitting recipe, not a single-factor change, and is reported as such.
 
-Prediction-to-experiment map: H1 (Exp 0), H2 and M1 (Exp 1), H3 and M2 (Exp 2), CMA1, CMA2, CMA4 and CMA5 (Exp 3), CMA3 (Exp 7), BO1 (Exp 0), H4, BO2 and BO3 (Exp 4), BO4 (Exp 5), H5 (Exp 6), H6, M3 and BO5 (Exp 8). The full table is in `docs/predictions_addendum.md`.
+Prediction-to-experiment map: H1 (Exp 0), H2 and M1 (Exp 1), H3 and M2 (Exp 2), CMA1, CMA2, CMA4 and CMA5 (Exp 3), CMA3 (Exp 8), BO1 (Exp 0), H4 and BO2 (Exp 4), BO2 (also Exp 5), BO3 and BO4 (Exp 6), H5 (Exp 7), H6, M3 and BO5 (Exp 9). (Renumbered 2026-10-28 when Exp 4 was split; the addendum table keeps the original numbering.) The full table is in `docs/predictions_addendum.md`.
 
 Budget note: keep N=300 for every CMA-ES vs BO comparison. A longer-budget CMA-ES-only run is fine for the large-lambda sweep, but never plot it on the same axes as BO.
 
@@ -198,7 +199,7 @@ If you fall behind, cut in this order:
 1. d=5 check
 2. Thompson sampling
 3. 8x and 16x lambda sweeps
-4. Exp 7 near-vs-far distance (keep the width sweep)
+4. Exp 8 near-vs-far distance (keep the width sweep)
 
 ## 12. Limitations and common pitfalls
 

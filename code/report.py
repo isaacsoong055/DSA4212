@@ -33,12 +33,13 @@ LABEL = {"cma_default": "default (λ=6)", "cma_lam12": "λ=12", "cma_lam24": "λ
          "cma_ro_k7": "σ0=7w", "cma_ro_k20": "σ0=20w", "bo_default": "EI ξ=0", "bo_ei_xi0.01": "EI ξ=0.01", "bo_ei_xi0.1": "EI ξ=0.1", "bo_ei_xi0.5": "EI ξ=0.5", "bo_ei_xi1": "EI ξ=1", "bo_ei_xi2": "EI ξ=2",
          "bo_lcb_b0.5": "LCB β=0.5", "bo_lcb_b2": "LCB β=2", "bo_lcb_b8": "LCB β=8", "bo_lcb_b32": "LCB β=32", "bo_ts": "Thompson",
          "bo_map": "EI, MAP fit", "bo_k_m32": "Matern-3/2", "bo_k_m12": "Matern-1/2", "bo_k_rbf": "RBF", "random": "random"}
-ORDER = ["exp0", "exp1", "exp2", "exp3", "exp3_oracle", "exp3_ratio", "exp4", "exp5", "exp6", "exp7_baseline", "exp8"]
+ORDER = ["exp0", "exp1", "exp2", "exp3", "exp3_oracle", "exp3_ratio", "exp4", "exp5", "exp6", "exp7", "exp8_baseline", "exp9"]
 EXP_TITLE = {"exp0": "Exp 0: baselines", "exp1": "Exp 1: population size", "exp2": "Exp 2: restarts", "exp3": "Exp 3: CMA-ES initial step size (random start)",
              "exp3_oracle": "Exp 3: CMA-ES initial step size (oracle start 1.0 from the well)",
              "exp3_ratio": "Exp 3: CMA-ES step size relative to well width (ratio test)",
-             "exp4": "Exp 4: BO exploration vs exploitation", "exp5": "Exp 5: BO kernel type", "exp6": "Exp 6: unimodal control",
-             "exp7_baseline": "Exp 7: basin width (baselines)", "exp8": "Exp 8: validation (Rastrigin, Schwefel)"}
+             "exp4": "Exp 4: BO explore/exploit (EI xi)", "exp5": "Exp 5: BO acquisition family",
+             "exp6": "Exp 6: BO surrogate (kernel, bo_map)", "exp7": "Exp 7: unimodal control",
+             "exp8_baseline": "Exp 8: basin width (baselines)", "exp9": "Exp 9: validation (Rastrigin, Schwefel)"}
 
 
 @lru_cache(maxsize=None)
@@ -497,12 +498,12 @@ def _success_card(exp: str, baseline: str, M: Mode) -> None:
     display(effect_table(runs, configs, PRIMARY, baseline).style.hide(axis="index"))
 
 
-def exp7_figure(M: Mode, best: dict | None = None) -> None:
+def exp8_figure(M: Mode, best: dict | None = None) -> None:
     """Far and near panels on one y-axis, fixed epsilon, random reference. `best` maps a method to
     its selected config id; its line is drawn only from the fresh seeds (2000-2049)."""
     runs = M.table("runs")
     if runs is None:
-        return not_run("exp7_baseline", M)
+        return not_run("exp8_baseline", M)
     main = runs[runs["seed"].isin(SEEDS)]
     fresh = runs[runs["seed"].isin(FRESH_SEEDS)]
     panels = [("far", [0.1, 0.3, 0.6, 1.0]), ("near", [0.1, 0.3])]
@@ -537,9 +538,9 @@ def exp7_figure(M: Mode, best: dict | None = None) -> None:
     axes[0].legend(frameon=False, loc="upper left")
     if not drawn:
         plt.close(fig)
-        return not_run("exp7_baseline", M)
-    _finish(fig, "nb_5_exp6", M)
-    display(Markdown("*Only CMA3 (CMA-ES) is pre-registered for Exp 7; there is none for BO (see `docs/predictions_addendum.md`). Near-well cells at w = 0.6 and "
+        return not_run("exp8_baseline", M)
+    _finish(fig, "nb_5_exp8", M)
+    display(Markdown("*Only CMA3 (CMA-ES) is pre-registered for Exp 8; there is none for BO (see `docs/predictions_addendum.md`). Near-well cells at w = 0.6 and "
                      "w = 1.0 are excluded because the near well's basin merges with the decoy there "
                      "(`docs/pilot_log.md`). Random sampling is the reference at each w.*"))
 
@@ -569,7 +570,7 @@ def regret_figure(M: Mode, exp: str) -> None:
     _finish(fig, f"nb_5_{exp}", M)
 
 
-def lambda_gain_figure(M: Mode, exp: str = "exp8", base: str = "cma_default",
+def lambda_gain_figure(M: Mode, exp: str = "exp9", base: str = "cma_default",
                        others=("cma_lam12", "cma_lam24")) -> None:
     """Per validation function: success-rate gain over the default lambda with a Newcombe interval."""
     runs = main_runs(M)
@@ -609,16 +610,16 @@ def random_reference(ax, runs: pd.DataFrame, landscape: str) -> bool:
 
 def _validation_card(M: Mode) -> None:
     runs = main_runs(M)
-    lands = EXPERIMENTS["exp8"]["landscapes"]
-    configs = [c for c in EXPERIMENTS["exp8"]["configs"] if c != "random"]
+    lands = EXPERIMENTS["exp9"]["landscapes"]
+    configs = [c for c in EXPERIMENTS["exp9"]["configs"] if c != "random"]
     if runs is None or all(_sub(runs, configs, l).empty for l in lands):
-        return not_run("exp8", M)
+        return not_run("exp9", M)
     fig, axes = plt.subplots(1, len(lands), figsize=(5.5 * len(lands), 4.4), sharey=True, layout="constrained", squeeze=False)
     for ax, l in zip(axes[0], lands):
         success_bars(ax, runs, configs, l)
         random_reference(ax, runs, l)
         ax.set_title(f"{l} (epsilon = {get_landscape(l).epsilon})")
-    _finish(fig, "nb_5_exp8", M)
+    _finish(fig, "nb_5_exp9", M)
     lambda_gain_figure(M)
 
 
@@ -645,11 +646,11 @@ def experiment_card(exp: str, M: Mode) -> None:
         _success_card(exp, "cma_o_sig2", M)
     elif exp == "exp3_ratio":
         ratio_figure(M)
-    elif exp in ("exp4", "exp5"):
+    elif exp in ("exp4", "exp5", "exp6"):
         _success_card(exp, "bo_default", M)
-    elif exp == "exp6":
+    elif exp == "exp7":
         regret_figure(M, exp)
-    elif exp == "exp7_baseline":
-        exp7_figure(M)
-    elif exp == "exp8":
+    elif exp == "exp8_baseline":
+        exp8_figure(M)
+    elif exp == "exp9":
         _validation_card(M)

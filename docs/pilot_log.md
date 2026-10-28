@@ -531,3 +531,27 @@ sigma0 = 3 does not (`cma.CMAEvolutionStrategy`, first `ask()`). Consequences: i
 identical runs at w = 0.6 and w = 1.0 (50/50 seeds) and k = 20 at w = 0.3 is effectively 4; Exps 0-3 are unaffected
 because their largest sigma0 is 4. No frozen config was changed; the labels in the report must say "nominal sigma0".
 
+
+## Amendment 2026-10-28: Exp 4 split into three experiments (presentation only, after the runs)
+
+The Exp 4 batch (`--full --exp exp4`, 11 new BO settings x 50 seeds, 2026-10-26 to 2026-10-27, 101 min) bundled three
+different questions. At the user's request it is reported as three experiments. **This was decided after the Exp 4
+success rates had been seen.** It is a regrouping of finished runs: no config, seed, N, run or result changed, and nothing
+was rerun. The reason is flow and the one-factor rule: xi is a margin inside EI, LCB and Thompson sampling change the
+acquisition function, and `bo_map` changes the surrogate's fitting recipe.
+
+| Now | Contents | Earlier name |
+|---|---|---|
+| Exp 4 | `bo_default`, EI xi in {0.01, 0.1, 0.5, 1, 2} | Exp 4 (EI arms) |
+| Exp 5 | `bo_default`, LCB beta in {0.5, 2, 8, 32}, `bo_ts` | Exp 4 (LCB and TS arms) |
+| Exp 6 | `bo_default`, `bo_map`, `bo_k_m32`, `bo_k_m12`, `bo_k_rbf` | `bo_map` from Exp 4; kernels were Exp 5 |
+| Exp 7 | sphere control | Exp 6 |
+| Exp 8 | basin width | Exp 7 |
+| Exp 9 | validation | Exp 8 |
+
+Code: `EXPERIMENTS` keys `exp4`, `exp5`, `exp6` hold the new groups; `exp4_5` holds the original 12-setting batch so the
+run command stays reproducible; `exp6` (sphere), `exp7_baseline` and `exp8` became `exp7`, `exp8_baseline` and `exp9`.
+The raw BO runs are archived as `results/archive/raw_bo_exp4.zip` (all 11 new settings, named after the original batch
+and never rewritten). The kernel arms of Exp 6 are not run yet. Prediction mapping (`predictions.md` is untouched, the
+addendum table keeps the earlier numbers): H4 and BO2 to Exp 4, BO2 also to Exp 5, BO3 (the `bo_map` arm) and BO4 to
+Exp 6, H5 to Exp 7, CMA3 to Exp 8, H6, M3 and BO5 to Exp 9.

@@ -32,9 +32,10 @@ untested is labelled *hypothesis*.
 ## 0b. Naming conventions (explain once in the report)
 
 - **Experiments** are numbered in run order and grouped by method: Exp 0 baselines; CMA-ES block: Exp 1 population
-  size, Exp 2 restarts; BO block: Exp 4 exploration vs exploitation, Exp 5 kernel type; both methods: Exp 6
-  unimodal control, Exp 7 landscape knobs, Exp 8 validation. (Renamed 2026-10-25 from A, B, C, D, E, V; there was no
-  Exp F, kernel became Exp 5. Older sections of `pilot_log.md` use the old letters.)
+  size, Exp 2 restarts; BO block: Exp 4 explore/exploit inside EI (xi), Exp 5 acquisition family (LCB, Thompson), Exp 6 surrogate
+  (kernel, `bo_map`); both methods: Exp 7 unimodal control, Exp 8 landscape knobs, Exp 9 validation. (Renamed 2026-10-25
+  from A, B, C, D, E, V; there was no Exp F. Exp 4 was split in three on 2026-10-28, after its runs finished, and the
+  later experiments moved up by one. Older sections of `pilot_log.md` and `predictions_addendum.md` use the earlier numbers.)
 - **Predictions:** H = headline prediction and M = mechanism (both in `predictions.md`, frozen 2026-10-22); BO1 to
   BO5 = BO predictions and CMA1 to CMA3 = CMA-ES step-size/width predictions, in `predictions_addendum.md`. Numbers are labels only. A prediction-to-experiment map is in the
   addendum and in `direction.md` section 6.
@@ -60,16 +61,16 @@ from firing rates only, BO lengthscale upper bound 20, start x0 ~ U[-4,4]^2 and 
 
 ## 2. Experimental design and exploration (35%)
 
-**Design in one line each.** Exp 0 baselines. Exp 1 lambda 1x/2x/4x. Exp 2 none/IPOP/BIPOP. Exp 4 BO exploration
-(EI xi in {0, 0.01, 0.1, 0.5, 1, 2}, LCB beta in {0.5, 2, 8, 32}, Thompson sampling, MAP-fit arm). Exp 5 BO kernel
-(Matern-5/2, 3/2, 1/2, RBF). Exp 6 sphere control. Exp 7 basin width w in {0.1, 0.3, 0.6, 1.0}, near vs far (near only
-for w <= 0.3). Exp 8 Rastrigin and Schwefel validation, CMA-ES and BO separately. One factor at a time, same seeds, N = 300.
+**Design in one line each.** Exp 0 baselines. Exp 1 lambda 1x/2x/4x. Exp 2 none/IPOP/BIPOP. Exp 4 BO explore/exploit
+(EI xi in {0, 0.01, 0.1, 0.5, 1, 2}). Exp 5 acquisition family (LCB beta in {0.5, 2, 8, 32}, Thompson sampling). Exp 6 BO
+surrogate (kernels Matern-5/2, 3/2, 1/2, RBF; MAP-fit arm). Exp 7 sphere control. Exp 8 basin width w in {0.1, 0.3, 0.6, 1.0},
+near vs far (near only for w <= 0.3). Exp 9 Rastrigin and Schwefel validation, CMA-ES and BO separately. One factor at a time, same seeds, N = 300.
 
 **Pre-registration trail (use in the report as evidence of rigour).**
 - `docs/predictions.md` committed 2026-10-22 (H1-H6, M1-M3), before any CMA-ES or BO success result.
-- `docs/predictions_addendum.md` 2026-10-25: BO1 (post hoc, from Exp 0), BO2 to BO5 (before Exps 4, 5, 8). BO1 is labelled
+- `docs/predictions_addendum.md` 2026-10-25: BO1 (post hoc, from Exp 0), BO2 to BO5 (before Exps 4 to 6 and Exp 9, original numbering). BO1 is labelled
   post hoc because the Exp 0 BO numbers had been seen.
-- Selection rules for the Exp 6, E and V variants were written before Exps 1-5 ran (`pilot_log.md`).
+- Selection rules for the Exp 7, E and V variants (now Exps 7 and 9) were written before Exps 1-5 ran (`pilot_log.md`).
 - Statuses in `docs/scoreboard.csv`, set by hand.
 
 **Controls and robustness already in place:** sphere BO sanity check (20/20 solved, pilot seeds 9000-9019); random
@@ -237,7 +238,7 @@ Oracle start at (10/3) w, sigma0 = k w. Success /50:
   distribution, because floating-point differences compound through the model-fitting loop. Paired comparisons are
   paired on starting conditions only."
 - **Schwefel epsilon = 5.0 is borderline** (exactly 5.0% random success).
-- **Exp 7 near well exists only for w <= 0.3** (basins merge at w >= 0.6).
+- **Exp 8 near well exists only for w <= 0.3** (basins merge at w >= 0.6).
 - *(Append: any contradicted prediction, any config slip or bug found and how it was resolved.)*
 
 ## 5. Limitations to state
@@ -260,7 +261,7 @@ axes; validation functions are two cases only; d = 5 check still to do.
 | `docs/figures/epsilon_check*.png` | epsilon threshold plots (appendix; markers ask) | ready |
 | `docs/figures/nb_5_exp{A,B,C,E}_fast.png` | smoke-test only, do not use | regenerate from full runs |
 
-Headline figure to produce: success vs w for baseline and best variant (Exp 7). Success vs lambda (Exp 1).
+Headline figure to produce: success vs w for baseline and best variant (Exp 8). Success vs lambda (Exp 1).
 
 ## 7. Reproducibility notes for the readme and the report
 

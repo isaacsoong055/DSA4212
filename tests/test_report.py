@@ -85,11 +85,11 @@ def quiet(monkeypatch):
 @smoke
 def test_regret_and_lambda_gain_figures_run(quiet, monkeypatch):
     cfgs = ["cma_default", "cma_lam12", "cma_lam24"]
-    monkeypatch.setitem(EXPERIMENTS, "exp6", dict(configs=cfgs, landscapes=[PRIMARY]))
-    monkeypatch.setitem(EXPERIMENTS, "exp8", dict(configs=cfgs, landscapes=[PRIMARY, "primary_far_w1.0"]))
+    monkeypatch.setitem(EXPERIMENTS, "exp7", dict(configs=cfgs, landscapes=[PRIMARY]))
+    monkeypatch.setitem(EXPERIMENTS, "exp9", dict(configs=cfgs, landscapes=[PRIMARY, "primary_far_w1.0"]))
     M = report.Mode(True)
-    report.experiment_card("exp6", M)
-    report.experiment_card("exp8", M)
+    report.experiment_card("exp7", M)
+    report.experiment_card("exp9", M)
 
 
 @smoke
@@ -105,10 +105,10 @@ def test_expE_best_variant_uses_only_fresh_seeds(quiet, monkeypatch):
 
     drawn = []
     monkeypatch.setattr(report.plt.Axes, "errorbar", lambda self, *a, **k: drawn.append(k.get("label")))
-    report.exp7_figure(FakeMode(True), best={"cmaes": "cma_lam12"})
+    report.exp8_figure(FakeMode(True), best={"cmaes": "cma_lam12"})
     assert any(l and "best variant" in l for l in drawn)
     drawn.clear()
-    report.exp7_figure(M, best={"cmaes": "cma_lam12"})  # no fresh seeds on disk: no best-variant line
+    report.exp8_figure(M, best={"cmaes": "cma_lam12"})  # no fresh seeds on disk: no best-variant line
     assert not any(l and "best variant" in l for l in drawn)
 
 
@@ -126,9 +126,9 @@ def test_card_not_drawn_when_settings_missing(quiet, monkeypatch):
     messages, figs = [], []
     monkeypatch.setattr(report, "not_run", lambda exp, M, why="": messages.append((exp, why)))
     monkeypatch.setattr(report, "_finish", lambda *a, **k: figs.append(a[1]))
-    for exp in ("exp1", "exp2", "exp4", "exp7_baseline"):
+    for exp in ("exp1", "exp2", "exp4", "exp8_baseline"):
         report.experiment_card(exp, FakeMode(True))
-    assert [m[0] for m in messages] == ["exp1", "exp2", "exp4", "exp7_baseline"] and not figs
+    assert [m[0] for m in messages] == ["exp1", "exp2", "exp4", "exp8_baseline"] and not figs
     report.experiment_card("exp1", M)  # all settings exist in the smoke data: drawn
     assert figs == ["nb_5_exp1"]
 
@@ -136,11 +136,11 @@ def test_card_not_drawn_when_settings_missing(quiet, monkeypatch):
 @smoke
 def test_validation_card_always_draws_random_reference(quiet, monkeypatch):
     cfgs = ["cma_default", "cma_lam12", "cma_lam24", "random"]
-    monkeypatch.setitem(EXPERIMENTS, "exp8", dict(configs=cfgs, landscapes=[PRIMARY]))
+    monkeypatch.setitem(EXPERIMENTS, "exp9", dict(configs=cfgs, landscapes=[PRIMARY]))
     calls = []
     real = report.random_reference
     monkeypatch.setattr(report, "random_reference", lambda ax, runs, l: calls.append(real(ax, runs, l)))
-    report.experiment_card("exp8", report.Mode(True))
+    report.experiment_card("exp9", report.Mode(True))
     assert calls == [True]  # random runs exist on the landscape, so the reference was drawn
 
 
