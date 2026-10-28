@@ -251,6 +251,22 @@ chosen after the results; "touched" = any sample within w of the well centre):
   rises 0 -> 0.1, then falls; flat in beta. Statuses are the user's.
 - Exp 6 kernel arms: not run yet.
 
+### Exp 4 follow-ups: after-discovery analysis and the BO oracle (BO6), 2026-10-28
+
+After-discovery (saved runs only; exploratory; runs that find the well by search): edge share before -> after the first well
+sample: xi 0.1: 0.19 -> 0.65; 0.5: 0.28 -> 0.59; 1: 0.31 -> 0.54; 2: 0.34 -> 0.37 (never settles). In-well share of later
+samples 1-3% for xi >= 0.1. xi = 0.1: successful runs 5 well samples (median) vs 2 for failed; edge share after 0.40 vs 0.77;
+first well sample at eval 167 vs 160 (not a timing effect); lengthscale after the first well sample 2.1 vs 2.0 (does not
+separate them). Figure `docs/figures/nb_5_exp4_mechanism.png`.
+
+BO6 oracle (`exp4_oracle`, well sampled at evaluation 0, 0.2 from the centre; diagnostic only): success xi = 0: 46/50
+[0.81, 0.97]; xi = 0.1: 44/50 [0.76, 0.94]; xi = 2: 5/50 [0.04, 0.21]. xi 0 minus xi 2 = +0.82 [+0.66, +0.89]; xi 0.1 minus
+xi 2 = +0.78 [+0.62, +0.87]; xi 0 minus xi 0.1 = +0.04 [-0.09, +0.17]. xi = 2 in-well share median 0.005. Pre-registered
+conditions of BO6 both met (statuses are the user's). Descriptive, uncontrolled contrast: xi = 0.1 refines a given well
+(44/50) but not one found late (17/45 of the runs that touched it in Exp 4); xi = 2 fails in both. So xi = 2 leaves the well
+whatever the discovery; for moderate xi the failure depends on how the well was found. Hypothesis (unresolved): lengthscale at
+discovery (0.85 early vs 2-5 late); against it, the within-run comparison. Raw runs: `results/archive/raw_bo_exp4_oracle.zip`.
+
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
 
 - **Both default optimisers are near random-search level on the primary landscape (Exp 0).** CMA-ES 0/50 is

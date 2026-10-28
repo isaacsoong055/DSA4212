@@ -96,12 +96,15 @@ def main():
         print(f"wrote {z} ({z.stat().st_size / 1e6:.2f} MB) and {m}")
         return
     if args.discovery:
-        from analysis import bo_after_discovery, bo_discovery
+        from analysis import bo_after_discovery, bo_discovery, bo_oracle
         from configs import PRIMARY
         cfgs = list(dict.fromkeys(c for e in ("exp4", "exp5", "exp6") for c in EXPERIMENTS[e]["configs"]))
         cfgs = [c for c in cfgs if (RAW_DIR / PRIMARY / f"bo__{c}__seed1000.csv").exists()]
         bo_discovery(cfgs, PRIMARY, SEEDS[:N_SEEDS_FULL])
         bo_after_discovery(cfgs, PRIMARY, SEEDS[:N_SEEDS_FULL])
+        orc = [c for c in EXPERIMENTS["exp4_oracle"]["configs"] if (RAW_DIR / PRIMARY / f"bo__{c}__seed1000.csv").exists()]
+        if orc:
+            bo_oracle(orc, PRIMARY, SEEDS[:N_SEEDS_FULL])
         return
     if args.trace:
         from analysis import mean_trace

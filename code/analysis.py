@@ -234,6 +234,41 @@ def bo_after_discovery(configs: list[str], landscape: str, seeds: list[int], raw
     print(f"wrote bo_discovery_curves.csv and bo_after_discovery.csv for {len(configs)} configs to {out_dir}")
 
 
+def bo_oracle(configs: list[str], landscape: str, seeds: list[int], raw_dir: Path = RAW_DIR,
+              out_dir: Path = SUMMARY_DIR) -> pd.DataFrame:
+    """BO6 (Exp 4 oracle arms: the well is sampled at evaluation 0). Per arm: success with a Wilson interval, the median
+    over runs of the share of samples after the initial design that lie within w of the well, the share at the box edge,
+    well samples after evaluation 0 (median), fitted lengthscale from evaluation 20 on (geometric mean over axes, median),
+    and the evaluation of the first success. Writes bo_oracle.csv; the Newcombe differences are computed in the notebook
+    card from the success counts."""
+    ls = get_landscape(landscape)
+    x_g, w = ls.x_star, ls.meta["w"]
+    rows = []
+    for cid in configs:
+        recs = []
+        for seed in seeds:
+            df = pd.read_csv(Path(raw_dir) / landscape / f"bo__{cid}__seed{seed}.csv")
+            X, f = df[[f"x_{i}" for i in range(ls.d)]].to_numpy(), df["f"].to_numpy()
+            d = np.linalg.norm(X - x_g, axis=1)
+            ell = df["lengthscales"].dropna().map(lambda s: float(np.exp(np.mean(np.log([float(v) for v in s.split(";")])))))
+            late = ell[df.loc[ell.index, "eval_idx"] >= 20]
+            ok = (f - ls.f_star) <= ls.epsilon
+            recs.append(dict(success=bool(ok.any()), first_success=int(np.argmax(ok)) if ok.any() else np.nan,
+                             in_well=(d[10:] < w).mean(), edge=(np.abs(X[10:]).max(axis=1) > 4.5).mean(),
+                             well_samples=int((d[1:] < w).sum()), ls=float(late.median()) if len(late) else np.nan))
+        r = pd.DataFrame(recs)
+        k, n = int(r.success.sum()), len(r)
+        lo, hi = wilson_ci(k, n)
+        rows.append(dict(config_id=cid, n=n, success=k, ci_lo=lo, ci_hi=hi, in_well_median=r.in_well.median(),
+                         in_well_mean=r.in_well.mean(), edge_share=r.edge.mean(), well_samples_median=r.well_samples.median(),
+                         lengthscale_after_20=r.ls.median(), first_success_median=r.first_success.median()))
+    out = pd.DataFrame(rows)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out.to_csv(out_dir / "bo_oracle.csv", index=False)
+    print(f"wrote bo_oracle.csv for {len(configs)} arms to {out_dir}")
+    return out
+
+
 # ----------------------------------------------------------------- plots
 
 _GRID_CACHE: dict = {}

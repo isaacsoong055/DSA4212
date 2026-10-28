@@ -451,6 +451,38 @@ def xi_mechanism_figure(M: Mode) -> None:
     display(t.round(2))
 
 
+def bo_oracle_figure(M: Mode) -> None:
+    """BO6: EI with xi = 0, 0.1, 2 when the well is sampled at evaluation 0 (diagnostic arms, never compared with the real
+    runs). Left: success with Wilson intervals; right: where the samples after the initial design go. Reads bo_oracle.csv."""
+    d = M.table("bo_oracle")
+    if M.fast or d is None:
+        why = "It has no smoke-test version; set `FAST = False` to see its saved results." if M.fast else "No saved results found."
+        return display(Markdown(f"> **Not run yet: BO oracle arms (BO6).** {why}  \n> Run: "
+                               f"`python run_experiments.py --full --exp exp4_oracle && python run_experiments.py --aggregate && "
+                               f"python run_experiments.py --discovery`"))
+    d = d.set_index("config_id").loc[EXPERIMENTS["exp4_oracle"]["configs"]]
+    names = [LABEL[c].replace("oracle EI ", "") for c in d.index]
+    fig, axes = plt.subplots(1, 2, figsize=(9.5, 3.8), layout="constrained")
+    ax = axes[0]
+    rate = d["success"] / d["n"]
+    ax.bar(names, rate, color=BLUE, yerr=[rate - d["ci_lo"], d["ci_hi"] - rate], capsize=4)
+    ax.set_ylim(0, 1); ax.set_ylabel("success rate (Wilson 95%)"); ax.set_title("A. well sampled at evaluation 0")
+    x = np.arange(len(d)); w_ = 0.38
+    ax = axes[1]
+    ax.bar(x - w_ / 2, d["in_well_mean"], w_, color=BLUE, label="within w of the well")
+    ax.bar(x + w_ / 2, d["edge_share"], w_, color=ORANGE, label="at the box edge")
+    ax.set_xticks(x, names); ax.set_ylim(0, 1); ax.set_ylabel("share of samples after the initial design")
+    ax.set_title("B. where the samples go"); ax.legend(frameon=False)
+    _finish(fig, "nb_5_exp4_oracle", M)
+    k = d["success"].astype(int)
+    cmp_ = [("ξ=0 minus ξ=2", "bo_o_xi2", "bo_o_xi0"), ("ξ=0.1 minus ξ=2", "bo_o_xi2", "bo_o_xi0.1"), ("ξ=0 minus ξ=0.1", "bo_o_xi0.1", "bo_o_xi0")]
+    t = pd.DataFrame([dict(comparison=n, **dict(zip(["difference", "lo", "hi"], np.round(an.newcombe_diff(k[a], 50, k[b], 50), 2))))
+                      for n, a, b in cmp_])
+    display(t)
+    display(d.rename(index=LABEL)[["success", "in_well_median", "in_well_mean", "edge_share", "well_samples_median",
+                                   "lengthscale_after_20", "first_success_median"]].round(3))
+
+
 def mean_trace_figure(M: Mode) -> None:
     """CMA4: distance of the search mean to the well per generation (oracle arm, sigma0 = 0.3 vs 2), plus the
     share of runs whose final mean is within w of the well. Reads results/summary/mean_trace*.csv."""
