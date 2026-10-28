@@ -197,11 +197,15 @@ def _kernel(model):
     return k.base_kernel if hasattr(k, "base_kernel") else k
 
 
-def _build_gp(X, Y, gp: str, bounds, kernel: str = "matern52"):
+def _build_gp(X, Y, gp: str, bounds, kernel: str = "matern52", cfg: dict | None = None):
     """Matern-5/2 ARD GP. 'mle_fixed': no priors, fixed tiny noise, bounded
     lengthscales. 'map_default': BoTorch's dim-scaled LogNormal prior and
     learned noise with its default prior (same Matern-5/2 kernel). `kernel`
-    (matern52 | matern32 | matern12 | rbf) applies to 'mle_fixed' only."""
+    (matern52 | matern32 | matern12 | rbf) applies to the 'mle_*' settings only.
+    One-factor variants of 'mle_fixed' (Exp 6), set in cfg: ls_cap (upper lengthscale bound in domain units, default 20),
+    noise (fixed noise variance in standardised units, default 1e-6); gp 'mle_learned_noise' (noise fitted, no prior,
+    in [1e-6, 1]) and 'mle_ls_prior' (BoTorch's dim-scaled lengthscale prior added, noise fixed)."""
+    cfg = cfg or {}
     import torch
     from botorch.models import SingleTaskGP
     from botorch.models.transforms import Normalize, Standardize
@@ -210,16 +214,24 @@ def _build_gp(X, Y, gp: str, bounds, kernel: str = "matern52"):
 
     d = X.shape[-1]
     common = dict(input_transform=Normalize(d, bounds=bounds), outcome_transform=Standardize(1))
-    if gp == "mle_fixed":
-        ls_con = Interval(*LS_BOUNDS_UNIT)
-        if kernel == "rbf":
-            base = RBFKernel(ard_num_dims=d, lengthscale_constraint=ls_con)
-        else:
-            base = MaternKernel(nu=KERNEL_NU[kernel], ard_num_dims=d, lengthscale_constraint=ls_con)
+    if gp in ("mle_fixed", "mle_learned_noise", "mle_ls_prior"):
+        hi = LS_BOUNDS_UNIT[1] if cfg.get("ls_cap") is None else cfg["ls_cap"] / (bounds[1] - bounds[0]).mean().item()
+        ls_con = Interval(LS_BOUNDS_UNIT[0], hi)
+        prior = None
+        if gp == "mle_ls_prior":
+            from gpytorch.priors import LogNormalPrior
+            prior = LogNormalPrior(loc=math.sqrt(2) + math.log(d) * 0.5, scale=math.sqrt(3))  # BoTorch's dim-scaled prior
+        kw = dict(ard_num_dims=d, lengthscale_constraint=ls_con, lengthscale_prior=prior)
+        base = RBFKernel(**kw) if kernel == "rbf" else MaternKernel(nu=KERNEL_NU[kernel], **kw)
         covar = ScaleKernel(base, outputscale_constraint=Interval(*OUTPUTSCALE_BOUNDS))
-        base.lengthscale = LS_INIT_UNIT
+        base.lengthscale = min(LS_INIT_UNIT, hi / 2)  # starts inside the interval when the cap is below the usual start
         covar.outputscale = 1.0
-        yvar = torch.full_like(Y, FIXED_NOISE) * Y.var()
+        if gp == "mle_learned_noise":
+            from gpytorch.likelihoods import GaussianLikelihood
+            lik = GaussianLikelihood(noise_constraint=Interval(1e-6, 1.0))
+            lik.noise = 1e-3
+            return SingleTaskGP(X, Y, likelihood=lik, covar_module=covar, **common)
+        yvar = torch.full_like(Y, cfg.get("noise", FIXED_NOISE)) * Y.var()
         return SingleTaskGP(X, Y, train_Yvar=yvar, covar_module=covar, **common)
     if gp == "map_default":
         from botorch.models.utils.gpytorch_modules import get_covar_module_with_dim_scaled_prior
@@ -230,7 +242,7 @@ def _build_gp(X, Y, gp: str, bounds, kernel: str = "matern52"):
 
 def _hyper_state(model, gp: str) -> dict:
     """Hyperparameters that can be carried to a model with more data."""
-    keep = ("covar_module.", "mean_module.") + (("likelihood.",) if gp == "map_default" else ())
+    keep = ("covar_module.", "mean_module.") + (("likelihood.",) if gp in ("map_default", "mle_learned_noise") else ())
     return {k: v.clone() for k, v in model.state_dict().items() if k.startswith(keep)}
 
 
@@ -276,7 +288,7 @@ def run_bo(ls: Landscape, N: int, seed: int, cfg: dict, config_id: str) -> RunLo
         Y = torch.tensor([[r["f"]] for r in log.rows], dtype=dt)
         with warnings.catch_warnings(record=True) as caught:
             warnings.simplefilter("always")
-            model = _build_gp(X, Y, cfg["gp"], bounds, cfg.get("kernel", "matern52"))
+            model = _build_gp(X, Y, cfg["gp"], bounds, cfg.get("kernel", "matern52"), cfg)
             if state is not None:
                 model.load_state_dict(state, strict=False)
             if state is None or it % cfg["refit_every"] == 0:

@@ -44,7 +44,7 @@ without asking the user. If something there is ambiguous, ask rather than guess.
 - Findings are written only after the full results exist; FAST (N=100, 5 seeds) is a smoke test and its figures are stamped.
 - Prediction statuses live in `docs/scoreboard.csv`, changed by hand, never by code.
 - Restart triggers are frozen at tolx = 3e-3, tolfun = 1e-5 (chosen from firing rates only).
-- Exp 8 near-well cells exist only for w <= 0.3 (basins merge at w >= 0.6; see `docs/pilot_log.md`).
-- Exp 8 best-variant line: selected by the rule in `docs/pilot_log.md`, evaluated on fresh seeds 2000-2049 only.
+- Exp 9 near-well cells exist only for w <= 0.3 (basins merge at w >= 0.6; see `docs/pilot_log.md`).
+- Exp 9 best-variant line: selected by the rule in `docs/pilot_log.md`, evaluated on fresh seeds 2000-2049 only.
 - BO runs are reproducible only statistically across processes (see `docs/pilot_log.md`). Never delete raw BO CSVs in `results/raw/`; commit them compressed, one zip per finished batch, with `run_experiments.py --archive NAME --exp EXP` (`results/archive/`); never rewrite an existing zip. `raw_fast` is never committed.
 - Do not start the full experiments until the user says so.

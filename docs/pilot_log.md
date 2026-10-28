@@ -575,3 +575,16 @@ arms ran. Like the CMA-ES oracle arms: a diagnostic, never compared with the rea
 The CMA-ES oracle (1.0 from the well) would be meaningless for BO because the well is invisible to a GP at that distance
 (about 1.5% of its depth), which is why the BO oracle starts inside the well. Prediction BO6 is in
 `docs/predictions_addendum.md`, committed before the runs.
+
+## Amendment 2026-10-28: Exp 6 becomes the one-factor fitting experiment; kernels move to Exp 7; later experiments shift
+
+At the user's request: `bo_map` changes the lengthscale handling, the noise, the outputscale and the fitting objective together
+(not "two things"), so it cannot say which setting matters. It stays as a reference arm (its 50 runs exist and are archived; it
+is reported as one table row and one line). New Exp 6 changes one fitting setting at a time against `bo_default`: lengthscale
+upper cap in {5, 2, 1, 0.5, 0.25} domain units (baseline 20), fixed noise in {1e-3, 1e-2, 1e-1, 1} (baseline 1e-6), learned noise
+(fitted in [1e-6, 1], no prior), and BoTorch's lengthscale prior alone (noise fixed, bounds kept). The user chose the full grid
+and the numbering. Kernel arms are now Exp 7 and run after Exp 6. Numbering: Exp 6 fitting settings, Exp 7 kernels, Exp 8
+sphere, Exp 9 width (`exp9_baseline`), Exp 10 validation (`exp10`); earlier text uses the earlier numbers. Code:
+`_build_gp(..., cfg)` reads `ls_cap`, `noise` and the new `gp` values `mle_learned_noise` and `mle_ls_prior`; the default path is
+unchanged (checked: `bo_default` and `bo_ei_xi0.1` reproduce saved runs to 4e-16 over 25 evaluations). Predictions BO7 to BO9 are in
+`docs/predictions_addendum.md`, committed before any new arm runs. 11 new arms, about 10 minutes each.

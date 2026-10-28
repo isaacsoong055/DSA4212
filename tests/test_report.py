@@ -46,7 +46,7 @@ def test_newcombe_matches_published_example():
 def test_predictions_parse_all_ids():
     ids = list(report.load_predictions()["ID"])
     assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "BO1", "BO2", "BO3", "BO4", "BO5",
-                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5", "BO6"]
+                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5", "BO6", "BO7", "BO8", "BO9"]
 
 
 def test_ratio_config_scales_sigma_and_start_with_the_well():
@@ -85,11 +85,11 @@ def quiet(monkeypatch):
 @smoke
 def test_regret_and_lambda_gain_figures_run(quiet, monkeypatch):
     cfgs = ["cma_default", "cma_lam12", "cma_lam24"]
-    monkeypatch.setitem(EXPERIMENTS, "exp7", dict(configs=cfgs, landscapes=[PRIMARY]))
-    monkeypatch.setitem(EXPERIMENTS, "exp9", dict(configs=cfgs, landscapes=[PRIMARY, "primary_far_w1.0"]))
+    monkeypatch.setitem(EXPERIMENTS, "exp8", dict(configs=cfgs, landscapes=[PRIMARY]))
+    monkeypatch.setitem(EXPERIMENTS, "exp10", dict(configs=cfgs, landscapes=[PRIMARY, "primary_far_w1.0"]))
     M = report.Mode(True)
-    report.experiment_card("exp7", M)
-    report.experiment_card("exp9", M)
+    report.experiment_card("exp8", M)
+    report.experiment_card("exp10", M)
 
 
 @smoke
@@ -105,10 +105,10 @@ def test_expE_best_variant_uses_only_fresh_seeds(quiet, monkeypatch):
 
     drawn = []
     monkeypatch.setattr(report.plt.Axes, "errorbar", lambda self, *a, **k: drawn.append(k.get("label")))
-    report.exp8_figure(FakeMode(True), best={"cmaes": "cma_lam12"})
+    report.exp9_figure(FakeMode(True), best={"cmaes": "cma_lam12"})
     assert any(l and "best variant" in l for l in drawn)
     drawn.clear()
-    report.exp8_figure(M, best={"cmaes": "cma_lam12"})  # no fresh seeds on disk: no best-variant line
+    report.exp9_figure(M, best={"cmaes": "cma_lam12"})  # no fresh seeds on disk: no best-variant line
     assert not any(l and "best variant" in l for l in drawn)
 
 
@@ -126,9 +126,9 @@ def test_card_not_drawn_when_settings_missing(quiet, monkeypatch):
     messages, figs = [], []
     monkeypatch.setattr(report, "not_run", lambda exp, M, why="": messages.append((exp, why)))
     monkeypatch.setattr(report, "_finish", lambda *a, **k: figs.append(a[1]))
-    for exp in ("exp1", "exp2", "exp4", "exp8_baseline"):
+    for exp in ("exp1", "exp2", "exp4", "exp9_baseline"):
         report.experiment_card(exp, FakeMode(True))
-    assert [m[0] for m in messages] == ["exp1", "exp2", "exp4", "exp8_baseline"] and not figs
+    assert [m[0] for m in messages] == ["exp1", "exp2", "exp4", "exp9_baseline"] and not figs
     report.experiment_card("exp1", M)  # all settings exist in the smoke data: drawn
     assert figs == ["nb_5_exp1"]
 
@@ -136,11 +136,11 @@ def test_card_not_drawn_when_settings_missing(quiet, monkeypatch):
 @smoke
 def test_validation_card_always_draws_random_reference(quiet, monkeypatch):
     cfgs = ["cma_default", "cma_lam12", "cma_lam24", "random"]
-    monkeypatch.setitem(EXPERIMENTS, "exp9", dict(configs=cfgs, landscapes=[PRIMARY]))
+    monkeypatch.setitem(EXPERIMENTS, "exp10", dict(configs=cfgs, landscapes=[PRIMARY]))
     calls = []
     real = report.random_reference
     monkeypatch.setattr(report, "random_reference", lambda ax, runs, l: calls.append(real(ax, runs, l)))
-    report.experiment_card("exp9", report.Mode(True))
+    report.experiment_card("exp10", report.Mode(True))
     assert calls == [True]  # random runs exist on the landscape, so the reference was drawn
 
 
@@ -186,3 +186,31 @@ def test_bo_oracle_start_replaces_only_the_first_initial_point():
     orc = run(ls, 12, 1000, CONFIGS["bo_o_xi0"], "bo_o_xi0").rows
     d0 = np.linalg.norm(np.array([orc[0]["x_0"], orc[0]["x_1"]]) - ls.x_star)
     assert d0 == pytest.approx(0.2) and [r["x_0"] for r in orc[1:10]] == [r["x_0"] for r in base[1:10]]
+
+
+@pytest.mark.parametrize("cid", ["bo_cap0.25", "bo_cap5", "bo_noise1", "bo_noise_learned", "bo_ls_prior"])
+def test_exp6_gp_settings_build_and_run(cid):
+    """Each single-factor fitting arm builds a GP and completes a short run with exactly N evaluations."""
+    ls = get_landscape(PRIMARY)
+    assert len(run(ls, 13, 1000, CONFIGS[cid], cid).rows) == 13
+
+
+def test_exp6_cap_and_noise_change_only_their_own_setting():
+    import torch
+    from optimizers import _build_gp
+    X, Y = torch.rand(8, 2, dtype=torch.float64), torch.rand(8, 1, dtype=torch.float64)
+    bounds = torch.tensor([[-5.0, -5.0], [5.0, 5.0]], dtype=torch.float64)
+    base = _build_gp(X, Y, "mle_fixed", bounds, "matern52", CONFIGS["bo_default"])
+    cap = _build_gp(X, Y, "mle_fixed", bounds, "matern52", CONFIGS["bo_cap0.25"])
+    assert base.covar_module.base_kernel.raw_lengthscale_constraint.upper_bound.item() == pytest.approx(2.0)
+    assert cap.covar_module.base_kernel.raw_lengthscale_constraint.upper_bound.item() == pytest.approx(0.025)
+    assert cap.covar_module.base_kernel.lengthscale.max().item() < 0.025  # starts inside the interval
+
+
+def test_exp6_arms_differ_from_the_baseline_in_exactly_one_setting():
+    base = CONFIGS["bo_default"]
+    for cid in EXPERIMENTS["exp6"]["configs"]:
+        if cid in ("bo_default", "bo_map"):  # bo_map is the all-at-once reference, not a one-factor arm
+            continue
+        diff = {k for k in set(base) | set(CONFIGS[cid]) if base.get(k) != CONFIGS[cid].get(k)}
+        assert len(diff) == 1, (cid, diff)

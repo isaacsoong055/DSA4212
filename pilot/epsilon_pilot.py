@@ -62,8 +62,8 @@ def main():
             chosen = e
     print(f"CHOSEN epsilon = {chosen}")
 
-    # Random-sampling reference at every Exp 8 landscape, under the chosen epsilon.
-    print("random success under chosen epsilon (Exp 8 reference):")
+    # Random-sampling reference at every Exp 9 landscape, under the chosen epsilon.
+    print("random success under chosen epsilon (Exp 9 reference):")
     for loc in ("near", "far"):
         for w in (0.1, 0.3, 0.6, 1.0):
             l2 = get_landscape(f"primary_{loc}_w{w}")

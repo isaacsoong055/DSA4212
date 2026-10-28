@@ -98,7 +98,7 @@ def main():
     if args.discovery:
         from analysis import bo_after_discovery, bo_discovery, bo_oracle
         from configs import PRIMARY
-        cfgs = list(dict.fromkeys(c for e in ("exp4", "exp5", "exp6") for c in EXPERIMENTS[e]["configs"]))
+        cfgs = list(dict.fromkeys(c for e in ("exp4", "exp5", "exp6", "exp7") for c in EXPERIMENTS[e]["configs"]))
         cfgs = [c for c in cfgs if (RAW_DIR / PRIMARY / f"bo__{c}__seed1000.csv").exists()]
         bo_discovery(cfgs, PRIMARY, SEEDS[:N_SEEDS_FULL])
         bo_after_discovery(cfgs, PRIMARY, SEEDS[:N_SEEDS_FULL])

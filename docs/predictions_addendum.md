@@ -124,3 +124,27 @@ Secondary, reported without a threshold: xi = 0.1 against the other two, success
 box-edge share and in-well share after evaluation 10, the evaluation of the first well sample (0 by construction), and the
 fitted lengthscale after the first 20 evaluations. Limits stated now: the arms differ from the real runs in having ~290 evaluations
 after the first well sample instead of ~150; the xi grid has three points; one landscape.
+
+## BO7 to BO9: BO fitting settings, one at a time (added 2026-10-28, before the runs)
+
+Written after Exp 4, its follow-ups and BO6 were seen, so they are not blind to the BO story so far; they are fixed before any
+`exp6` arm other than `bo_map` has run. `bo_map` (all settings changed together) stays as a reference and is not part of these
+tests. Each arm differs from `bo_default` in exactly one setting (checked by a test). Grids were fixed from the landscape (box
+width 10, well width 0.3), not from results. One detail: when the lengthscale cap is below 4 domain units, the lengthscale start
+becomes cap / 2 instead of 2, so that it starts inside the allowed interval. The earlier lengthscale discussion (cause or
+symptom) is in the sections above (BO2, BO3).
+
+| ID | Prediction | Supported if | Contradicted if | Tested in |
+|---|---|---|---|---|
+| BO7 | The long fitted lengthscale is a symptom, not the cause, of BO's failure to find the well. Capping the lengthscale at 5, 2, 1, 0.5 or 0.25 domain units does not raise success. The tightest caps (0.5, 0.25, near or below the well width) make the GP uninformative about the bowl and do not help either | No cap arm's Newcombe 95% interval for the difference from `bo_default` is entirely above zero | At least one cap arm's interval is entirely above zero (over-smoothing then contributes to the failure) | Exp 6 (cap arms) |
+| BO8 | Fixed noise does not raise success: a noise variance of 1e-3, 1e-2, 1e-1 or 1 (standardised units) does not make BO find the well more often than noise 1e-6. At noise 1 the GP treats all the variance as noise and cannot resolve the well | No noise arm's interval is entirely above zero; the noise = 1 arm is not above the baseline | At least one noise arm's interval is entirely above zero | Exp 6 (noise arms) |
+| BO9 | Neither a fitted noise level alone nor BoTorch's lengthscale prior alone changes BO's success, because before the first well sample the data show a smooth bowl, so no fitting recipe has a reason to shorten the lengthscale or to treat the data as noisy | Both arms' intervals include zero | Either arm's interval is entirely above zero | Exp 6 (learned-noise and prior arms) |
+
+For all three the primary measure is the Newcombe difference in success from `bo_default` (50 seeds, so a modest effect can
+go undetected: say so). Reported alongside without a threshold: the fraction of runs that sample inside the well, success given
+a well sample, and the fitted lengthscale before the first well sample. Fitted noise is not logged in the run files, so BO9 is
+judged on success only. The reading across Exp 6: if every single-factor arm and `bo_map` give no gain, the fitting recipe is
+not what limits BO here; if one arm helps and `bo_map` does not, settings interact.
+
+Current numbering (2026-10-28): BO3 (`bo_map`) and BO7 to BO9 are tested in Exp 6; BO4 (kernels) in Exp 7; H5 in Exp 8; CMA3 in
+Exp 9; H6, M3 and BO5 in Exp 10.

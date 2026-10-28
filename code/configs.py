@@ -7,7 +7,7 @@ from __future__ import annotations
 # Seed lists are fixed in advance and only ever extended by appending.
 SEEDS = list(range(1000, 1200))        # experiment seeds; full runs use a prefix
 PILOT_SEEDS = list(range(9000, 9200))  # epsilon pilot (random sampling only)
-FRESH_SEEDS = list(range(2000, 2050))  # Exp 8 best-variant line only (selection rule in pilot_log.md)
+FRESH_SEEDS = list(range(2000, 2050))  # Exp 9 best-variant line only (selection rule in pilot_log.md)
 
 N_FULL, N_FAST = 300, 100
 N_LONG = 1500   # Exp 1 side check only (CMA-ES, never plotted on BO axes)
@@ -65,8 +65,24 @@ CONFIGS: dict[str, dict] = {
     "bo_o_xi0": dict(BO_BASE, x_init_from_well=0.2),
     "bo_o_xi0.1": dict(BO_BASE, xi=0.1, x_init_from_well=0.2),
     "bo_o_xi2": dict(BO_BASE, xi=2.0, x_init_from_well=0.2),
-    # Exp 6: BO surrogate (baseline is bo_default = Matern-5/2). bo_map was run with Exp 4 and is reported here
-    "bo_map": dict(BO_BASE, gp="map_default"),  # lengthscale prior AND learned noise: not a one-factor change
+    # Exp 6: BO fitting settings, one at a time (baseline is bo_default: MLE, lengthscale in [0.05, 20], noise 1e-6).
+    # Grids fixed 2026-10-28 from the landscape (box width 10, well width 0.3), before any of these ran.
+    # Lengthscale upper cap in domain units; the lengthscale start becomes min(2, cap / 2) when the cap is below 4.
+    "bo_cap5": dict(BO_BASE, ls_cap=5.0),
+    "bo_cap2": dict(BO_BASE, ls_cap=2.0),
+    "bo_cap1": dict(BO_BASE, ls_cap=1.0),
+    "bo_cap0.5": dict(BO_BASE, ls_cap=0.5),
+    "bo_cap0.25": dict(BO_BASE, ls_cap=0.25),
+    # Fixed noise variance in standardised units (baseline 1e-6)
+    "bo_noise1e-3": dict(BO_BASE, noise=1e-3),
+    "bo_noise1e-2": dict(BO_BASE, noise=1e-2),
+    "bo_noise1e-1": dict(BO_BASE, noise=1e-1),
+    "bo_noise1": dict(BO_BASE, noise=1.0),
+    "bo_noise_learned": dict(BO_BASE, gp="mle_learned_noise"),  # noise fitted (no prior) in [1e-6, 1]
+    "bo_ls_prior": dict(BO_BASE, gp="mle_ls_prior"),  # BoTorch's lengthscale prior alone; noise fixed, bounds kept
+    # Reference, not a one-factor arm (run with Exp 4): BoTorch's default recipe, every setting above changed together
+    "bo_map": dict(BO_BASE, gp="map_default"),  # lengthscale prior, learned noise with prior, no bounds, MAP fit
+    # Exp 7: BO kernel type (baseline is bo_default = Matern-5/2)
     "bo_k_m32": dict(BO_BASE, kernel="matern32"),
     "bo_k_m12": dict(BO_BASE, kernel="matern12"),
     "bo_k_rbf": dict(BO_BASE, kernel="rbf"),
@@ -89,13 +105,16 @@ EXPERIMENTS = {
                  landscapes=[PRIMARY]),
     "exp5": dict(configs=["bo_default", "bo_lcb_b0.5", "bo_lcb_b2", "bo_lcb_b8", "bo_lcb_b32", "bo_ts"],
                  landscapes=[PRIMARY]),
-    "exp6": dict(configs=["bo_default", "bo_map", "bo_k_m32", "bo_k_m12", "bo_k_rbf"], landscapes=[PRIMARY]),
+    "exp6": dict(configs=["bo_default", "bo_cap5", "bo_cap2", "bo_cap1", "bo_cap0.5", "bo_cap0.25", "bo_noise1e-3",
+                          "bo_noise1e-2", "bo_noise1e-1", "bo_noise1", "bo_noise_learned", "bo_ls_prior", "bo_map"],
+                 landscapes=[PRIMARY]),
+    "exp7": dict(configs=["bo_default", "bo_k_m32", "bo_k_m12", "bo_k_rbf"], landscapes=[PRIMARY]),
     # Exp 4 and Exp 5 were launched as one batch (--exp exp4_5) before the split; bo_map in the same batch
     "exp4_oracle": dict(configs=["bo_o_xi0", "bo_o_xi0.1", "bo_o_xi2"], landscapes=[PRIMARY]),
     "exp4_5": dict(configs=["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_ei_xi0.5", "bo_ei_xi1", "bo_ei_xi2",
                             "bo_lcb_b0.5", "bo_lcb_b2", "bo_lcb_b8", "bo_lcb_b32", "bo_ts", "bo_map"],
                    landscapes=[PRIMARY]),
-    "exp8_baseline": dict(configs=["cma_default", "bo_default", "random"],
+    "exp9_baseline": dict(configs=["cma_default", "bo_default", "random"],
                           # near well only at w <= 0.3: at w >= 0.6 its basin merges with the decoy
                           landscapes=[f"primary_far_w{w}" for w in (0.1, 0.3, 0.6, 1.0)]
                                      + [f"primary_near_w{w}" for w in (0.1, 0.3)]),
