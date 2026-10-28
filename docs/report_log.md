@@ -267,6 +267,31 @@ conditions of BO6 both met (statuses are the user's). Descriptive, uncontrolled 
 whatever the discovery; for moderate xi the failure depends on how the well was found. Hypothesis (unresolved): lengthscale at
 discovery (0.85 early vs 2-5 late); against it, the within-run comparison. Raw runs: `results/archive/raw_bo_exp4_oracle.zip`.
 
+### Open question after BO6 (kept for the report: explains why follow-up experiments were chosen), 2026-10-28
+
+**Question.** EI with xi = 0.1 refines a well handed to it at evaluation 0 (44/50, BO6 oracle) but not one it finds late,
+around evaluation 160 (17 of the 45 Exp 4 runs that touched the well). xi = 2 fails in both situations; xi = 0 refines a given
+well (46/50) and almost never finds one. So what differs between an early and a late well sample at moderate xi?
+
+**Ruled out, mostly.**
+- *Running out of budget:* late finders still had about 150 evaluations left, and successful oracle runs reached epsilon at
+  a median of about evaluation 25.
+- *xi alone:* the same xi = 0.1 appears in both cases.
+
+**Candidate explanations, none confirmed.**
+1. *GP lengthscale at the time of discovery:* about 0.85 in the oracle runs, already 2-5 after a late discovery, so one well
+   sample may be smoothed away. Evidence against it as the whole story: within the real xi = 0.1 runs the lengthscale after
+   the first well sample was the same for successful and failed runs (2.1 vs 2.0).
+2. *Overall GP state at discovery:* by evaluation 150 the GP has many edge samples and has explored for a long time, so a
+   single deep point may look like an outlier. Not measured.
+3. *How late discoveries happen:* the first well sample of a late run may be a rim sample reached while exploring, unlike the
+   oracle's deliberate sample 0.2 from the centre. Not measured.
+
+**A test that would separate them (not run, not pre-registered).** Hand over the well late: replace the sample at
+evaluation 150 by one 0.2 from the well centre, for xi = 0.1, 50 seeds, about 12 minutes. Compare with the early
+handover (44/50) and the real late finders (17/45). Success like the early handover points to how the well was found
+(explanation 3); failure like the real late runs points to the late GP state (explanations 1 and 2).
+
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
 
 - **Both default optimisers are near random-search level on the primary landscape (Exp 0).** CMA-ES 0/50 is
