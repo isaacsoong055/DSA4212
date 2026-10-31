@@ -184,7 +184,11 @@ def bo_discovery(configs: list[str], landscape: str, seeds: list[int], raw_dir: 
                          pre_touch_lengthscale=r.pre_ls.median(), edge_share=r.edge.mean()))
     out = pd.DataFrame(rows)
     b = out[out.config_id == baseline].iloc[0]
-    diff = [newcombe_diff(int(b.success), int(b.n), int(r.success), int(r.n)) for r in out.itertuples()]
+
+    def base_for(cid):  # kernels run at lengthscale cap 1 are compared with bo_cap1 when it is present
+        alt = out[out.config_id == "bo_cap1"]
+        return alt.iloc[0] if cid.startswith("bo_k_") and cid.endswith("_cap1") and len(alt) else b
+    diff = [newcombe_diff(int(base_for(r.config_id).success), int(b.n), int(r.success), int(r.n)) for r in out.itertuples()]
     out[["diff_vs_baseline", "diff_lo", "diff_hi"]] = diff
     out_dir.mkdir(parents=True, exist_ok=True)
     out.to_csv(out_dir / "bo_discovery.csv", index=False)

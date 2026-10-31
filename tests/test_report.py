@@ -46,7 +46,7 @@ def test_newcombe_matches_published_example():
 def test_predictions_parse_all_ids():
     ids = list(report.load_predictions()["ID"])
     assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "BO1", "BO2", "BO3", "BO4", "BO5",
-                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5", "BO6", "BO7", "BO8", "BO9"]
+                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5", "BO6", "BO7", "BO8", "BO9", "BO10"]
 
 
 def test_ratio_config_scales_sigma_and_start_with_the_well():
@@ -205,6 +205,15 @@ def test_exp6_cap_and_noise_change_only_their_own_setting():
     assert base.covar_module.base_kernel.raw_lengthscale_constraint.upper_bound.item() == pytest.approx(2.0)
     assert cap.covar_module.base_kernel.raw_lengthscale_constraint.upper_bound.item() == pytest.approx(0.025)
     assert cap.covar_module.base_kernel.lengthscale.max().item() < 0.025  # starts inside the interval
+
+
+def test_exp7_arms_differ_from_their_matern52_baseline_in_exactly_one_setting():
+    for cid in EXPERIMENTS["exp7"]["configs"]:
+        if cid in ("bo_default", "bo_cap1"):
+            continue
+        base = CONFIGS["bo_cap1" if cid.endswith("_cap1") else "bo_default"]
+        diff = {k for k in set(base) | set(CONFIGS[cid]) if base.get(k) != CONFIGS[cid].get(k)}
+        assert diff == {"kernel"}, (cid, diff)
 
 
 def test_exp6_arms_differ_from_the_baseline_in_exactly_one_setting():

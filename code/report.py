@@ -34,7 +34,7 @@ LABEL = {"cma_default": "default (λ=6)", "cma_lam12": "λ=12", "cma_lam24": "λ
          "bo_lcb_b0.5": "LCB β=0.5", "bo_lcb_b2": "LCB β=2", "bo_lcb_b8": "LCB β=8", "bo_lcb_b32": "LCB β=32", "bo_ts": "Thompson",
          "bo_map": "BoTorch default recipe (MAP)", "bo_cap5": "ls cap 5", "bo_cap2": "ls cap 2", "bo_cap1": "ls cap 1", "bo_cap0.5": "ls cap 0.5",
          "bo_cap0.25": "ls cap 0.25", "bo_noise1e-3": "noise 1e-3", "bo_noise1e-2": "noise 1e-2", "bo_noise1e-1": "noise 1e-1", "bo_noise1": "noise 1",
-         "bo_noise_learned": "noise learned", "bo_ls_prior": "ls prior", "bo_o_xi0": "oracle EI ξ=0", "bo_o_xi0.1": "oracle EI ξ=0.1", "bo_o_xi2": "oracle EI ξ=2", "bo_k_m32": "Matern-3/2", "bo_k_m12": "Matern-1/2", "bo_k_rbf": "RBF", "random": "random"}
+         "bo_noise_learned": "noise learned", "bo_ls_prior": "ls prior", "bo_o_xi0": "oracle EI ξ=0", "bo_o_xi0.1": "oracle EI ξ=0.1", "bo_o_xi2": "oracle EI ξ=2", "bo_k_m32": "Matern-3/2", "bo_k_m12": "Matern-1/2", "bo_k_rbf": "RBF", "bo_k_m32_cap1": "Matern-3/2, cap 1", "bo_k_m12_cap1": "Matern-1/2, cap 1", "bo_k_rbf_cap1": "RBF, cap 1", "random": "random"}
 ORDER = ["exp0", "exp1", "exp2", "exp3", "exp3_oracle", "exp3_ratio", "exp4", "exp5", "exp6", "exp7", "exp8", "exp9_baseline", "exp10"]
 EXP_TITLE = {"exp0": "Exp 0: baselines", "exp1": "Exp 1: population size", "exp2": "Exp 2: restarts", "exp3": "Exp 3: CMA-ES initial step size (random start)",
              "exp3_oracle": "Exp 3: CMA-ES initial step size (oracle start 1.0 from the well)",
@@ -587,7 +587,7 @@ def long_budget_card(M: Mode) -> None:
     display(pd.DataFrame(rows, columns=cols).style.hide(axis="index"))
 
 
-def _success_card(exp: str, baseline: str, M: Mode) -> None:
+def _success_card(exp: str, baseline: str, M: Mode, extra_baseline: str | None = None) -> None:
     runs = main_runs(M)
     configs = EXPERIMENTS[exp]["configs"]
     if runs is None or _sub(runs, configs, PRIMARY).empty:
@@ -596,7 +596,13 @@ def _success_card(exp: str, baseline: str, M: Mode) -> None:
     tab = success_bars(ax, runs, configs, PRIMARY)
     ax.set_title(f"{EXP_TITLE[exp]}, {PRIMARY}, n = {int(tab['n'].min())}-{int(tab['n'].max())} seeds")
     _finish(fig, f"nb_5_{exp}", M)
-    display(effect_table(runs, configs, PRIMARY, baseline).style.hide(axis="index"))
+    if extra_baseline is None:
+        display(effect_table(runs, configs, PRIMARY, baseline).style.hide(axis="index"))
+        return
+    # two groups, each compared with its own Matern-5/2 baseline
+    capped = [c for c in configs if c == extra_baseline or c.endswith("_cap1")]
+    display(effect_table(runs, [c for c in configs if c not in capped or c == baseline], PRIMARY, baseline).style.hide(axis="index"))
+    display(effect_table(runs, capped, PRIMARY, extra_baseline).style.hide(axis="index"))
 
 
 def exp9_figure(M: Mode, best: dict | None = None) -> None:
@@ -747,7 +753,9 @@ def experiment_card(exp: str, M: Mode) -> None:
         _success_card(exp, "cma_o_sig2", M)
     elif exp == "exp3_ratio":
         ratio_figure(M)
-    elif exp in ("exp4", "exp5", "exp6", "exp7"):
+    elif exp == "exp7":
+        _success_card(exp, "bo_default", M, extra_baseline="bo_cap1")
+    elif exp in ("exp4", "exp5", "exp6"):
         _success_card(exp, "bo_default", M)
     elif exp == "exp8":
         regret_figure(M, exp)

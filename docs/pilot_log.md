@@ -588,3 +588,10 @@ sphere, Exp 9 width (`exp9_baseline`), Exp 10 validation (`exp10`); earlier text
 `_build_gp(..., cfg)` reads `ls_cap`, `noise` and the new `gp` values `mle_learned_noise` and `mle_ls_prior`; the default path is
 unchanged (checked: `bo_default` and `bo_ei_xi0.1` reproduce saved runs to 4e-16 over 25 evaluations). Predictions BO7 to BO9 are in
 `docs/predictions_addendum.md`, committed before any new arm runs. 11 new arms, about 10 minutes each.
+
+
+## Amendment 2026-10-31: Exp 7 doubled (kernels at the default cap and at cap 1)
+
+After Exp 6 (lengthscale cap 1 gives 39/50), Exp 7 runs each kernel at the default cap (BO4) and at cap 1 (BO10, pre-registered in
+`docs/predictions_addendum.md` before the runs). New configs `bo_k_m32_cap1`, `bo_k_m12_cap1`, `bo_k_rbf_cap1`; baseline for them is the
+existing `bo_cap1` (no re-run). The earlier plan of three default-cap kernels is unchanged. Same seeds, N, landscape.

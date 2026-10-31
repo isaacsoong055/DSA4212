@@ -86,6 +86,10 @@ CONFIGS: dict[str, dict] = {
     "bo_k_m32": dict(BO_BASE, kernel="matern32"),
     "bo_k_m12": dict(BO_BASE, kernel="matern12"),
     "bo_k_rbf": dict(BO_BASE, kernel="rbf"),
+    # Exp 7 at lengthscale cap 1 (added 2026-10-31 after Exp 6; baseline is bo_cap1 = Matern-5/2 with cap 1)
+    "bo_k_m32_cap1": dict(BO_BASE, kernel="matern32", ls_cap=1.0),
+    "bo_k_m12_cap1": dict(BO_BASE, kernel="matern12", ls_cap=1.0),
+    "bo_k_rbf_cap1": dict(BO_BASE, kernel="rbf", ls_cap=1.0),
 }
 
 PRIMARY = "primary_far_w0.3"
@@ -108,7 +112,8 @@ EXPERIMENTS = {
     "exp6": dict(configs=["bo_default", "bo_cap5", "bo_cap2", "bo_cap1", "bo_cap0.5", "bo_cap0.25", "bo_noise1e-3",
                           "bo_noise1e-2", "bo_noise1e-1", "bo_noise1", "bo_noise_learned", "bo_ls_prior", "bo_map"],
                  landscapes=[PRIMARY]),
-    "exp7": dict(configs=["bo_default", "bo_k_m32", "bo_k_m12", "bo_k_rbf"], landscapes=[PRIMARY]),
+    "exp7": dict(configs=["bo_default", "bo_k_m32", "bo_k_m12", "bo_k_rbf",
+                          "bo_cap1", "bo_k_m32_cap1", "bo_k_m12_cap1", "bo_k_rbf_cap1"], landscapes=[PRIMARY]),
     # Exp 4 and Exp 5 were launched as one batch (--exp exp4_5) before the split; bo_map in the same batch
     "exp4_oracle": dict(configs=["bo_o_xi0", "bo_o_xi0.1", "bo_o_xi2"], landscapes=[PRIMARY]),
     "exp4_5": dict(configs=["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_ei_xi0.5", "bo_ei_xi1", "bo_ei_xi2",

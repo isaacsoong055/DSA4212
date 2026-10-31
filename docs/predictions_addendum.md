@@ -148,3 +148,17 @@ not what limits BO here; if one arm helps and `bo_map` does not, settings intera
 
 Current numbering (2026-10-28): BO3 (`bo_map`) and BO7 to BO9 are tested in Exp 6; BO4 (kernels) in Exp 7; H5 in Exp 8; CMA3 in
 Exp 9; H6, M3 and BO5 in Exp 10.
+
+
+## BO10: kernel type at lengthscale cap 1 (added 2026-10-31, before the runs)
+
+Exp 7 now runs each kernel twice: at the default lengthscale cap (20; tests BO4 above, unchanged) and at cap 1, the best cap of Exp 6.
+The cap-1 baseline is `bo_cap1` (Matern-5/2, cap 1, 39/50 in Exp 6); each cap-1 kernel differs from it in the kernel only. Seeds 1000-1049,
+N = 300, same as before. Added after seeing Exp 6, so this prediction is conditional on that result.
+
+| ID | Prediction | Supported if | Contradicted if | Test |
+|---|---|---|---|---|
+| BO10 | With the lengthscale capped at 1 every kernel sweeps the box and, once the well is sampled, refines it, so kernel type does not change success | Newcombe 95% intervals of the difference from `bo_cap1` for Matern-3/2, Matern-1/2 and RBF all include zero | At least one kernel's interval is entirely above or below zero | Exp 7 (cap-1 arms) |
+
+Notes: lengthscale values are not comparable across kernels, and a cap of 1 domain unit means a different smoothness for each kernel. The
+success-given-touch rate is reported separately. Statuses stay the user's.
