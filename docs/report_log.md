@@ -297,6 +297,18 @@ evaluation 150 by one 0.2 from the well centre, for xi = 0.1, 50 seeds, about 12
 handover (44/50) and the real late finders (17/45). Success like the early handover points to how the well was found
 (explanation 3); failure like the real late runs points to the late GP state (explanations 1 and 2).
 
+
+### Exp 6: BO fitting settings, one at a time (full, 2026-10-31, seeds 1000-1049, N = 300; archive `raw_bo_exp6.zip`)
+
+Success /50 (diff vs bo_default 5/50, Newcombe 95%): cap5 11 (+0.12 [-0.03,+0.26]); cap2 28 (+0.46 [+0.28,+0.60]); cap1 39 (+0.68 [+0.51,+0.79]); cap0.5 22 (+0.34 [+0.17,+0.49]); cap0.25 6 (+0.02); noise 1e-3/1e-2/1e-1/1: 4/3/1/0 (noise 1: -0.10 [-0.21,-0.01]); learned noise 4; lengthscale prior 5; bo_map (reference) 4.
+- BO7 (cap does not help) contradicted: caps 2, 1, 0.5 wholly above zero. BO8, BO9 consistent. Statuses are the user's.
+- Touched the well: 12, 29, 41, 24, 6 for caps 5..0.25 (default 5). Success given touched-by-search: cap1 36/38, cap2 26/26.
+- Lengthscale median = cap in every cap arm (cap binds). Exploratory (post hoc, from saved runs, no new runs): distinct 1x1 cells visited after the initial design, of 100: default 10, cap5 39, cap2 92, cap1 ~102, cap0.5 58, cap0.25 27. First well sample by search, median eval: 128, 177, 218, 231 (caps 5, 2, 1, 0.5); cap1 quartiles 147/202/251.
+- Reading: default BO fails at discovery because the lengthscale runs to its bound (20) and the search stays near the bowl centre; a cap makes it sweep the box, and refinement then works (finding vs refining, see Exp 4 follow-ups). Acquisition tuning (Exps 4-5) gave at most 17/50; the cap alone gives 39/50.
+- Hypothesis (untested): cap near/below w (0.25 vs w=0.3) makes the GP so local it clusters around observed points. Confound to state: for caps < 4 the lengthscale start is cap/2.
+- Caveats: one landscape/w; best-of-five-caps selection means 39/50 is optimistic (fresh seeds would be needed); fitted noise not logged.
+- Possible follow-ups (not run, need the user's OK): cap 1 + EI xi=0.1 (do the two fixes add or overlap?); cap sweep at another w; cap-aware CMA-ES comparison; check whether kernels (Exp 7) should be run at cap 1 too.
+
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
 
 - **Both default optimisers are near random-search level on the primary landscape (Exp 0).** CMA-ES 0/50 is
