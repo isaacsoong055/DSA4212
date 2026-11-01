@@ -20,7 +20,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent / "code"))
 
 from configs import (CONFIGS, EXPERIMENTS, LONG_EXPERIMENTS, N_FAST, N_FULL, N_LONG, N_SEEDS_FAST,  # noqa: E402
-                     N_SEEDS_FULL, SEEDS)
+                     N_SEEDS_FULL, SEEDS, FRESH_SEEDS)
 from logging_utils import RAW_DIR, run_path  # noqa: E402
 
 
@@ -48,7 +48,10 @@ def run_one(config_id: str, landscape: str, seed: int, N: int, raw_dir: str) -> 
 def build_jobs(args) -> list[tuple[str, str, int]]:
     table = LONG_EXPERIMENTS if args.long else EXPERIMENTS
     exps = [args.exp] if args.exp else list(table)
-    seeds = SEEDS[: args.seeds or (N_SEEDS_FAST if args.fast else N_SEEDS_FULL)]
+    if args.fresh:
+        seeds = FRESH_SEEDS[: args.seeds or N_SEEDS_FULL]
+    else:
+        seeds = SEEDS[: args.seeds or (N_SEEDS_FAST if args.fast else N_SEEDS_FULL)]
     jobs = set()
     for e in exps:
         for c in table[e]["configs"]:
@@ -81,6 +84,8 @@ def main():
     p.add_argument("--exp", choices=list(EXPERIMENTS) + list(LONG_EXPERIMENTS))
     p.add_argument("--method", choices=["cmaes", "bo", "random"])
     p.add_argument("--landscape")
+    p.add_argument("--fresh", action="store_true",
+                   help="use the fresh seeds 2000-2049 (best-variant line of Exp 8 only; combine with --full)")
     p.add_argument("--seeds", type=int, help="override number of seeds (prefix of SEEDS)")
     p.add_argument("--workers", type=int, default=6)
     args = p.parse_args()

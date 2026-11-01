@@ -7,7 +7,7 @@ from __future__ import annotations
 # Seed lists are fixed in advance and only ever extended by appending.
 SEEDS = list(range(1000, 1200))        # experiment seeds; full runs use a prefix
 PILOT_SEEDS = list(range(9000, 9200))  # epsilon pilot (random sampling only)
-FRESH_SEEDS = list(range(2000, 2050))  # Exp 9 best-variant line only (selection rule in pilot_log.md)
+FRESH_SEEDS = list(range(2000, 2050))  # Exp 8 best-variant line only (selection rule in pilot_log.md)
 
 N_FULL, N_FAST = 300, 100
 N_LONG = 1500   # Exp 1 side check only (CMA-ES, never plotted on BO axes)
@@ -119,10 +119,15 @@ EXPERIMENTS = {
     "exp4_5": dict(configs=["bo_default", "bo_ei_xi0.01", "bo_ei_xi0.1", "bo_ei_xi0.5", "bo_ei_xi1", "bo_ei_xi2",
                             "bo_lcb_b0.5", "bo_lcb_b2", "bo_lcb_b8", "bo_lcb_b32", "bo_ts", "bo_map"],
                    landscapes=[PRIMARY]),
-    "exp9_baseline": dict(configs=["cma_default", "bo_default", "random"],
+    "exp8_baseline": dict(configs=["cma_default", "bo_default", "random"],
                           # near well only at w <= 0.3: at w >= 0.6 its basin merges with the decoy
                           landscapes=[f"primary_far_w{w}" for w in (0.1, 0.3, 0.6, 1.0)]
                                      + [f"primary_near_w{w}" for w in (0.1, 0.3)]),
+    # Best-variant line (fresh seeds 2000-2049, run with --fresh): the selected CMA-ES and BO settings and their defaults,
+    # re-run on the same landscapes (selection rule: pilot_log.md, amendment 2026-11-01).
+    "exp8_best": dict(configs=["cma_default", "cma_sig1", "bo_default", "bo_cap1"],
+                      landscapes=[f"primary_far_w{w}" for w in (0.1, 0.3, 0.6, 1.0)]
+                                 + [f"primary_near_w{w}" for w in (0.1, 0.3)]),
 }
 
 # Side check for Exp 1 (decided 2026-10-25, see pilot_log.md): the same three lambda settings at a 5x budget, so a

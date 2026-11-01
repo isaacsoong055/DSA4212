@@ -46,7 +46,7 @@ def test_newcombe_matches_published_example():
 def test_predictions_parse_all_ids():
     ids = list(report.load_predictions()["ID"])
     assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "BO1", "BO2", "BO3", "BO4", "BO5",
-                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5", "BO6", "BO7", "BO8", "BO9", "BO10"]
+                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5", "BO6", "BO7", "BO8", "BO9", "BO10", "BO11", "BO12"]
 
 
 def test_ratio_config_scales_sigma_and_start_with_the_well():
@@ -85,10 +85,10 @@ def quiet(monkeypatch):
 @smoke
 def test_regret_and_lambda_gain_figures_run(quiet, monkeypatch):
     cfgs = ["cma_default", "cma_lam12", "cma_lam24"]
-    monkeypatch.setitem(EXPERIMENTS, "exp8", dict(configs=cfgs, landscapes=[PRIMARY]))
+    monkeypatch.setitem(EXPERIMENTS, "exp9", dict(configs=cfgs, landscapes=[PRIMARY]))
     monkeypatch.setitem(EXPERIMENTS, "exp10", dict(configs=cfgs, landscapes=[PRIMARY, "primary_far_w1.0"]))
     M = report.Mode(True)
-    report.experiment_card("exp8", M)
+    report.experiment_card("exp9", M)
     report.experiment_card("exp10", M)
 
 
@@ -105,10 +105,10 @@ def test_expE_best_variant_uses_only_fresh_seeds(quiet, monkeypatch):
 
     drawn = []
     monkeypatch.setattr(report.plt.Axes, "errorbar", lambda self, *a, **k: drawn.append(k.get("label")))
-    report.exp9_figure(FakeMode(True), best={"cmaes": "cma_lam12"})
+    report.exp8_figure(FakeMode(True), best={"cmaes": "cma_lam12"})
     assert any(l and "best variant" in l for l in drawn)
     drawn.clear()
-    report.exp9_figure(M, best={"cmaes": "cma_lam12"})  # no fresh seeds on disk: no best-variant line
+    report.exp8_figure(M, best={"cmaes": "cma_lam12"})  # no fresh seeds on disk: no best-variant line
     assert not any(l and "best variant" in l for l in drawn)
 
 
@@ -126,9 +126,9 @@ def test_card_not_drawn_when_settings_missing(quiet, monkeypatch):
     messages, figs = [], []
     monkeypatch.setattr(report, "not_run", lambda exp, M, why="": messages.append((exp, why)))
     monkeypatch.setattr(report, "_finish", lambda *a, **k: figs.append(a[1]))
-    for exp in ("exp1", "exp2", "exp4", "exp9_baseline"):
+    for exp in ("exp1", "exp2", "exp4", "exp8_baseline"):
         report.experiment_card(exp, FakeMode(True))
-    assert [m[0] for m in messages] == ["exp1", "exp2", "exp4", "exp9_baseline"] and not figs
+    assert [m[0] for m in messages] == ["exp1", "exp2", "exp4", "exp8_baseline"] and not figs
     report.experiment_card("exp1", M)  # all settings exist in the smoke data: drawn
     assert figs == ["nb_5_exp1"]
 

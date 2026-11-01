@@ -34,7 +34,7 @@ untested is labelled *hypothesis*.
 - **Experiments** are numbered in run order and grouped by method: Exp 0 baselines; CMA-ES block: Exp 1 population
   size, Exp 2 restarts; BO block: Exp 4 explore/exploit inside EI (xi), Exp 5 acquisition family (LCB, Thompson), Exp 6 BO fitting
   settings (lengthscale cap, noise, one at a time; `bo_map` is the all-at-once reference), Exp 7 kernel type; both methods: Exp 8
-  unimodal control, Exp 9 landscape knobs, Exp 10 validation. (Renumbered again 2026-10-28 when the fitting settings
+  landscape knobs (width sweep), Exp 9 unimodal control, Exp 10 validation (Exps 8 and 9 swapped 2026-11-01 so the width sweep comes first). (Renumbered again 2026-10-28 when the fitting settings
   were added before the kernels. Renamed 2026-10-25
   from A, B, C, D, E, V; there was no Exp F. Exp 4 was split in three on 2026-10-28, after its runs finished, and the
   later experiments moved up by one. Older sections of `pilot_log.md` and `predictions_addendum.md` use the earlier numbers.)
@@ -66,8 +66,8 @@ from firing rates only, BO lengthscale upper bound 20, start x0 ~ U[-4,4]^2 and 
 **Design in one line each.** Exp 0 baselines. Exp 1 lambda 1x/2x/4x. Exp 2 none/IPOP/BIPOP. Exp 4 BO explore/exploit
 (EI xi in {0, 0.01, 0.1, 0.5, 1, 2}). Exp 5 acquisition family (LCB beta in {0.5, 2, 8, 32}, Thompson sampling). Exp 6 BO
 fitting settings (lengthscale cap in {5, 2, 1, 0.5, 0.25}, fixed noise in {1e-3, 1e-2, 1e-1, 1}, learned noise, lengthscale prior; `bo_map` as an
-all-at-once reference). Exp 7 kernels (Matern-5/2, 3/2, 1/2, RBF). Exp 8 sphere control. Exp 9 basin width w in {0.1, 0.3, 0.6, 1.0},
-near vs far (near only for w <= 0.3). Exp 10 Rastrigin and Schwefel validation, CMA-ES and BO separately. One factor at a time, same seeds, N = 300.
+all-at-once reference). Exp 7 kernels (Matern-5/2, 3/2, 1/2, RBF). Exp 8 basin width w in {0.1, 0.3, 0.6, 1.0},
+near vs far (near only for w <= 0.3). Exp 9 sphere control. Exp 10 Rastrigin and Schwefel validation, CMA-ES and BO separately. One factor at a time, same seeds, N = 300.
 
 **Pre-registration trail (use in the report as evidence of rigour).**
 - `docs/predictions.md` committed 2026-10-22 (H1-H6, M1-M3), before any CMA-ES or BO success result.
@@ -330,7 +330,7 @@ Success /50, diff vs the same-row Matern-5/2 baseline (Newcombe 95%): default ca
   distribution, because floating-point differences compound through the model-fitting loop. Paired comparisons are
   paired on starting conditions only."
 - **Schwefel epsilon = 5.0 is borderline** (exactly 5.0% random success).
-- **Exp 9 near well exists only for w <= 0.3** (basins merge at w >= 0.6).
+- **Exp 8 near well exists only for w <= 0.3** (basins merge at w >= 0.6).
 - *(Append: any contradicted prediction, any config slip or bug found and how it was resolved.)*
 
 ## 5. Limitations to state
@@ -353,7 +353,7 @@ axes; validation functions are two cases only; d = 5 check still to do.
 | `docs/figures/epsilon_check*.png` | epsilon threshold plots (appendix; markers ask) | ready |
 | `docs/figures/nb_5_exp{A,B,C,E}_fast.png` | smoke-test only, do not use | regenerate from full runs |
 
-Headline figure to produce: success vs w for baseline and best variant (Exp 9). Success vs lambda (Exp 1).
+Headline figure to produce: success vs w for baseline and best variant (Exp 8). Success vs lambda (Exp 1).
 
 ## 7. Reproducibility notes for the readme and the report
 

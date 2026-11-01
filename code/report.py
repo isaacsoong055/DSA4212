@@ -35,14 +35,14 @@ LABEL = {"cma_default": "default (λ=6)", "cma_lam12": "λ=12", "cma_lam24": "λ
          "bo_map": "BoTorch default recipe (MAP)", "bo_cap5": "ls cap 5", "bo_cap2": "ls cap 2", "bo_cap1": "ls cap 1", "bo_cap0.5": "ls cap 0.5",
          "bo_cap0.25": "ls cap 0.25", "bo_noise1e-3": "noise 1e-3", "bo_noise1e-2": "noise 1e-2", "bo_noise1e-1": "noise 1e-1", "bo_noise1": "noise 1",
          "bo_noise_learned": "noise learned", "bo_ls_prior": "ls prior", "bo_o_xi0": "oracle EI ξ=0", "bo_o_xi0.1": "oracle EI ξ=0.1", "bo_o_xi2": "oracle EI ξ=2", "bo_k_m32": "Matern-3/2", "bo_k_m12": "Matern-1/2", "bo_k_rbf": "RBF", "bo_k_m32_cap1": "Matern-3/2, cap 1", "bo_k_m12_cap1": "Matern-1/2, cap 1", "bo_k_rbf_cap1": "RBF, cap 1", "random": "random"}
-ORDER = ["exp0", "exp1", "exp2", "exp3", "exp3_oracle", "exp3_ratio", "exp4", "exp5", "exp6", "exp7", "exp8", "exp9_baseline", "exp10"]
+ORDER = ["exp0", "exp1", "exp2", "exp3", "exp3_oracle", "exp3_ratio", "exp4", "exp5", "exp6", "exp7", "exp8_baseline", "exp9", "exp10"]
 EXP_TITLE = {"exp0": "Exp 0: baselines", "exp1": "Exp 1: population size", "exp2": "Exp 2: restarts", "exp3": "Exp 3: CMA-ES initial step size (random start)",
              "exp3_oracle": "Exp 3: CMA-ES initial step size (oracle start 1.0 from the well)",
              "exp3_ratio": "Exp 3: CMA-ES step size relative to well width (ratio test)",
              "exp4": "Exp 4: BO explore/exploit (EI xi)", "exp5": "Exp 5: BO acquisition family",
              "exp6": "Exp 6: BO fitting settings (lengthscale cap, noise)", "exp7": "Exp 7: BO kernel type",
-             "exp8": "Exp 8: unimodal control",
-             "exp9_baseline": "Exp 9: basin width (baselines)", "exp10": "Exp 10: validation (Rastrigin, Schwefel)"}
+             "exp8_baseline": "Exp 8: basin width (baselines)", "exp8_best": "Exp 8: basin width (best-variant line, fresh seeds)",
+             "exp9": "Exp 9: unimodal control", "exp10": "Exp 10: validation (Rastrigin, Schwefel)"}
 
 
 @lru_cache(maxsize=None)
@@ -605,12 +605,12 @@ def _success_card(exp: str, baseline: str, M: Mode, extra_baseline: str | None =
     display(effect_table(runs, capped, PRIMARY, extra_baseline).style.hide(axis="index"))
 
 
-def exp9_figure(M: Mode, best: dict | None = None) -> None:
+def exp8_figure(M: Mode, best: dict | None = None) -> None:
     """Far and near panels on one y-axis, fixed epsilon, random reference. `best` maps a method to
     its selected config id; its line is drawn only from the fresh seeds (2000-2049)."""
     runs = M.table("runs")
     if runs is None:
-        return not_run("exp9_baseline", M)
+        return not_run("exp8_baseline", M)
     main = runs[runs["seed"].isin(SEEDS)]
     fresh = runs[runs["seed"].isin(FRESH_SEEDS)]
     panels = [("far", [0.1, 0.3, 0.6, 1.0]), ("near", [0.1, 0.3])]
@@ -645,9 +645,9 @@ def exp9_figure(M: Mode, best: dict | None = None) -> None:
     axes[0].legend(frameon=False, loc="upper left")
     if not drawn:
         plt.close(fig)
-        return not_run("exp9_baseline", M)
-    _finish(fig, "nb_5_exp9", M)
-    display(Markdown("*Only CMA3 (CMA-ES) is pre-registered for Exp 9; there is none for BO (see `docs/predictions_addendum.md`). Near-well cells at w = 0.6 and "
+        return not_run("exp8_baseline", M)
+    _finish(fig, "nb_5_exp8", M)
+    display(Markdown("*CMA3 (CMA-ES) and BO11, BO12 (BO) are pre-registered for Exp 8 (see `docs/predictions_addendum.md`). Near-well cells at w = 0.6 and "
                      "w = 1.0 are excluded because the near well's basin merges with the decoy there "
                      "(`docs/pilot_log.md`). Random sampling is the reference at each w.*"))
 
@@ -757,9 +757,9 @@ def experiment_card(exp: str, M: Mode) -> None:
         _success_card(exp, "bo_default", M, extra_baseline="bo_cap1")
     elif exp in ("exp4", "exp5", "exp6"):
         _success_card(exp, "bo_default", M)
-    elif exp == "exp8":
+    elif exp == "exp9":
         regret_figure(M, exp)
-    elif exp == "exp9_baseline":
-        exp9_figure(M)
+    elif exp == "exp8_baseline":
+        exp8_figure(M, best={"cmaes": "cma_sig1", "bo": "bo_cap1"})  # drawn only from the fresh seeds, once they exist
     elif exp == "exp10":
         _validation_card(M)

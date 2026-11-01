@@ -115,13 +115,13 @@ Experiments are numbered in the order they run and grouped by method (renamed 20
 | 5 | BO | Acquisition family | LCB with beta in {0.5, 2, 8, 32}; Thompson sampling; EI xi = 0 as baseline | Same as Exp 4 | A different factor from xi (the acquisition function itself) |
 | 6 | BO | Fitting settings | One at a time against `bo_default`: lengthscale upper cap in {5, 2, 1, 0.5, 0.25} domain units (baseline 20); fixed noise in {1e-3, 1e-2, 1e-1, 1} (baseline 1e-6); learned noise; BoTorch's lengthscale prior alone. Reference (not one-factor): `bo_map`, BoTorch's default recipe with every setting changed together | Success rate, success given a well sample, fitted lengthscale | Grids fixed 2026-10-28 from the landscape. The lengthscale start is min(2, cap / 2) when the cap is below 4. Tests BO7 to BO9 and BO3 (`bo_map`) |
 | 7 | BO | Kernel type | Matern-5/2 (baseline), Matern-3/2, Matern-1/2, RBF | Success rate, success given a well sample, fitted lengthscale | Run after Exp 6. Everything else at baseline. Tests BO4 |
-| 8 | both | Unimodal control | Best and worst settings from Exps 1-7 on the sphere, per method | Regret | Tests H5 |
-| 9 | both | Landscape knobs | w in {0.1, 0.3, 0.6, 1.0}; near vs far | Success vs w for the baseline and best variant of each method | Headline figure. Tests CMA3 (success rises as w approaches sigma0) |
+| 8 | both | Landscape knobs | w in {0.1, 0.3, 0.6, 1.0}; near vs far | Success vs w for the baseline and best variant of each method | Headline figure. Tests CMA3 (success rises as w approaches sigma0) |
+| 9 | both | Unimodal control | Best and worst settings from Exps 1-7 on the sphere, per method | Regret | Tests H5 |
 | 10 | both | Validation | Best and worst variant from Exps 1-7 on Rastrigin and Schwefel, CMA-ES and BO selected and evaluated separately, 20-30 seeds | Success rate | Tests H6 (CMA-ES) and BO5 (BO) |
 
 `bo_map` differs from `bo_default` in two things at once: a prior on the lengthscale (so it cannot sit at the bound) and a learned noise level instead of a fixed tiny one. It is therefore a different fitting recipe, not a single-factor change, and is reported as such.
 
-Prediction-to-experiment map: H1 (Exp 0), H2 and M1 (Exp 1), H3 and M2 (Exp 2), CMA1, CMA2, CMA4 and CMA5 (Exp 3), CMA3 (Exp 9), BO1 (Exp 0), H4 and BO2 (Exp 4), BO2 (also Exp 5), BO6 (Exp 4 oracle), BO3, BO7, BO8 and BO9 (Exp 6), BO4 (Exp 7), H5 (Exp 8), H6, M3 and BO5 (Exp 10). (Renumbered 2026-10-28; the addendum table keeps the original numbering.)
+Prediction-to-experiment map (current numbering 2026-11-01: width sweep is Exp 8, sphere Exp 9; BO11 and BO12 added, tested in Exp 8): H1 (Exp 0), H2 and M1 (Exp 1), H3 and M2 (Exp 2), CMA1, CMA2, CMA4 and CMA5 (Exp 3), CMA3 (Exp 8), BO1 (Exp 0), H4 and BO2 (Exp 4), BO2 (also Exp 5), BO6 (Exp 4 oracle), BO3, BO7, BO8 and BO9 (Exp 6), BO4 (Exp 7), H5 (Exp 9), H6, M3 and BO5 (Exp 10). (Renumbered 2026-10-28; the addendum table keeps the original numbering.)
 
 Budget note: keep N=300 for every CMA-ES vs BO comparison. A longer-budget CMA-ES-only run is fine for the large-lambda sweep, but never plot it on the same axes as BO.
 
@@ -200,7 +200,7 @@ If you fall behind, cut in this order:
 1. d=5 check
 2. Thompson sampling
 3. 8x and 16x lambda sweeps
-4. Exp 9 near-vs-far distance (keep the width sweep)
+4. Exp 8 near-vs-far distance (keep the width sweep)
 
 ## 12. Limitations and common pitfalls
 

@@ -595,3 +595,31 @@ unchanged (checked: `bo_default` and `bo_ei_xi0.1` reproduce saved runs to 4e-16
 After Exp 6 (lengthscale cap 1 gives 39/50), Exp 7 runs each kernel at the default cap (BO4) and at cap 1 (BO10, pre-registered in
 `docs/predictions_addendum.md` before the runs). New configs `bo_k_m32_cap1`, `bo_k_m12_cap1`, `bo_k_rbf_cap1`; baseline for them is the
 existing `bo_cap1` (no re-run). The earlier plan of three default-cap kernels is unchanged. Same seeds, N, landscape.
+
+
+## Amendment 2026-11-01: Exp 8 and 9 swapped, and the best/worst selection rule extended to the settings of Exps 3 to 7
+
+**Renumbering.** The width sweep is Exp 8 (`exp8_baseline` for the baselines on seeds 1000-1049, `exp8_best` for the best variant and its default on
+fresh seeds 2000-2049, run with `--fresh`), the unimodal control is Exp 9 (`exp9`), validation stays Exp 10. Earlier text in this file and in
+`predictions_addendum.md` uses the earlier numbers (width sweep was Exp 9, sphere Exp 8). Code keys: `exp9_baseline` became `exp8_baseline`.
+
+**Why the rule is extended.** The rule above (written 2026-10-22) lists candidates from the old Exps A-C only. Exps 3 to 7 added settings that
+did not exist then (CMA-ES sigma0; BO lengthscale caps, noise, learned noise, prior, kernels). Leaving them out would make the "best BO" of the
+headline figure a setting that is not the best BO setting measured. **This is a deviation from the pre-registered list, made after Exps 4 to 7 were
+seen.** The mechanical result of the original list is recorded for the report: best BO `bo_ei_xi0.1` (17/50), worst BO `bo_lcb_b0.5` (3/50, ties
+with `bo_ts`; broken toward default by the old order).
+
+**Extended rule (written before any width run on fresh seeds).**
+- Candidates, per method, from the random-start Exp 1-7 arms on `primary_far_w0.3`, seeds 1000-1049. CMA-ES: `cma_default`, `cma_lam12`,
+  `cma_lam24`, `cma_ipop`, `cma_bipop`, `cma_sig0.3`, `cma_sig0.5`, `cma_sig1`, `cma_sig4`. BO: the Exp 4, 5, 6 and 7 arms (EI xi, LCB, Thompson,
+  caps, fixed noise, learned noise, lengthscale prior, kernels, kernels at cap 1) and `bo_default`, `bo_map`. Excluded: the oracle arms
+  (`cma_o_*`, `bo_o_*`) and the ratio arms (`cma_ro_*`), which are diagnostics with a non-baseline start.
+- Best = highest success rate, worst = lowest. **Tie-break:** the candidate with the fewest settings changed from the method's default; if still
+  tied, the order the arms are listed in `code/configs.py`.
+- Outcome (applied on 2026-11-01 from `results/summary/success.csv`): **BO best `bo_cap1`** (39/50; tied with `bo_k_rbf_cap1` 39/50, broken
+  by one changed setting against two). **BO worst `bo_noise1`** (0/50, unique). **CMA-ES best `cma_sig1`** (1/50; unique, but one success out of 50
+  is within noise of the zeros, so this is a mechanical choice, not evidence that sigma0 = 1 helps). **CMA-ES worst `cma_default`** (many arms
+  at 0/50; the tie-break picks the default itself).
+- Evaluation: the best variant and its default are re-run on fresh seeds 2000-2049 on every Exp 8 landscape; the baseline-only curves stay on seeds
+  1000-1049. The best-variant line is never drawn from seeds 1000-1049. Exps 9 and 10 use the same best and worst variants. Cost note: the fresh
+  default BO re-run (about 300 runs) is required by this rule and roughly doubles the BO fresh-seed cost.

@@ -162,3 +162,19 @@ N = 300, same as before. Added after seeing Exp 6, so this prediction is conditi
 
 Notes: lengthscale values are not comparable across kernels, and a cap of 1 domain unit means a different smoothness for each kernel. The
 success-given-touch rate is reported separately. Statuses stay the user's.
+
+
+## BO11 and BO12: basin width (Exp 8), added 2026-11-01, before any BO run at a width other than 0.3
+
+Renumbering (2026-11-01): the width sweep is now Exp 8 (run first), the unimodal control Exp 9, validation Exp 10. CMA3 is tested in Exp 8; H5 in
+Exp 9; H6, M3 and BO5 in Exp 10. The Exp 8 BO lines are `bo_default` (seeds 1000-1049 for the baseline curve) and the selected best variant
+`bo_cap1` with `bo_default` re-run on fresh seeds 2000-2049 (selection rule: `docs/pilot_log.md`, amendment 2026-11-01). Far placement
+(w in {0.1, 0.3, 0.6, 1.0}) carries both predictions; near cells (w <= 0.3) are reported descriptively. Written after Exp 6 was seen, so both are
+conditional on it; the default BO result at w = 0.3 (5/50) is already known, the other widths are not.
+
+| ID | Prediction | Supported if | Contradicted if | Test |
+|---|---|---|---|---|
+| BO11 | Default BO's success rises with well width on the far placement: a wider well is more likely to be sampled by the initial design and the early search | Success at w = 1.0 exceeds success at w = 0.3, with the Newcombe 95% interval for the difference entirely above zero | The w = 1.0 interval includes zero or lies below zero | Exp 8 (`bo_default`, seeds 1000-1049) |
+| BO12 | The cap-1 gain over default BO is largest at an intermediate width: at w = 0.1 a well is too small for either setting to hit often, and at w = 1.0 default BO already finds it | The cap-1 minus default success difference at w = 0.3 is larger (point estimate) than at w = 0.1 and at w = 1.0, all on fresh seeds 2000-2049; the three Newcombe intervals are reported | The gain is largest at w = 0.1 or w = 1.0, or tied | Exp 8 (`bo_cap1` and `bo_default`, fresh seeds) |
+
+Statuses stay the user's.
