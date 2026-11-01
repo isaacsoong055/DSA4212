@@ -309,6 +309,15 @@ Success /50 (diff vs bo_default 5/50, Newcombe 95%): cap5 11 (+0.12 [-0.03,+0.26
 - Caveats: one landscape/w; best-of-five-caps selection means 39/50 is optimistic (fresh seeds would be needed); fitted noise not logged.
 - Possible follow-ups (not run, need the user's OK): cap 1 + EI xi=0.1 (do the two fixes add or overlap?); cap sweep at another w; cap-aware CMA-ES comparison; check whether kernels (Exp 7) should be run at cap 1 too.
 
+
+### Exp 7: BO kernel type, at the default cap and at cap 1 (full, 2026-11-01, seeds 1000-1049, N = 300; archive `raw_bo_exp7.zip`)
+
+Success /50, diff vs the same-row Matern-5/2 baseline (Newcombe 95%): default cap (baseline bo_default 5): m32 7 (+0.04 [-0.09,+0.17]), m12 2 (-0.06 [-0.18,+0.05]), rbf 4 (-0.02 [-0.14,+0.10]). Cap 1 (baseline bo_cap1 39): m32 6 (-0.66 [-0.77,-0.48]), m12 3 (-0.72 [-0.82,-0.55]), rbf 39 (0.00 [-0.16,+0.16]).
+- BO4 consistent (all default-cap intervals include zero). BO10 contradicted for m32 and m12, consistent for rbf. Statuses are the user's.
+- Touched the well at cap 1: m32 6, m12 3, rbf 45 (bo_cap1 41); success given touched 6/6, 3/3, 39/45. So the rough kernels lose at discovery, not refinement. Box-edge share after the initial design: m12 0.00, m32 0.02, m52 0.11, rbf 0.23 (rough kernels stay in the interior).
+- Hypothesis (untested): the same cap is different smoothness per kernel; heavier-tailed rough kernels need a tighter cap. A per-kernel cap sweep would test it (not run; needs the user's OK). Note the Exp 6 result that tight caps (0.25) also kill the effect for Matern-5/2.
+- Caveats: cap-1 arms and BO10 added after seeing Exp 6; bo_cap1 baseline from a different batch; one landscape.
+
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
 
 - **Both default optimisers are near random-search level on the primary landscape (Exp 0).** CMA-ES 0/50 is
