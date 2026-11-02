@@ -46,7 +46,7 @@ def test_newcombe_matches_published_example():
 def test_predictions_parse_all_ids():
     ids = list(report.load_predictions()["ID"])
     assert ids == ["H1", "H2", "H3", "H4", "H5", "H6", "M1", "M2", "M3", "BO1", "BO2", "BO3", "BO4", "BO5",
-                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5", "BO6", "BO7", "BO8", "BO9", "BO10", "BO11", "BO12"]
+                   "CMA1", "CMA2", "CMA3", "CMA4", "CMA5", "BO6", "BO7", "BO8", "BO9", "BO10", "BO11", "BO12", "BO13", "CMA6"]
 
 
 def test_ratio_config_scales_sigma_and_start_with_the_well():

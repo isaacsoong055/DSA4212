@@ -337,6 +337,16 @@ Success /50, diff vs the same-row Matern-5/2 baseline (Newcombe 95%): default ca
 - Default BO is faster than CMA-ES early on the bowl but CMA-ES ends far lower (about 1e-10 against 8e-7).
 - Note for the report: both the extra `bo_default` arm and the 20-seed BO count are deviations/choices to state; the 20 seeds follow the pre-set rule, the extra arm does not.
 
+### Exp 10: validation on Rastrigin and Schwefel (full, 2026-11-03; CMA-ES seeds 1000-1049, BO seeds 1000-1019; N = 300; archive `raw_bo_exp10.zip`)
+
+- Arms: `cma_default`, `cma_lam12`, `cma_lam24`, `cma_sig1`; BO `bo_default`, `bo_cap1`, `bo_noise1`; `random` reference (1/50 Rastrigin, 2/50 Schwefel). BO13 and CMA6 were written and committed before any run (`6390d8b`). Wall time: CMA-ES 7 s, BO 120 runs 3526 s, random 2 s.
+- Successes (Rastrigin / Schwefel): `cma_default` 8/50, 8/50; `cma_lam12` 11/50, 6/50; `cma_lam24` 4/50, 2/50; `cma_sig1` 7/50, 4/50; `bo_default` 8/20, 16/20; `bo_cap1` 10/20, 20/20; `bo_noise1` 1/20, 0/20.
+- Checks: CMA6 supported; BO13 contradicted (Rastrigin +0.10 [-0.19, +0.37]; Schwefel +0.20 [-0.0003, +0.42], just including zero); BO5 contradicted (gap +0.45 on Rastrigin, +1.00 on Schwefel, ceiling); H6 not distinguishable (all lambda intervals include or touch zero); M3 not tested (no clear lambda gain, no mean-trace analysis). Statuses are the user's.
+- Unexpected: BO is far stronger than CMA-ES on Schwefel (16/20 and 20/20 against 2 to 8 out of 50); the raw runs were checked and no bug or config slip was found. The cap's gain does not transfer cleanly (modest, uncertain gain, nothing like +0.86 on the primary landscape).
+- Feature scale measured from the functions before the predictions (no optimiser run): Rastrigin local minima 1.0 apart, success radius about 0.04; Schwefel local minima about 1.3 apart, success radius about 0.06, global minimum near the corner (4.21, 4.21).
+- Incident (2026-11-02 to 03): the first Exp 10 CMA-ES batch hung. The repository and `.venv` live in the iCloud-synced `~/Desktop`; with the disk at 92-93% full macOS had evicted most `.venv` files (38,650 of 44,543) and 5,346 repo files, so imports blocked on re-download. Fixed by re-downloading everything; the committed results and all 9 zip archives were intact. A stray `.git/refs/heads/main 2` (an iCloud conflict copy) makes `git fsck` complain; it is ignored by git and has not been removed. Aggregation (about 12 to 15 minutes with ~6000 runs) is slow because of its own computation, not eviction (it stayed slow with every file local).
+- Random reference was not in the first `exp10` config; added and run afterwards, as the pilot-log rule says it is always drawn.
+
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
 
 - **Both default optimisers are near random-search level on the primary landscape (Exp 0).** CMA-ES 0/50 is
