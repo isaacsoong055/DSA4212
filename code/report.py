@@ -639,7 +639,7 @@ def exp8_figure(M: Mode, best: dict | None = None) -> None:
         for method, cid in (best or {}).items():
             line(ax, fresh, cid, loc, ws, 1.12, color=COLOUR[method], ls=":", marker="s", mfc="white",
                  label=f"best variant {LABEL.get(cid, cid)} (fresh seeds)")
-        ax.set_xscale("log"); ax.set_xticks(ws, [str(w) for w in ws]); ax.set_ylim(-0.02, 1.05)
+        ax.set_xscale("log"); ax.set_xticks(ws, [str(w) for w in ws]); ax.minorticks_off(); ax.set_ylim(-0.02, 1.05)
         ax.set_xlabel("well width w"); ax.set_title(f"{loc} well (epsilon = {eps} in both panels)")
     axes[0].set_ylabel("success rate (Wilson 95% CI)")
     axes[0].legend(frameon=False, loc="upper left")

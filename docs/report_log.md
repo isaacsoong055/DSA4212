@@ -318,6 +318,17 @@ Success /50, diff vs the same-row Matern-5/2 baseline (Newcombe 95%): default ca
 - Hypothesis (untested): the same cap is different smoothness per kernel; heavier-tailed rough kernels need a tighter cap. A per-kernel cap sweep would test it (not run; needs the user's OK). Note the Exp 6 result that tight caps (0.25) also kill the effect for Matern-5/2.
 - Caveats: cap-1 arms and BO10 added after seeing Exp 6; bo_cap1 baseline from a different batch; one landscape.
 
+### Exp 8: basin width (full, 2026-11-02; baselines seeds 1000-1049, best-variant line fresh seeds 2000-2049; N = 300; archives `raw_bo_exp8_baseline.zip`, `raw_bo_exp8_best.zip`)
+
+- Wall time (6 workers): baselines 6867 s (617 runs), fresh seeds 14369 s (1200 runs). The BO runs are far slower than the 100 s per run assumed in the pre-run estimate (the estimate was about 35 min for the baselines, actual 1.9 h).
+- Successes out of 50. Far well, w = 0.1 / 0.3 / 0.6 / 1.0: random 0/2/3/10; CMA-ES default 0/0/2/30; BO default 0/5/23/45 (all seeds 1000-1049). Fresh seeds: CMA-ES default 0/0/10/35; `cma_sig1` 1/4/9/30; BO default 0/1/10/39; `bo_cap1` 1/44/50/50. Near well, w = 0.1 / 0.3: CMA-ES default 0/23 (fresh 0/30); BO default 1/10 (fresh 1/13); `cma_sig1` 0/26; `bo_cap1` 23/50; random 0/0.
+- CMA3: supported (w = 1.0: 30/50 [0.46, 0.72]; w = 0.3: 0/50 [0, 0.07]; w = 0.1 not above). BO11: supported (+0.80 [+0.64, +0.88]). BO12: supported on the written point-estimate condition (gain +0.02, +0.86, +0.80, +0.22 at w = 0.1, 0.3, 0.6, 1.0; Newcombe intervals in the notebook box), but the gain is nearly as large at 0.6 as at 0.3. Statuses in `docs/scoreboard.csv` are the user's to set.
+- Best-variant selection (extended rule, logged deviation after Exps 4-7): CMA-ES `cma_sig1` (chosen on 1/50, mechanical), BO `bo_cap1`. Selection did not inflate the headline: `bo_cap1` at far w = 0.3 was 39/50 on the selection seeds and 44/50 on fresh seeds.
+- Unexpected / to report: (1) default BO at far w = 0.6 is 23/50 on seeds 1000-1049 and 10/50 on fresh seeds, and default CMA-ES 2/50 and 10/50: large seed-set differences, unexplained, both reported. (2) Default CMA-ES beats default BO on the near well at w = 0.3 (30 and 23 against 13 and 10) but not on the far well at w >= 0.6. (3) `bo_cap1` reaches 23/50 on the near well at w = 0.1 but 1/50 on the far well. (4) `cma_sig1` shows no gain over the default at any width.
+- Pooling note: `results/summary/success.csv` pools both seed sets (n = 100 for the defaults); split by seed (>= 2000 is fresh) from `runs.csv` for any table. The figure `docs/figures/nb_5_exp8.png` does the split.
+- Aggregation of ~6000 raw CSVs took over 12 minutes; do not rerun it needlessly.
+- Archives list only runs not already in an earlier zip (the w = 0.3 baseline and cap-1 runs on seeds 1000-1049 are in `raw_bo_exp0.zip` and `raw_bo_exp7.zip`); built with `archive_bo` and explicit file lists, not `--exp`, which would have duplicated them.
+
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
 
 - **Both default optimisers are near random-search level on the primary landscape (Exp 0).** CMA-ES 0/50 is
