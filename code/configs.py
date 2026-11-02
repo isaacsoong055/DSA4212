@@ -135,6 +135,11 @@ EXPERIMENTS = {
     # whether the cap costs anything on a smooth function. Same seeds 1000-1019.
     "exp9": dict(configs=["cma_default", "cma_lam12", "cma_lam24", "cma_sig1", "bo_default", "bo_cap1", "bo_noise1"],
                  landscapes=["sphere"]),
+    # Validation (Exp 10) on Rastrigin and Schwefel, d = 2. Arms per pilot_log.md (amendments 2026-10-22, 2026-11-01): CMA-ES default,
+    # lambda 12 and 24 (H6) and the best variant cma_sig1; BO best (bo_cap1) and worst (bo_noise1) plus bo_default, the baseline
+    # for the cap comparison (added as in Exp 9). Seeds: CMA-ES 1000-1049, BO 1000-1019 (--method cmaes; --method bo --seeds 20).
+    "exp10": dict(configs=["cma_default", "cma_lam12", "cma_lam24", "cma_sig1", "bo_default", "bo_cap1", "bo_noise1"],
+                  landscapes=["rastrigin", "schwefel"]),
 }
 
 # Side check for Exp 1 (decided 2026-10-25, see pilot_log.md): the same three lambda settings at a 5x budget, so a

@@ -178,3 +178,22 @@ conditional on it; the default BO result at w = 0.3 (5/50) is already known, the
 | BO12 | The cap-1 gain over default BO is largest at an intermediate width: at w = 0.1 a well is too small for either setting to hit often, and at w = 1.0 default BO already finds it | The cap-1 minus default success difference at w = 0.3 is larger (point estimate) than at w = 0.1 and at w = 1.0, all on fresh seeds 2000-2049; the three Newcombe intervals are reported | The gain is largest at w = 0.1 or w = 1.0, or tied | Exp 8 (`bo_cap1` and `bo_default`, fresh seeds) |
 
 Statuses stay the user's.
+
+## BO13 and CMA6: do the scale settings transfer to Rastrigin and Schwefel? (Exp 10), added 2026-11-02, before any Exp 10 run
+
+**Basis (tier: informed by Exps 6 to 9, so less independent than H1 to H6).** The scale-mismatch account from Exps 3, 6, 8 and 9: a step size or
+lengthscale much longer than the feature scale hides the feature, and a lengthscale cap near that scale helped BO on the primary landscape
+(`bo_cap1`) while costing early speed on a smooth bowl (Exp 9). Feature scale was measured from the functions alone, with no optimiser run
+(local descent from 2000 uniform starts, domain [-5, 5]^2): Rastrigin local minima are 1.0 apart (success radius about 0.04 for epsilon = 0.2);
+Schwefel local minima are about 1.3 apart, irregularly (success radius about 0.06 for epsilon = 5.0; global minimum near the corner (4.21, 4.21)).
+Both spacings are close to the cap of 1 domain unit, so scale alone does not separate the two landscapes. H6, M3 and BO5 are unchanged and are tested as
+written (`docs/predictions.md`, BO5 above). Arms: `bo_default` and `bo_cap1` on seeds 1000-1019 (the same seeds), `cma_default` and `cma_sig1` on seeds 1000-1049.
+
+| ID | Prediction | Supported if | Contradicted if | Test |
+|---|---|---|---|---|
+| BO13 | The lengthscale cap transfers: on both Rastrigin and Schwefel, whose feature spacing is close to the cap, `bo_cap1` has higher success than `bo_default` | On each landscape the Newcombe 95% interval for (`bo_cap1` minus `bo_default`) success lies entirely above zero | On either landscape the interval includes zero or lies below it. Report each landscape separately; if only one is above zero, BO13 is contradicted and the split is reported | Exp 10 (`bo_default`, `bo_cap1`, seeds 1000-1019) |
+| CMA6 | A smaller initial step size does not help CMA-ES from a random start on either landscape, because finding the basin, not refining it, limits CMA-ES there (as CMA2 found on the primary landscape) | On each landscape the Newcombe 95% interval for (`cma_sig1` minus `cma_default`) success includes zero | On either landscape the interval is entirely above or below zero | Exp 10 (`cma_default`, `cma_sig1`, seeds 1000-1049) |
+
+**Power note (stated before the run).** With 20 BO seeds a difference of about 0.3 (for example 6/20 against 0/20) is needed for the interval to clear zero, and the random-sampling success at these epsilons is at most 5% by construction. A BO13 "contradicted" verdict can therefore mean low power on a landscape where success is rare, not that the cap fails; report the counts so the reader can tell the two apart.
+
+Statuses stay the user's.
