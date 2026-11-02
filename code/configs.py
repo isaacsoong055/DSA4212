@@ -128,6 +128,13 @@ EXPERIMENTS = {
     "exp8_best": dict(configs=["cma_default", "cma_sig1", "bo_default", "bo_cap1"],
                       landscapes=[f"primary_far_w{w}" for w in (0.1, 0.3, 0.6, 1.0)]
                                  + [f"primary_near_w{w}" for w in (0.1, 0.3)]),
+    # Unimodal control (H5), sphere d = 2. Arms per pilot_log.md (amendment 2026-10-22, all-tie rule, and 2026-11-01): CMA-ES
+    # default, lambda 12 and 24 (needed for H5) and the best variant cma_sig1; BO only its best (bo_cap1) and worst (bo_noise1).
+    # Seeds: CMA-ES 1000-1049, BO 1000-1019 (run with --method cmaes, and --method bo --seeds 20).
+    # bo_default added 2026-11-02 after the first sphere runs (user's request, not in the written rule): it closes the question
+    # whether the cap costs anything on a smooth function. Same seeds 1000-1019.
+    "exp9": dict(configs=["cma_default", "cma_lam12", "cma_lam24", "cma_sig1", "bo_default", "bo_cap1", "bo_noise1"],
+                 landscapes=["sphere"]),
 }
 
 # Side check for Exp 1 (decided 2026-10-25, see pilot_log.md): the same three lambda settings at a 5x budget, so a

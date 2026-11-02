@@ -329,6 +329,14 @@ Success /50, diff vs the same-row Matern-5/2 baseline (Newcombe 95%): default ca
 - Aggregation of ~6000 raw CSVs took over 12 minutes; do not rerun it needlessly.
 - Archives list only runs not already in an earlier zip (the w = 0.3 baseline and cap-1 runs on seeds 1000-1049 are in `raw_bo_exp0.zip` and `raw_bo_exp7.zip`); built with `archive_bo` and explicit file lists, not `--exp`, which would have duplicated them.
 
+### Exp 9: unimodal control, sphere (full, 2026-11-02; CMA-ES seeds 1000-1049, BO seeds 1000-1019; N = 300; archive `raw_bo_exp9.zip`)
+
+- Arms: CMA-ES `cma_default`, `cma_lam12`, `cma_lam24`, `cma_sig1`; BO `bo_cap1`, `bo_noise1` (best and worst, per `docs/pilot_log.md`), plus `bo_default` added afterwards at the user's request (outside the written rule; logged in `code/configs.py`). Wall time: CMA-ES 4 s, BO 40 runs about 5 min, then 20 more in 394 s.
+- Final regret (median): `cma_default` 1.6e-10, `cma_lam12` 9.8e-8, `cma_lam24` 6.0e-5, `cma_sig1` 9.8e-11; `bo_default` 7.9e-7, `bo_cap1` 4.3e-6, `bo_noise1` 2.9e-2. H5 supported on the written rule (larger lambda worse).
+- BO cap is a trade-off, not free: at evaluation 100 `bo_cap1` is 8.9e-4 against 1.2e-6 for `bo_default`; by N = 300 the gap is small and the quartile ranges overlap (20 seeds).
+- Default BO is faster than CMA-ES early on the bowl but CMA-ES ends far lower (about 1e-10 against 8e-7).
+- Note for the report: both the extra `bo_default` arm and the 20-seed BO count are deviations/choices to state; the 20 seeds follow the pre-set rule, the extra arm does not.
+
 ## 4. Unexpected results, negative results and failed attempts (investigate and report all)
 
 - **Both default optimisers are near random-search level on the primary landscape (Exp 0).** CMA-ES 0/50 is
