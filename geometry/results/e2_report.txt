@@ -1,0 +1,186 @@
+== success rate (%) within the shared cap of 200 evaluations
+method                      bo-ard  bo-full  cmaes-diagonal  cmaes-full
+condition geometry target                                              
+1         none     0.00001     0.0      0.0           100.0       100.0
+                   0.00100    20.0     27.0           100.0       100.0
+                   0.10000   100.0    100.0           100.0       100.0
+          random   0.00001     0.0      0.0           100.0       100.0
+                   0.00100    20.0      7.0           100.0       100.0
+                   0.10000   100.0    100.0           100.0       100.0
+100       none     0.00001     0.0      0.0             7.0        13.0
+                   0.00100     7.0      7.0            87.0        80.0
+                   0.10000    93.0    100.0           100.0       100.0
+          random   0.00001     0.0      0.0             0.0         7.0
+                   0.00100     7.0      0.0            40.0        87.0
+                   0.10000    93.0     93.0            93.0       100.0
+10000     none     0.00001     0.0      0.0             0.0         0.0
+                   0.00100     0.0      0.0             0.0         7.0
+                   0.10000    27.0     40.0            33.0        20.0
+          random   0.00001     0.0      0.0             0.0         0.0
+                   0.00100     0.0      0.0             0.0         0.0
+                   0.10000     7.0     13.0            13.0        27.0
+
+== median runtime to target among successful runs (evaluations)
+method                      bo-ard  bo-full  cmaes-diagonal  cmaes-full
+condition geometry target                                              
+1         none     0.00001     NaN      NaN           143.0       148.0
+                   0.00100   128.0    120.0            82.0        89.0
+                   0.10000    13.0     14.0            25.0        31.0
+          random   0.00001     NaN      NaN           154.0       142.0
+                   0.00100   179.0     83.0            79.0        82.0
+                   0.10000    12.0     13.0            23.0        23.0
+100       none     0.00001     NaN      NaN           190.0       186.0
+                   0.00100    34.0    134.0           175.0       154.0
+                   0.10000    35.0     75.0            97.0       105.0
+          random   0.00001     NaN      NaN             NaN       172.0
+                   0.00100   132.0      NaN           166.0       156.0
+                   0.10000    84.0     83.0            96.0        89.0
+10000     none     0.00100     NaN      NaN             NaN       197.0
+                   0.10000    58.0    112.0           105.0       135.0
+          random   0.10000   132.0     99.0           131.0       174.0
+
+== CMA-ES continued to 4000 evaluations: success % and median runtime
+                                       success                      median_runtime                
+method                     cmaes-diagonal-long cmaes-full-long cmaes-diagonal-long cmaes-full-long
+condition geometry target                                                                         
+1         none     0.00001                 100             100               143.0           148.0
+                   0.00100                 100             100                82.0            89.0
+                   0.10000                 100             100                25.0            31.0
+          random   0.00001                 100             100               154.0           142.0
+                   0.00100                 100             100                79.0            82.0
+                   0.10000                 100             100                23.0            23.0
+100       none     0.00001                 100             100               229.0           241.0
+                   0.00100                 100             100               179.0           158.0
+                   0.10000                 100             100                97.0           105.0
+          random   0.00001                 100             100               344.0           237.0
+                   0.00100                 100             100               251.0           167.0
+                   0.10000                 100             100               101.0            89.0
+10000     none     0.00001                 100             100               415.0           399.0
+                   0.00100                 100             100               308.0           337.0
+                   0.10000                 100             100               224.0           261.0
+          random   0.00001                  20             100              2098.0           386.0
+                   0.00100                  20             100              1009.0           314.0
+                   0.10000                  60             100              1107.0           228.0
+
+== median log10 best-so-far at fixed budgets
+method                     bo-ard  bo-full  cmaes-diagonal  cmaes-full
+condition geometry budget                                             
+1         none     20       -1.60    -1.45           -0.60       -0.80
+                   50       -1.89    -1.84           -1.91       -2.02
+                   100      -2.28    -2.27           -3.60       -3.74
+                   200      -2.65    -2.66           -6.45       -6.23
+          random   20       -1.72    -1.90           -0.89       -0.93
+                   50       -2.09    -2.12           -1.98       -1.89
+                   100      -2.57    -2.49           -3.71       -3.90
+                   200      -2.58    -2.63           -6.14       -6.43
+100       none     20       -0.08    -0.08            0.57        0.55
+                   50       -1.05    -0.87           -0.05       -0.23
+                   100      -1.28    -1.03           -1.37       -0.82
+                   200      -1.43    -1.43           -4.00       -4.02
+          random   20        0.27     0.25            0.60        0.41
+                   50       -0.83    -0.86            0.17       -0.48
+                   100      -1.24    -1.08           -0.71       -1.18
+                   200      -1.38    -1.72           -2.30       -4.02
+10000     none     20        1.15     1.01            1.82        1.57
+                   50        0.61     0.54            1.19        0.92
+                   100      -0.24    -0.52            0.74        0.39
+                   200      -0.24    -0.84            0.07       -0.17
+          random   20        1.66     1.03            1.63        1.27
+                   50        0.86     0.87            0.91        0.93
+                   100       0.59     0.28            0.54        0.05
+                   200      -0.05    -0.25            0.25       -0.52
+
+== paired bootstrap, cross-family at fixed budget: median log10 f, BO minus CMA-ES (negative = BO better)
+  k=1      none    n=20    bo-full - cmaes-full       -0.65 [ -0.99,  -0.11]
+  k=1      none    n=20     bo-ard - cmaes-diagonal   -1.00 [ -1.56,  -0.56]
+  k=1      none    n=20     bo-ard - cmaes-full       -0.80 [ -1.39,  -0.43]
+  k=1      none    n=50    bo-full - cmaes-full       +0.18 [ -0.63,  +0.52]
+  k=1      none    n=50     bo-ard - cmaes-diagonal   +0.02 [ -0.53,  +0.62]
+  k=1      none    n=50     bo-ard - cmaes-full       +0.13 [ -0.50,  +0.50]
+  k=1      none    n=100   bo-full - cmaes-full       +1.47 [ +0.79,  +1.88]
+  k=1      none    n=100    bo-ard - cmaes-diagonal   +1.32 [ +0.83,  +1.63]
+  k=1      none    n=100    bo-ard - cmaes-full       +1.47 [ +0.70,  +1.83]
+  k=1      none    n=200   bo-full - cmaes-full       +3.56 [ +3.32,  +4.08]
+  k=1      none    n=200    bo-ard - cmaes-diagonal   +3.79 [ +3.28,  +4.29]
+  k=1      none    n=200    bo-ard - cmaes-full       +3.57 [ +3.22,  +4.30]
+  k=1      random  n=20    bo-full - cmaes-full       -0.97 [ -1.65,  -0.35]
+  k=1      random  n=20     bo-ard - cmaes-diagonal   -0.83 [ -1.68,  -0.04]
+  k=1      random  n=20     bo-ard - cmaes-full       -0.79 [ -1.57,  -0.04]
+  k=1      random  n=50    bo-full - cmaes-full       -0.23 [ -1.00,  -0.06]
+  k=1      random  n=50     bo-ard - cmaes-diagonal   -0.11 [ -0.95,  +0.34]
+  k=1      random  n=50     bo-ard - cmaes-full       -0.20 [ -0.83,  +0.21]
+  k=1      random  n=100   bo-full - cmaes-full       +1.41 [ +1.19,  +2.03]
+  k=1      random  n=100    bo-ard - cmaes-diagonal   +1.15 [ +0.83,  +1.82]
+  k=1      random  n=100    bo-ard - cmaes-full       +1.33 [ +1.24,  +1.81]
+  k=1      random  n=200   bo-full - cmaes-full       +3.80 [ +3.56,  +3.98]
+  k=1      random  n=200    bo-ard - cmaes-diagonal   +3.56 [ +3.34,  +3.93]
+  k=1      random  n=200    bo-ard - cmaes-full       +3.85 [ +3.52,  +4.13]
+  k=100    none    n=20    bo-full - cmaes-full       -0.63 [ -1.37,  +0.23]
+  k=100    none    n=20     bo-ard - cmaes-diagonal   -0.65 [ -1.50,  -0.11]
+  k=100    none    n=20     bo-ard - cmaes-full       -0.63 [ -1.55,  -0.01]
+  k=100    none    n=50    bo-full - cmaes-full       -0.64 [ -0.97,  -0.29]
+  k=100    none    n=50     bo-ard - cmaes-diagonal   -0.99 [ -1.72,  -0.41]
+  k=100    none    n=50     bo-ard - cmaes-full       -0.82 [ -1.64,  -0.47]
+  k=100    none    n=100   bo-full - cmaes-full       -0.21 [ -0.60,  +0.64]
+  k=100    none    n=100    bo-ard - cmaes-diagonal   +0.09 [ -0.71,  +0.57]
+  k=100    none    n=100    bo-ard - cmaes-full       -0.46 [ -1.23,  +0.42]
+  k=100    none    n=200   bo-full - cmaes-full       +2.59 [ +1.84,  +3.05]
+  k=100    none    n=200    bo-ard - cmaes-diagonal   +2.57 [ +2.07,  +3.18]
+  k=100    none    n=200    bo-ard - cmaes-full       +2.59 [ +1.86,  +2.94]
+  k=100    random  n=20    bo-full - cmaes-full       -0.16 [ -0.89,  +0.91]
+  k=100    random  n=20     bo-ard - cmaes-diagonal   -0.33 [ -0.84,  +0.32]
+  k=100    random  n=20     bo-ard - cmaes-full       -0.14 [ -0.73,  +1.08]
+  k=100    random  n=50    bo-full - cmaes-full       -0.38 [ -1.28,  +0.15]
+  k=100    random  n=50     bo-ard - cmaes-diagonal   -1.00 [ -1.40,  -0.21]
+  k=100    random  n=50     bo-ard - cmaes-full       -0.35 [ -1.20,  +0.13]
+  k=100    random  n=100   bo-full - cmaes-full       +0.10 [ -0.65,  +0.63]
+  k=100    random  n=100    bo-ard - cmaes-diagonal   -0.52 [ -1.43,  +0.41]
+  k=100    random  n=100    bo-ard - cmaes-full       -0.06 [ -0.63,  +0.64]
+  k=100    random  n=200   bo-full - cmaes-full       +2.30 [ +1.74,  +2.88]
+  k=100    random  n=200    bo-ard - cmaes-diagonal   +0.92 [ +0.19,  +2.11]
+  k=100    random  n=200    bo-ard - cmaes-full       +2.64 [ +1.87,  +3.10]
+  k=10000  none    n=20    bo-full - cmaes-full       -0.56 [ -1.57,  -0.38]
+  k=10000  none    n=20     bo-ard - cmaes-diagonal   -0.67 [ -1.14,  -0.21]
+  k=10000  none    n=20     bo-ard - cmaes-full       -0.42 [ -1.44,  -0.19]
+  k=10000  none    n=50    bo-full - cmaes-full       -0.37 [ -1.07,  +0.06]
+  k=10000  none    n=50     bo-ard - cmaes-diagonal   -0.58 [ -1.28,  -0.27]
+  k=10000  none    n=50     bo-ard - cmaes-full       -0.31 [ -1.28,  +0.29]
+  k=10000  none    n=100   bo-full - cmaes-full       -0.92 [ -1.72,  -0.15]
+  k=10000  none    n=100    bo-ard - cmaes-diagonal   -0.98 [ -1.89,  +0.14]
+  k=10000  none    n=100    bo-ard - cmaes-full       -0.64 [ -1.82,  -0.11]
+  k=10000  none    n=200   bo-full - cmaes-full       -0.67 [ -1.69,  +0.15]
+  k=10000  none    n=200    bo-ard - cmaes-diagonal   -0.31 [ -1.36,  +0.99]
+  k=10000  none    n=200    bo-ard - cmaes-full       -0.07 [ -0.86,  +0.38]
+  k=10000  random  n=20    bo-full - cmaes-full       -0.24 [ -0.88,  +0.07]
+  k=10000  random  n=20     bo-ard - cmaes-diagonal   +0.03 [ -0.41,  +0.53]
+  k=10000  random  n=20     bo-ard - cmaes-full       +0.39 [ -0.04,  +0.65]
+  k=10000  random  n=50    bo-full - cmaes-full       -0.06 [ -0.59,  +0.32]
+  k=10000  random  n=50     bo-ard - cmaes-diagonal   -0.05 [ -0.56,  +0.69]
+  k=10000  random  n=50     bo-ard - cmaes-full       -0.07 [ -0.43,  +0.53]
+  k=10000  random  n=100   bo-full - cmaes-full       +0.23 [ -0.54,  +0.63]
+  k=10000  random  n=100    bo-ard - cmaes-diagonal   +0.05 [ -0.80,  +1.00]
+  k=10000  random  n=100    bo-ard - cmaes-full       +0.54 [ -0.22,  +1.00]
+  k=10000  random  n=200   bo-full - cmaes-full       +0.27 [ -0.76,  +1.02]
+  k=10000  random  n=200    bo-ard - cmaes-diagonal   -0.31 [ -0.70,  +0.75]
+  k=10000  random  n=200    bo-ard - cmaes-full       +0.47 [ -0.11,  +1.07]
+
+== rotation penalty at n = 200 : median log10 f, rotated minus aligned (unpaired bootstrap; positive = rotation hurts)
+  k=1      bo-full           +0.03 [ -0.25,  +0.28]
+  k=1      bo-ard            +0.07 [ -0.36,  +0.30]
+  k=1      cmaes-full        -0.21 [ -0.41,  +0.27]
+  k=1      cmaes-diagonal    +0.30 [ -0.42,  +0.63]
+  k=100    bo-full           -0.28 [ -0.63,  +0.26]
+  k=100    bo-ard            +0.05 [ -0.53,  +0.63]
+  k=100    cmaes-full        +0.00 [ -0.76,  +0.64]
+  k=100    cmaes-diagonal    +1.70 [ +0.41,  +2.57]
+  k=10000  bo-full           +0.59 [ -0.52,  +1.47]
+  k=10000  bo-ard            +0.19 [ -0.01,  +1.16]
+  k=10000  cmaes-full        -0.35 [ -1.01,  +0.35]
+  k=10000  cmaes-diagonal    +0.19 [ -0.85,  +1.62]
+
+== median wall-clock seconds per run (capped runs)
+method     bo-ard  bo-full  cmaes-diagonal  cmaes-full
+condition                                             
+1          108.40   204.27             0.0         0.0
+100        113.36   215.96             0.0         0.0
+10000      117.26   232.70             0.0         0.0

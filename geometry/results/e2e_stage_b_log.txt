@@ -1,0 +1,52 @@
+[1/30] B2 fixed noise inst=4 185s, final f=7.82e-04, elapsed 188s
+[2/30] B2 fixed noise inst=0 188s, final f=1.67e-04, elapsed 191s
+[3/30] B2 fixed noise inst=3 191s, final f=1.50e-04, elapsed 194s
+[4/30] B2 fixed noise inst=5 192s, final f=3.78e-04, elapsed 195s
+[5/30] B2 fixed noise inst=2 217s, final f=1.54e-05, elapsed 219s
+[6/30] B2 fixed noise inst=1 233s, final f=1.19e-04, elapsed 235s
+[7/30] B2 fixed noise inst=7 156s, final f=3.28e-04, elapsed 346s
+[8/30] B2 fixed noise inst=8 167s, final f=2.97e-05, elapsed 360s
+[9/30] B2 fixed noise inst=6 184s, final f=2.78e-05, elapsed 372s
+[10/30] B2 fixed noise inst=9 184s, final f=8.57e-04, elapsed 379s
+[11/30] B2 fixed noise inst=11 155s, final f=8.54e-05, elapsed 390s
+[12/30] B2 fixed noise inst=10 171s, final f=3.93e-04, elapsed 390s
+[13/30] B2 fixed noise inst=12 151s, final f=2.44e-04, elapsed 497s
+[14/30] B4 LogEI inst=2 111s, final f=8.47e-03, elapsed 501s
+[15/30] B2 fixed noise inst=13 152s, final f=7.94e-05, elapsed 512s
+[16/30] B4 LogEI inst=0 140s, final f=2.41e-04, elapsed 519s
+[17/30] B4 LogEI inst=1 131s, final f=5.45e-03, elapsed 521s
+[18/30] B2 fixed noise inst=14 161s, final f=1.54e-05, elapsed 533s
+[19/30] B4 LogEI inst=4 143s, final f=8.79e-06, elapsed 645s
+[20/30] B4 LogEI inst=3 150s, final f=6.07e-04, elapsed 646s
+[21/30] B4 LogEI inst=6 147s, final f=3.63e-03, elapsed 665s
+[22/30] B4 LogEI inst=7 150s, final f=5.67e-04, elapsed 671s
+[23/30] B4 LogEI inst=5 159s, final f=6.56e-04, elapsed 671s
+[24/30] B4 LogEI inst=8 144s, final f=2.27e-03, elapsed 677s
+[25/30] B4 LogEI inst=9 122s, final f=4.55e-03, elapsed 767s
+[26/30] B4 LogEI inst=10 141s, final f=3.75e-03, elapsed 788s
+[27/30] B4 LogEI inst=12 143s, final f=5.56e-04, elapsed 815s
+[28/30] B4 LogEI inst=11 149s, final f=2.47e-03, elapsed 815s
+[29/30] B4 LogEI inst=14 141s, final f=2.46e-03, elapsed 818s
+[30/30] B4 LogEI inst=13 150s, final f=1.65e-03, elapsed 821s
+Medians over 15 instances (reached_*: % of runs); BO-ARD, kappa = 1, aligned
+variant                       B2 fixed noise  B4 LogEI  baseline
+log10_f_20                             -2.21     -1.72     -1.60
+log10_f_50                             -3.32     -1.90     -1.89
+log10_f_100                            -3.76     -2.43     -2.28
+log10_f_200                            -3.83     -2.64     -2.65
+reached_0.001                         100.00     40.00     26.67
+reached_1e-05                           0.00      6.67      6.67
+median_noise_sd                         0.00      0.27      0.26
+pct_ei_below_1e-12                      0.00     89.26    100.00
+median_dist_chosen_incumbent            1.27      3.62      3.82
+pct_improving                           0.67      1.34      0.67
+
+Paired bootstrap, variant minus baseline, median log10 f (negative = variant better)
+  B2 fixed noise  n=20    -0.60 [ -0.98,  -0.09]
+  B2 fixed noise  n=50    -1.43 [ -1.83,  -0.73]
+  B2 fixed noise  n=100   -1.48 [ -1.71,  -1.01]
+  B2 fixed noise  n=200   -1.17 [ -1.71,  -0.74]
+  B4 LogEI        n=20    -0.12 [ -0.38,  +0.40]
+  B4 LogEI        n=50    -0.01 [ -0.55,  +0.30]
+  B4 LogEI        n=100   -0.15 [ -0.52,  +0.38]
+  B4 LogEI        n=200   +0.01 [ -0.79,  +0.47]
