@@ -104,6 +104,9 @@ MONOTONE_TRANSFORMS = {
     "log1p":    lambda v: np.log1p(v),
     "cube":     lambda v: np.sign(v) * np.abs(v) ** 3,
     "sqrt":     lambda v: np.sqrt(np.abs(v)),
+    # An additive offset: the optimum's value becomes 1 instead of 0.  COCO
+    # gives every function a non-zero f_opt for the same reason.
+    "plus1":    lambda v: v + 1.0,
 }
 
 

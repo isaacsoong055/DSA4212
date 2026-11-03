@@ -33,12 +33,17 @@ def default_population_size(dimension):
 
 def cma_es(objective, dimension, initial_mean, seed=0, variant="full",
            max_evaluations=1500, initial_sigma=2.0, target=1e-8,
-           population_size=None, record_history=True):
+           population_size=None, record_history=True, initial_covariance=None):
     """Minimise ``objective`` with full- or diagonal-covariance CMA-ES.
 
     Returns a dict with the best value found, the number of objective
     evaluations consumed, the final state of the search distribution, and
     (optionally) the best-so-far value after each generation.
+
+    ``initial_covariance`` (default identity) sets C at the start. Hansen's
+    invariance to an invertible linear map A of the search space holds only if
+    the initial mean and C are mapped with it (C0 -> A^-1 C0 A^-T); E3 uses
+    this to test that clause for a change of units.
     """
     if variant not in VARIANTS:
         raise ValueError(f"variant must be one of {VARIANTS}")
@@ -65,7 +70,12 @@ def cma_es(objective, dimension, initial_mean, seed=0, variant="full",
     if mean.shape != (n,):
         raise ValueError(f"initial_mean must have shape ({n},)")
     sigma = float(initial_sigma)
-    covariance = np.eye(n)
+    covariance = np.eye(n) if initial_covariance is None \
+        else np.array(initial_covariance, dtype=float)
+    if covariance.shape != (n, n):
+        raise ValueError(f"initial_covariance must have shape ({n}, {n})")
+    if variant == "diagonal" and np.any(covariance != np.diag(np.diag(covariance))):
+        raise ValueError("the diagonal variant needs a diagonal initial_covariance")
     path_sigma = np.zeros(n)
     path_c = np.zeros(n)
     best_value = np.inf
