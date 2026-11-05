@@ -307,6 +307,47 @@ def fig7_e5_other_functions():
     save(fig, "fig7_e5_other_functions")
 
 
+def fig8_e6_noise():
+    """E6: recommendation rule and budget split under noise (paired, 200 noisy evaluations)."""
+    s = pd.read_csv(R / "e6_summary.csv")
+    panels = [
+        ("Recommendation rule: model estimate − lowest observed", [
+            ("cmaes-base: R2 - R1", "CMA-ES, λ = 6: mean", BLUE),
+            ("cmaes-pop24: R2 - R1", "CMA-ES, λ = 24: mean", BLUE),
+            ("bo-base: R2 - R1", "BO: posterior-mean minimiser", ORANGE)]),
+        ("Budget split − baseline (both read through the model)", [
+            ("cmaes-resample - cmaes-base (R2)", "CMA-ES: resample ×4", BLUE),
+            ("cmaes-pop24 - cmaes-base (R2)", "CMA-ES: population ×4", BLUE),
+            ("cmaes-reserve R3 - cmaes-base R2", "CMA-ES: final re-evaluation", BLUE),
+            ("bo-replicate - bo-base (R2)", "BO: replicates ×4", ORANGE),
+            ("bo-reserve R3 - bo-base R2", "BO: final re-evaluation", ORANGE)]),
+    ]
+    sigmas = (0.01, 0.1, 1.0)
+    fig, axes = plt.subplots(2, 1, figsize=(5.6, 6.2),
+                             gridspec_kw={"height_ratios": [9, 15], "hspace": 0.35})
+    for ax, (title, rows) in zip(axes, panels):
+        ax.axvline(0, color=AXIS, linewidth=0.8, zorder=0)
+        labels, y = [], 0
+        for sigma in reversed(sigmas):
+            for comparison, label, colour in reversed(rows):
+                r = s[(s.comparison == comparison) & (np.isclose(s.sigma, sigma))].iloc[0]
+                interval(ax, y, r, colour)
+                labels.append(f"σ = {sigma:g} · {label}")
+                y += 1
+            ax.axhline(y - 0.5, color=GRID, linewidth=0.8)
+            y += 0.0
+        ax.set_yticks(range(len(labels)))
+        ax.set_yticklabels(labels, fontsize=7)
+        ax.tick_params(axis="y", length=0)
+        ax.set_ylim(-0.6, len(labels) - 0.4)
+        ax.set_title(title, fontsize=8.5)
+        ax.grid(axis="y", visible=False)
+    axes[1].set_xlabel("difference in median log$_{10}$ f of the recommended point (− = better)")
+    fig.suptitle("E6. Noisy evaluations (κ = 100 quadratic; 200 noisy evaluations;\npaired; 95% bootstrap intervals)",
+                 x=0.0, ha="left", fontsize=9.5, y=0.99)
+    save(fig, "fig8_e6_noise")
+
+
 if __name__ == "__main__":
     fig1_e1_angle_sweep()
     fig2_e2c_axis_error()
@@ -315,3 +356,4 @@ if __name__ == "__main__":
     fig5_e3_invariance()
     fig6_e4_boundary()
     fig7_e5_other_functions()
+    fig8_e6_noise()

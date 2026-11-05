@@ -35,6 +35,7 @@ code/
   run_e3_invariance.py        E3: units changes and monotone transforms of f (which invariances survive)
   run_e4_boundary.py          E4: optimum near the box edge, with a same-distance interior control
   run_e5_other_functions.py   E5: Rosenbrock (COCO f8/f9) and a noisy quadratic
+  run_e6_noise_budget.py      E6: noisy evaluations -- budget split (repeats, population, reserve) and recommendation rule
   make_figures.py             rebuilds every report figure from results/ (no experiment is re-run)
 results/                      CSV output of the above (one file per experiment)
 report/                       report.tex, references.bib, figures/ (and the compiled report.pdf)
@@ -71,6 +72,7 @@ python code/run_e2e_stage_b.py --workers 8           # Stage B, ~15 min per vari
 python code/run_e3_invariance.py --workers 8         # ~1.5 h (BO dominates)
 python code/run_e4_boundary.py --workers 8           # ~1 h
 python code/run_e5_other_functions.py --workers 8    # ~45 min
+python code/run_e6_noise_budget.py --workers 8       # ~30 min
 python code/make_figures.py                          # seconds; writes report/figures/
 cd report && latexmk -pdf report.tex                 # compiles the report
 ```

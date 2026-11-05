@@ -40,7 +40,8 @@ that made BO stall on every problem. Once it was fixed, BO-ARD paid a rotation p
 at $\kappa=10^4$ while the full metric did not, the same pattern as diagonal against full CMA-ES. We then
 test which of CMA-ES's theoretical invariances survive in practice (rank invariance does, bit for bit;
 units invariance only with a matched initial covariance) and where the box boundary, a curved valley and
-noise change the comparison. Nothing here is specific to one family: the axis restriction, not the
+noise change the comparison. Under noise, the rule for choosing the final point mattered as much as how
+the budget was split. With each family's best choices the two are level. Nothing here is specific to one family: the axis restriction, not the
 algorithm, predicts the rotation failures.
 \end{abstract}
 
@@ -283,10 +284,47 @@ $+0.42$ and $-0.01$). It misleads CMA-ES's recommendation more than its search: 
 evaluates points at $10^{-3.57}$ but recommends one at $10^{-2.40}$.
 \end{itemize}
 
-\begin{figure}[t]
+\begin{figure}[!htbp]
 \centering\includegraphics[width=0.80\linewidth]{figures/fig7_e5_other_functions.pdf}
 \caption{E5. Median noise-free value of the recommended point. Dotted: BO-ARD with the noise fitted (original).}
 \label{fig:e5}
+\end{figure}
+
+%=====================================================================
+\section{Noisy evaluations: budget split and recommendation}\label{sec:noise}
+%=====================================================================
+\textbf{E6} (Fig.~\ref{fig:e6}) follows E5's noise test with the two questions the course brief poses.
+How should a noisy budget be divided between new points and repeats, and which point should be
+recommended? Setting: the aligned $\kappa=100$ quadratic, additive noise $\sigma\in\{0.01,0.1,1\}$, 200
+noisy evaluations per run with repeats counted, and full CMA-ES and BO-ARD with the fix. Each
+recommendation is scored on the noise-free $f$. The rules are R1, the lowest observed value; R2, the
+model's estimate (CMA-ES's final mean, or the point with the lowest posterior mean of a GP refitted
+\emph{with noise estimated}); and R3, the best average after re-evaluating the top five points.
+\begin{itemize}
+\item \emph{Rules.} For BO, R2 beats R1 by $0.30$ \ci{0.15}{0.78} decades at $\sigma=0.1$ and by $1.08$
+\ci{0.28}{1.29} at $\sigma=1$: the search was fine, but picking the lowest reading threw it away. For
+CMA-ES, the mean helps only with a larger population ($\lambda=24$: 0.47 and 0.33 decades, both
+significant). With $\lambda=6$ it ties with R1, because a mean of three selected points averages little.
+\item \emph{Splits.} Repeats did not pay at this budget. Resampling each CMA-ES candidate $4\times$
+leaves 48 distinct points and costs 1.1--3.0 decades. BO replicates cost 1.6 and 1.1 decades at
+$\sigma\le0.1$ and do not help at $\sigma=1$ ($+0.84$ \ci{-0.14}{1.68}), though they cut BO's computation
+27-fold (5\,s against 141\,s). A final reserve of 40 re-evaluations never helped significantly. A
+$4\times$ larger population, which averages without repeating, was the only split that helped (CMA-ES at
+$\sigma=1$: $-0.57$ \ci{-0.85}{-0.08}), and it costs $+0.62$ at $\sigma=0.01$.
+\item \emph{Across families.} With each family's best configuration, BO and CMA-ES are level at every
+noise level ($+0.02$, $+0.08$, $-0.18$ decades; every interval contains 0). Three of our five written
+predictions failed or held only in part (\texttt{code/run\_e6\_noise\_budget.py}).
+\end{itemize}
+At this budget the best use of noisy evaluations was to keep exploring new points and let a model
+average at the end. One anomaly is unexplained: with replicates, BO's R2 is \emph{worse} than R1. A
+plausible cause is that the averaged data are nearly noise-free, so the noise-fitting GP fails as in
+Section~4.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=0.66\linewidth]{figures/fig8_e6_noise.pdf}
+\caption{E6. Top: model-based recommendation minus lowest reading on the same runs. Bottom: each budget
+split minus the baseline. Negative = better.}
+\label{fig:e6}
 \end{figure}
 
 %=====================================================================
@@ -299,7 +337,8 @@ needed (up to $+21.6\%$ evaluations for CMA-ES; worse held-out RMSE for the full
 problems). (3) CMA-ES's rank invariance survives the implementation exactly; its linear invariance holds
 only under the stated condition on $C_0$. BO has neither invariance, and how $f$ is written can move it
 by 1.7 decades. (4) The box is part of BO's model and invisible to CMA-ES; a fair comparison has to state
-the bound handling for both.
+the bound handling for both. (5) Under noise at this budget, model-based recommendation (GP posterior
+mean; a large-population CMA-ES mean) beats the lowest reading, and repeating evaluations does not pay.
 
 \textbf{Uncertain or limited.} BO was run only in 2-D, with one kernel family, so the dimension trend of
 the ARD penalty is inferred from CMA-ES (E1), not measured. BO stops near $10^{-4}$ even after the fix,
@@ -311,7 +350,8 @@ Two of our predictions failed (E5) and are reported as such.
 
 \textbf{For algorithm choice.} The question ``BO or CMA-ES?'' is partly the wrong one. Whether the
 method can represent the problem's orientation matters as much as the family. A practitioner facing a
-rotated, ill-conditioned problem should avoid an ARD kernel or a diagonal ES for the same reason.
+rotated, ill-conditioned problem should avoid an ARD kernel or a diagonal ES for the same reason. Under
+noise, the choice of recommendation rule matters as much as the choice of family.
 
 \small
 \bibliographystyle{abbrvnat}
