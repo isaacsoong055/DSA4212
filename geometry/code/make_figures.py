@@ -88,7 +88,7 @@ def fig1_e1_angle_sweep():
         ax.set_xticks([0, 15, 30, 45, 60, 75, 90])
         ax.set_xlabel("rotation angle of the valley (degrees)")
         ax.set_ylim(-5, 105)
-    axes[0].set_ylabel(f"% of {sub.instance.nunique()} instances\nreaching $10^{{-8}}$")
+    axes[0].set_ylabel(f"% of {sub.instance.nunique()} instances reaching\n$10^{{-8}}$ within 4,000 evaluations")
     axes[1].legend(loc="center right")
     fig.suptitle("E1. Diagonal CMA-ES fails only when the valley lies between the axes",
                  x=0.0, ha="left", fontsize=9.5, y=1.04)

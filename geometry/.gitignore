@@ -8,3 +8,6 @@ report/*.log
 report/*.out
 report/*.bbl
 report/*.blg
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
