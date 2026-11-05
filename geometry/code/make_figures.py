@@ -39,6 +39,7 @@ STYLE = {   # method -> (label, colour, dash)
     "bo-full": ("BO, full metric", ORANGE, "-"),
     "bo-ard": ("BO, ARD", ORANGE, "--"),
     "cmaes-full-reflect": ("CMA-ES, full + reflection", AQUA, "-"),
+    "bo-ard-fitnoise": ("BO, ARD, noise fitted (original)", ORANGE, ":"),
 }
 GEO = {"none": "aligned", "random": "Haar-random rotation"}
 
@@ -272,6 +273,40 @@ def fig6_e4_boundary():
     save(fig, "fig6_e4_boundary")
 
 
+def fig7_e5_other_functions():
+    """E5: Rosenbrock and the noisy quadratic, median recommended (noise-free) value."""
+    traj = pd.read_csv(R / "e5_trajectories.csv")
+    traj = traj.assign(l=np.log10(traj.recommended_true + 1e-300))
+    panels = [("rosenbrock:none", "Rosenbrock f8 (aligned)"),
+              ("rosenbrock:random", "Rosenbrock f9 (rotated)"),
+              ("noisy:0.01", "κ = 100 quadratic, noise σ = 0.01"),
+              ("noisy:1", "κ = 100 quadratic, noise σ = 1")]
+    fig, axes = plt.subplots(2, 2, figsize=(6.4, 4.6), sharex=True)
+    for ax, (problem, title) in zip(axes.flat, panels):
+        sub = traj[traj.problem == problem]
+        for method in sub.method.unique():
+            m = sub[sub.method == method].groupby("evaluation").l.median()
+            line(ax, m.index, m.values, method)
+        ax.set_title(title)
+        ax.set_xlim(0, 200)
+    for ax in axes[:, 0]:
+        ax.set_ylabel("median log$_{10}$ f\nof the recommended point")
+    for ax in axes[1]:
+        ax.set_xlabel("objective evaluations")
+    handles, labels = {}, {}
+    for ax in axes.flat:
+        for h, l in zip(*ax.get_legend_handles_labels()):
+            handles[l] = h
+    order = ["CMA-ES, full", "CMA-ES, diagonal", "BO, full metric", "BO, ARD",
+             "BO, ARD, noise fitted (original)"]
+    fig.legend([handles[l] for l in order], order, loc="upper left", ncol=3,
+               bbox_to_anchor=(0.0, 0.975))
+    fig.suptitle("E5. Beyond the quadratic (15 instances; recommendation = lowest observed value,"
+                 " scored on noise-free f)", x=0.0, ha="left", fontsize=9.5, y=1.0)
+    fig.tight_layout(rect=(0, 0, 1, 0.9))
+    save(fig, "fig7_e5_other_functions")
+
+
 if __name__ == "__main__":
     fig1_e1_angle_sweep()
     fig2_e2c_axis_error()
@@ -279,3 +314,4 @@ if __name__ == "__main__":
     fig4_rotation_penalty()
     fig5_e3_invariance()
     fig6_e4_boundary()
+    fig7_e5_other_functions()
