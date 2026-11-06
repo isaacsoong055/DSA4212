@@ -36,6 +36,10 @@ code/
   run_e4_boundary.py          E4: optimum near the box edge, with a same-distance interior control
   run_e5_other_functions.py   E5: Rosenbrock (COCO f8/f9) and a noisy quadratic
   run_e6_noise_budget.py      E6: noisy evaluations -- budget split (repeats, population, reserve) and recommendation rule
+  run_e7_cmaes_restarts.py    E7: do IPOP-style restarts change any CMA-ES result? (seconds)
+  run_e8_matern.py            E8: the rotation result with a Matern-5/2 kernel
+  run_e9_rosenbrock_long.py   E9: Rosenbrock with 4,000 CMA-ES evaluations (seconds)
+  run_e10_trust_region.py     E10: TuRBO-style trust region, axis-aligned (ARD) vs rotated (full) box
   make_figures.py             rebuilds every report figure from results/ (no experiment is re-run)
 results/                      CSV output of the above (one file per experiment)
 report/                       report.tex, references.bib, figures/ (and the compiled report.pdf)
@@ -82,6 +86,12 @@ python code/run_e3_invariance.py --workers 8         # ~1.5 h (BO dominates)
 python code/run_e4_boundary.py --workers 8           # ~1 h
 python code/run_e5_other_functions.py --workers 8    # ~45 min
 python code/run_e6_noise_budget.py --workers 8       # ~30 min
+python code/run_e2_bo_metric.py --refit-local --workers 8   # original BO on this machine -> results/e2_local_* (~2.5 h)
+python code/run_e2_bo_metric.py --local-cand --workers 8    # BO fix + local candidates -> results/e2_lc_* (~1.5 h)
+python code/run_e7_cmaes_restarts.py                 # seconds
+python code/run_e8_matern.py --workers 8             # ~1.5 h
+python code/run_e9_rosenbrock_long.py                # seconds
+python code/run_e10_trust_region.py --workers 8      # ~15 min
 python code/make_figures.py                          # seconds; writes report/figures/
 cd report && latexmk -pdf report.tex                 # compiles the report
 ```

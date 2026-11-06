@@ -54,7 +54,7 @@ a Gaussian-process surrogate and chooses points through an acquisition function 
 Its standard squared-exponential kernel with automatic relevance determination (ARD) uses a squared
 distance $\sum_i (x_i-x'_i)^2/\ell_i^2$, a \emph{diagonal} metric. Trust-region BO inherits the same
 restriction, because TuRBO's trust region is a hyperrectangle whose side lengths are set per coordinate
-from the ARD lengthscales \citep{eriksson2019turbo}.
+from the ARD lengthscales \citep{eriksson2019turbo} (tested in Section~4).
 
 \textbf{Explanation under test.} On a rotated, ill-conditioned problem, performance depends on whether
 the method's search geometry \emph{can tilt}. That property, not the family, decides the outcome:
@@ -196,7 +196,12 @@ the hypothesis rejected before the fix. After 100 evaluations the GP's shortest 
 0.07, so the region worth searching is about 0.1 wide. In 98--99\% of iterations a dense search there
 finds $>10\times$ (median about $800\times$) the EI of the point chosen, while only 1--2\% of chosen
 points land within 0.1 of the incumbent: 200 uniform candidates in a $10\times10$ box almost never hit it.
-Adding candidates around the incumbent, as BoTorch does, is the natural remedy.
+Adding 200 candidates around the incumbent, as BoTorch samples around its best points, removed the
+stall on the round bowl: every run reached $10^{-5}$, in a median of 41--56 evaluations against about 145
+for CMA-ES. It also exposed a \emph{boundary trap}. On the ill-conditioned problems, 4--8 of 15 runs per
+aligned cell ended at $f\approx5$, with the incumbent on the valley floor \emph{at the box edge} and
+95--96\% of evaluations on the edge. EI's boundary preference (Section~\ref{sec:boundary}) places the
+incumbent there, and searching around it keeps BO there.
 
 \textbf{E2 with the fix.} We re-ran the 180 BO runs both ways on one machine, fitted noise and fixed
 noise (CMA-ES is unaffected), so the comparison is paired. The fix lifted BO significantly in 10 of 12
@@ -211,8 +216,38 @@ the ARD penalty, because no method can lose ground it never gains.
 
 Across families (Fig.~\ref{fig:curves}), BO-full now leads CMA-ES-full by 0.85--1.25 decades at 50
 evaluations in every cell, and on aligned $\kappa=10^4$ at every budget ($-1.32$ \ci{-1.92}{-0.62} at 200).
-CMA-ES still wins by 200 evaluations at $\kappa\le100$ (by 1.2--2.7 decades), where its linear convergence
-overtakes BO's stalled progress. BO's early lead costs about $10^5$ times more computation per run.
+With plain EI, CMA-ES still wins by 200 evaluations at $\kappa\le100$ (by 1.2--2.7 decades), where its
+linear convergence overtakes BO's stalled progress. That conclusion depends on the acquisition search.
+A TuRBO-style trust-region BO (below) beats full CMA-ES at 200 evaluations on aligned $\kappa=100$ ($-1.36$
+\ci{-2.02}{-0.85}) and on rotated $\kappa=10^4$ ($-3.32$ \ci{-4.24}{-1.82}). BO's early lead costs about
+$10^5$ times more computation per run (trust-region BO: 41--79\,s per run).
+
+\textbf{Robustness of the rotation result.} The ARD penalty could be an artefact of one kernel or one
+acquisition search, so we repeated the key comparison with three changes (Table~\ref{tab:robust}): BoTorch's
+default Mat\'ern-5/2 kernel (E8); 200 extra candidates around the incumbent; and a TuRBO-style trust
+region (E10; one region, TuRBO-1's expand/shrink/restart rules, EI over 1,000 candidates inside it). The
+trust region is either the published axis-aligned box with sides scaled by the ARD lengthscales, or a
+box rotated to the full metric. In all four variants the axis-restricted version ends significantly
+behind on rotated $\kappa=10^4$ problems and is level on aligned ones. This confirms the argument of
+Section~1 that TuRBO inherits the restriction. On aligned $\kappa=100$ the axis-aligned trust region is
+\emph{better} ($-0.57$ \ci{-1.04}{-0.27}): the cost of tilting when no tilt is needed, again.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lcc}
+\toprule
+BO variant (2-D, 15 instances, 200 evaluations) & rotated $\kappa=10^4$ & aligned $\kappa=10^4$ \\
+\midrule
+EI, squared exponential (E2, fixed noise) & $+1.40$ \ci{+0.68}{+1.69} & $-0.13$ \ci{-1.15}{+0.19} \\
+EI, Mat\'ern-5/2 (E8) & $+1.06$ \ci{+0.59}{+1.43} & $-0.13$ \ci{-0.70}{+0.54} \\
+EI + local candidates & $+1.28$ \ci{+0.12}{+2.36} & $-2.96$ \ci{-3.44}{+2.61} \\
+Trust region, ARD box vs rotated box (E10) & $+2.92$ \ci{+1.27}{+3.79} & $-0.39$ \ci{-3.11}{+4.65} \\
+\bottomrule
+\end{tabular}
+\caption{Axis-restricted minus tilting version, median $\log_{10}f$ at 200 evaluations, paired by instance
+(+ = axis-restricted worse). The wide aligned intervals in the last two rows come from the boundary trap.}
+\label{tab:robust}
+\end{table}
 
 \begin{figure}[t]
 \centering\includegraphics[width=0.86\linewidth]{figures/fig4_rotation_penalty.pdf}
@@ -365,7 +400,9 @@ split minus the baseline. Negative = better.}
 %=====================================================================
 \textbf{Established.} (1) On rotated ill-conditioned quadratics, the axis restriction predicts failure
 in both families: diagonal CMA-ES and ARD-BO pay, while their tilting counterparts do not, and the
-penalty vanishes on aligned or well-conditioned problems. (2) Tilting has a modest cost when no tilt is
+penalty vanishes on aligned or well-conditioned problems. On the BO side this holds for two kernels, two
+acquisition searches and a TuRBO-style trust region; on Rosenbrock, what matters is the local
+orientation (E9). (2) Tilting has a modest cost when no tilt is
 needed (up to $+21.6\%$ evaluations for CMA-ES; worse held-out RMSE for the full GP metric on aligned
 problems). (3) CMA-ES's rank invariance survives the implementation exactly; its linear invariance holds
 only under the stated condition on $C_0$. BO has neither invariance, and how $f$ is written can move it
@@ -373,9 +410,10 @@ by 1.7 decades. (4) The box is part of BO's model and invisible to CMA-ES; a fai
 the bound handling for both. (5) Under noise at this budget, model-based recommendation (GP posterior
 mean; a large-population CMA-ES mean) beats the lowest reading, and repeating evaluations does not pay.
 
-\textbf{Uncertain or limited.} BO was run only in 2-D, with one kernel family, so the dimension trend of
-the ARD penalty is inferred from CMA-ES (E1), not measured. BO stops near $10^{-4}$ even after the fix; the
-logs point to the acquisition search (Section~4), and the comparison at 200 evaluations depends on it. The full GP metric
+\textbf{Uncertain or limited.} BO was run only in 2-D, so the dimension trend of the ARD penalty is inferred from CMA-ES (E1), not
+measured. The cross-family comparison at 200 evaluations depends on BO's acquisition search: plain EI
+stalls near $10^{-4}$, local candidates fix that but fall into a boundary trap, and trust-region BO is
+strongest but shares the trap. No single BO configuration dominates. The full GP metric
 is overconfident (worse log predictive density than ARD nearly everywhere), and about 2\% of fits still
 miss the best hyperparameter optimum. CMA-ES ran without restarts. A check (E7) shows this does not matter here: full CMA-ES solves every
 quadratic without them, and IPOP-style restarts (4 runs, population doubling from 6 to 48) leave diagonal
