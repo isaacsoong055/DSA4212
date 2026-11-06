@@ -11,3 +11,8 @@ report/*.blg
 report/*.fls
 report/*.fdb_latexmk
 report/*.synctex.gz
+
+# Course materials: not for the repository
+*.pdf
+!report/report.pdf
+!report/figures/*.pdf

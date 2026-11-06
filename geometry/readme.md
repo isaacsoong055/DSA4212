@@ -51,8 +51,17 @@ numpy scipy pandas matplotlib
 
 ```
 python -m venv .venv && source .venv/bin/activate
-pip install numpy scipy pandas matplotlib
+pip install -r requirements.txt        # pinned versions used for every result
+python -m unittest discover -s tests   # 10 checks, about a second
 ```
+
+The tests check the pieces every result depends on: the test problems
+(optimum, spectrum, rotation), the analytic GP gradient against finite
+differences, LogEI against the direct formula, CMA-ES's exact rank invariance,
+and that a BO run repeats bit for bit with one BLAS thread.
+
+`./run_all.sh [workers]` re-runs everything in order (about 6-7 hours on
+8 cores), rebuilds the figures and compiles the report.
 
 No data download is required: every objective is generated in code.
 
