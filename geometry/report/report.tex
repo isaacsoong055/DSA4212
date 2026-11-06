@@ -191,7 +191,12 @@ improved the median by $-1.43$ \ci{-1.83}{-0.73} decades at 50 evaluations and $
 at 200; every run then reached $10^{-3}$ (27\% before). LogEI \citep{ament2023logei}, which fixes the
 underflow but not its cause, changed nothing ($+0.01$ \ci{-0.79}{+0.47}). Lowering the transform floor as
 well added a non-significant $-0.28$ \ci{-0.68}{+0.15}, so we adopted the fixed noise alone. Even fixed,
-BO stops improving near $10^{-4}$; that remaining limit is unexplained.
+BO stops improving near $10^{-4}$. The fixed-noise logs explain why: the acquisition search now fails,
+the hypothesis rejected before the fix. After 100 evaluations the GP's shortest lengthscale is about
+0.07, so the region worth searching is about 0.1 wide. In 98--99\% of iterations a dense search there
+finds $>10\times$ (median about $800\times$) the EI of the point chosen, while only 1--2\% of chosen
+points land within 0.1 of the incumbent: 200 uniform candidates in a $10\times10$ box almost never hit it.
+Adding candidates around the incumbent, as BoTorch does, is the natural remedy.
 
 \textbf{E2 with the fix.} Re-running the 180 BO runs (CMA-ES is unaffected) lifted BO in 11 of 12
 condition, geometry and kernel cells, by 0.66--1.39 decades at 200 evaluations. \textbf{The negative
@@ -284,14 +289,24 @@ drift onto a mirror copy of an interior optimum ($+1.04$ \ci{+0.43}{+1.64}).
 %=====================================================================
 \textbf{E5} (Fig.~\ref{fig:e5}). We wrote two predictions down before running.
 \begin{itemize}
-\item \emph{Rosenbrock (f8/f9).} Its valley bends, so its Hessian, and with it the valley's local
-orientation, changes along the path (Section~1). The prediction was that a full GP metric, being one
-\emph{global} tilt, would gain less over ARD on such a curved valley. No method converges within 200 evaluations
-($10^{-1.35}$--$10^{-0.49}$). Even ``aligned'' Rosenbrock has its valley at $63.5^\circ$ to the axes near
-the optimum (local $\kappa\approx2{,}500$), so rotating it changes little. BO-full beats BO-ARD by 0.63
-\ci{0.21}{1.08} (f8) and 0.39 \ci{-0.24}{0.96} (f9) decades, against 1.40 on the rotated quadratic. That
-is weak support only: the intervals overlap. Full against diagonal CMA-ES is not significant, because
-neither reaches the final stage, where covariance learning pays off.
+\item \emph{Rosenbrock (f8/f9).} \emph{Why this function:} every other problem here is a quadratic,
+whose Hessian, and so whose orientation and conditioning, is the same everywhere. Rosenbrock is the
+standard benchmark (COCO f8/f9) that is still unimodal and smooth, but whose valley floor \emph{bends}
+along the parabola $z_2=z_1^2$ (Section~1). It changes one thing, the constancy of the geometry, and so
+tests whether the explanation needs a \emph{local} tilt or only a global one. \emph{Why it needs a longer
+budget:} a method must travel along the bending floor, and its learned orientation goes stale as the
+floor turns. A step that is long along today's direction climbs the wall further on, so steps stay short
+and the shape must be re-learned repeatedly. Near the optimum the valley is also narrow (local
+$\kappa\approx2{,}500$). Full CMA-ES needs a median of about 500 evaluations to reach $10^{-5}$ (E9 below),
+so 200 evaluations end before the final stage. \emph{At 200 evaluations (E5)} no method converges
+($10^{-1.35}$--$10^{-0.49}$). Even ``aligned'' Rosenbrock has its valley at $63.5^\circ$ to the axes near the
+optimum, so rotating it changes little. BO-full beats BO-ARD by 0.63 \ci{0.21}{1.08} (f8) and 0.39
+\ci{-0.24}{0.96} (f9) decades, against 1.40 on the rotated quadratic, which is weak support for the
+``one global tilt'' prediction only. \emph{With 4,000 evaluations (E9, CMA-ES only)} the picture is sharp.
+Full CMA-ES reaches $10^{-5}$ in every run (median 535 and 492 evaluations), while diagonal CMA-ES reaches
+it in 0\% of f8 runs and 27\% of f9 runs, about 3,500 evaluations behind (paired, failures counted at the
+cap). We had predicted that both would converge. Diagonal fails even on the ``aligned'' f8, because what
+matters is the valley's \emph{local} orientation, which is tilted near the optimum whatever the label says.
 \item \emph{Noise} (additive, $\sigma\in\{0.01,1\}$; each method recommends its lowest observed point,
 scored on the noise-free $f$, as the course brief requires). The prediction was that the noise fix would
 backfire once the objective is noisy. It did not: fixed-noise BO still beat fitted-noise BO ($-0.41$
@@ -357,12 +372,15 @@ the bound handling for both. (5) Under noise at this budget, model-based recomme
 mean; a large-population CMA-ES mean) beats the lowest reading, and repeating evaluations does not pay.
 
 \textbf{Uncertain or limited.} BO was run only in 2-D, with one kernel family, so the dimension trend of
-the ARD penalty is inferred from CMA-ES (E1), not measured. BO stops near $10^{-4}$ even after the fix,
-for reasons we did not establish; the comparison at 200 evaluations depends on it. The full GP metric
+the ARD penalty is inferred from CMA-ES (E1), not measured. BO stops near $10^{-4}$ even after the fix; the
+logs point to the acquisition search (Section~4), and the comparison at 200 evaluations depends on it. The full GP metric
 is overconfident (worse log predictive density than ARD nearly everywhere), and about 2\% of fits still
-miss the best hyperparameter optimum. CMA-ES ran without restarts. The E2 before/after comparison spans
-two machines. On a curved valley and with noise, the geometry argument predicts little at this budget.
-Two of our predictions failed (E5) and are reported as such.
+miss the best hyperparameter optimum. CMA-ES ran without restarts. A check (E7) shows this does not matter here: full CMA-ES solves every
+quadratic without them, and IPOP-style restarts (4 runs, population doubling from 6 to 48) leave diagonal
+CMA-ES's rotated $\kappa=10^4$ failure in place (7\% reach $10^{-5}$ against 20\% for one long run),
+because a restarted diagonal run still cannot tilt. The E2 before/after comparison spans
+two machines. With noise, the geometry argument predicts little at this budget. Several of our written predictions
+failed or held only in part (E5, E6, E9) and are reported as such.
 
 \textbf{For algorithm choice.} The question ``BO or CMA-ES?'' is partly the wrong one. Whether the
 method can represent the problem's orientation matters as much as the family. A practitioner facing a
