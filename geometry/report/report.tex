@@ -63,6 +63,21 @@ the method's search geometry \emph{can tilt}. That property, not the family, dec
 $k(x,x')=\exp(-\tfrac12(x-x')^\top M(x-x'))$;
 \item \emph{cannot tilt:} diagonal CMA-ES, and the ARD kernel ($M$ diagonal).
 \end{itemize}
+\textbf{Conditioning, rotation and curvature.} Near a minimum, $f(x^*+h)\approx f^*+\tfrac12 h^\top Hh$.
+The eigenvalues of the Hessian $H$ are the \emph{curvatures} of $f$ along its eigenvectors. The
+\emph{condition number} $\kappa=\lambda_{\max}/\lambda_{\min}$ is the ratio of the largest curvature to the
+smallest, so an ill-conditioned problem is a narrow valley: steep across, flat along. The eigenvectors
+give the valley's \emph{orientation}; a rotation changes them but leaves $\kappa$ unchanged. This is why
+our problems vary $\kappa$ and rotation separately. On a quadratic, $H$ is the same everywhere, so one
+tilt describes the whole problem. A well-adapted CMA-ES covariance approximates $H^{-1}$ up to scale
+\citep{hansen2016tutorial}, and a full GP metric can align with the eigenvectors of $H$. A step that
+ignores the orientation is a poor one on a narrow, tilted valley. Along the valley it must stay short
+enough not to climb the steep walls, so progress along the flat direction is slow. Rosenbrock
+(Section~\ref{sec:beyond}) adds a third property: its Hessian changes from point to point. The valley
+floor \emph{bends}, so the local orientation and local $\kappa$ change along the path. This separates
+\emph{local} geometry, which CMA-ES re-adapts as it moves, from \emph{global} geometry, the single metric a
+stationary kernel learns for the whole box.
+
 The explanation makes three falsifiable predictions. (i) Each axis-restricted method pays a penalty
 under rotation that its tilting counterpart does not. (ii) The penalty appears only when the problem is
 both ill-conditioned and rotated, because an aligned problem needs no tilt. (iii) The tilting variant
@@ -269,8 +284,9 @@ drift onto a mirror copy of an interior optimum ($+1.04$ \ci{+0.43}{+1.64}).
 %=====================================================================
 \textbf{E5} (Fig.~\ref{fig:e5}). We wrote two predictions down before running.
 \begin{itemize}
-\item \emph{Rosenbrock (f8/f9).} The prediction was that a full GP metric, being one \emph{global} tilt,
-would gain less over ARD on a curved valley. No method converges within 200 evaluations
+\item \emph{Rosenbrock (f8/f9).} Its valley bends, so its Hessian, and with it the valley's local
+orientation, changes along the path (Section~1). The prediction was that a full GP metric, being one
+\emph{global} tilt, would gain less over ARD on such a curved valley. No method converges within 200 evaluations
 ($10^{-1.35}$--$10^{-0.49}$). Even ``aligned'' Rosenbrock has its valley at $63.5^\circ$ to the axes near
 the optimum (local $\kappa\approx2{,}500$), so rotating it changes little. BO-full beats BO-ARD by 0.63
 \ci{0.21}{1.08} (f8) and 0.39 \ci{-0.24}{0.96} (f9) decades, against 1.40 on the rotated quadratic. That
