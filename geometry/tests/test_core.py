@@ -53,24 +53,36 @@ class TestGaussianProcess(unittest.TestCase):
 
     def test_map_gradient_matches_finite_differences(self):
         loc = bo.lengthscale_prior_loc(2, 10.0)
-        for metric in ("ard", "full", "iso"):
+        for kernel, metric in [(k, m) for k in bo.KERNELS for m in ("ard", "full", "iso")]:
             n = bo._n_parameters(2, metric)
             theta = np.random.default_rng(2).normal(0, 0.3, n)
             theta[-1] = -3.0
-            args = (self.x, self.y, 2, metric, loc, bo.PRIOR_SCALE)
+            args = (self.x, self.y, 2, metric, loc, bo.PRIOR_SCALE, kernel)
             _, grad = bo._neg_log_posterior_and_gradient(theta, *args)
             numeric = np.zeros(n)
             for k in range(n):
                 step = np.zeros(n); step[k] = 1e-6
                 numeric[k] = (bo._negative_log_posterior(theta + step, *args)
                               - bo._negative_log_posterior(theta - step, *args)) / 2e-6
-            np.testing.assert_allclose(grad, numeric, rtol=1e-4, atol=1e-4, err_msg=metric)
+            np.testing.assert_allclose(grad, numeric, rtol=1e-4, atol=1e-4,
+                                       err_msg=f"{kernel} {metric}")
 
     def test_fixed_noise_is_respected(self):
         model = bo.fit_gp(self.x, self.y, "ard", np.random.default_rng(0),
                           input_scale=10.0, noise_variance=1e-6)
         _, cut = bo._precision_matrix(model["theta"], 2, "ard")
         self.assertAlmostEqual(np.exp(2 * model["theta"][cut]), 1e-6, places=12)
+
+
+    def test_matern_is_a_valid_kernel(self):
+        r2 = np.array([0.0, 0.5, 2.0, 10.0])
+        k = bo._kernel(r2, "matern52")
+        self.assertEqual(k[0], 1.0)
+        self.assertTrue(np.all(np.diff(k) < 0))
+        model = bo.fit_gp(self.x, self.y, "full", np.random.default_rng(0), input_scale=10.0,
+                          kernel="matern52")
+        mean, sd = bo.predict(model, self.x)
+        self.assertTrue(np.all(np.isfinite(mean)) and np.all(sd > 0))
 
 
 class TestLogEI(unittest.TestCase):

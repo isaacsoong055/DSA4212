@@ -49,7 +49,21 @@ BOFIX_OPTIONS) and writes results/e2_bofix_* instead; the CMA-ES runs, which the
 fix does not touch, are copied from the original checkpoint. The original
 E2 files are left as they are, for the before/after comparison.
 
-Usage: python code/run_e2_bo_metric.py [--workers N] [--report-only] [--bofix]
+--refit-local re-runs the BO methods with the ORIGINAL settings (noise fitted)
+on the current machine, with BLAS pinned to one thread, into results/e2_local_*.
+Together with --bofix this makes the before/after comparison paired on one
+machine (the original e2_* runs came from another machine, before pinning).
+
+--local-cand adds Stage C on top of the fix: 200 extra acquisition candidates
+around the incumbent (bo.bayes_opt local_candidates=200), into results/e2_lc_*.
+Stage C was added after the fixed-noise logs showed that the remaining stall
+near 1e-4 is an acquisition-search failure: in 98-99% of late iterations a
+dense search near the incumbent finds >10x the EI of the point chosen.
+Prediction, written before running: BO now reaches 1e-5 on kappa = 1, and the
+rotation result (ARD pays at kappa = 10,000, full does not) persists.
+
+Usage: python code/run_e2_bo_metric.py [--workers N] [--report-only]
+                                       [--bofix | --refit-local | --local-cand]
 """
 
 import os
@@ -78,15 +92,19 @@ import problems
 RESULTS = pathlib.Path(__file__).resolve().parent.parent / "results"
 PARTIAL = RESULTS / "e2_runs_partial.jsonl"
 BOFIX = "--bofix" in sys.argv
-PREFIX = "e2_bofix" if BOFIX else "e2"
+LOCAL = "--refit-local" in sys.argv
+LOCAL_CAND = "--local-cand" in sys.argv
+assert BOFIX + LOCAL + LOCAL_CAND <= 1, "choose one of --bofix, --refit-local, --local-cand"
+PREFIX = ("e2_bofix" if BOFIX else "e2_local" if LOCAL else "e2_lc" if LOCAL_CAND else "e2")
 # The fix adopted after E2e Stage B (code/run_e2e_stage_b.py, notebook 8.6).
 # B2, noise fixed at 1e-6: the cause found in Stage A, -1.17 decades at 200
 # evaluations. B5's extra fixed floor (-0.28 [-0.68, +0.15] vs B2) was not
 # significant and is untested at high kappa, so it is not adopted.
 BOFIX_OPTIONS = {"noise_variance": 1e-6}
-BO_OPTIONS = BOFIX_OPTIONS if BOFIX else {}
-if BOFIX:
-    ORIGINAL_PARTIAL, PARTIAL = PARTIAL, RESULTS / "e2_bofix_runs_partial.jsonl"
+BO_OPTIONS = (BOFIX_OPTIONS if BOFIX else
+              {**BOFIX_OPTIONS, "local_candidates": 200} if LOCAL_CAND else {})
+if BOFIX or LOCAL or LOCAL_CAND:
+    ORIGINAL_PARTIAL, PARTIAL = PARTIAL, RESULTS / f"{PREFIX}_runs_partial.jsonl"
 DIMENSION = 2
 BOX = 5.0
 SIGMA_FRACTION = 0.3
@@ -147,7 +165,7 @@ def all_tasks():
 
 def sweep(workers):
     RESULTS.mkdir(exist_ok=True)
-    if BOFIX and not PARTIAL.exists():
+    if (BOFIX or LOCAL or LOCAL_CAND) and not PARTIAL.exists():
         cma = [line for line in ORIGINAL_PARTIAL.read_text().splitlines()
                if not json.loads(line)["method"].startswith("bo-")]
         PARTIAL.write_text("".join(line + "\n" for line in cma))

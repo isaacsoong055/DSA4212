@@ -106,10 +106,35 @@ def _squared_distance(a, b, precision):
     return np.einsum("ijk,kl,ijl->ij", delta, precision, delta)
 
 
-def _negative_log_marginal_likelihood(theta, x, y, dimension, metric):
+KERNELS = ("se", "matern52")
+_SQRT5 = sqrt(5.0)
+
+
+def _kernel(r2, kernel="se"):
+    """Stationary kernel as a function of the squared metric distance r^2 = d^T M d.
+
+    "se" is the squared exponential used throughout; "matern52" is the Matern-5/2
+    kernel, BoTorch's default, which is rougher (twice differentiable rather than
+    infinitely). Both see the same metric M, so ARD/full is the same choice in each.
+    """
+    if kernel == "se":
+        return np.exp(-0.5 * r2)
+    r = np.sqrt(np.maximum(r2, 0.0))
+    return (1.0 + _SQRT5 * r + 5.0 * r2 / 3.0) * np.exp(-_SQRT5 * r)
+
+
+def _kernel_dr2(r2, kernel="se"):
+    """d k / d(r^2), used by the exact likelihood gradient."""
+    if kernel == "se":
+        return -0.5 * np.exp(-0.5 * r2)
+    r = np.sqrt(np.maximum(r2, 0.0))
+    return -(5.0 / 6.0) * (1.0 + _SQRT5 * r) * np.exp(-_SQRT5 * r)
+
+
+def _negative_log_marginal_likelihood(theta, x, y, dimension, metric, kernel="se"):
     precision, cut = _precision_matrix(theta, dimension, metric)
     noise = np.exp(2 * theta[cut])
-    gram = np.exp(-0.5 * _squared_distance(x, x, precision))
+    gram = _kernel(_squared_distance(x, x, precision), kernel)
     gram += (noise + 1e-8) * np.eye(len(x))
     try:
         factor = cho_factor(gram, lower=True)
@@ -140,9 +165,9 @@ def eigen_log_lengthscales(precision, metric):
     return -0.5 * np.log(np.maximum(values, 1e-300))
 
 
-def _negative_log_posterior(theta, x, y, dimension, metric, prior_loc, prior_scale):
+def _negative_log_posterior(theta, x, y, dimension, metric, prior_loc, prior_scale, kernel="se"):
     """Negative log marginal likelihood plus the LogNormal lengthscale penalty."""
-    nlml = _negative_log_marginal_likelihood(theta, x, y, dimension, metric)
+    nlml = _negative_log_marginal_likelihood(theta, x, y, dimension, metric, kernel)
     if nlml >= 1e10:
         return nlml
     precision, _ = _precision_matrix(theta, dimension, metric)
@@ -164,7 +189,7 @@ def _metric_gradient_to_theta(grad_m, theta, dimension, metric):
     return np.concatenate([np.diag(d_lower) * np.exp(theta[:dimension]), d_lower[off]])
 
 
-def _nlml_and_gradient(theta, x, y, dimension, metric):
+def _nlml_and_gradient(theta, x, y, dimension, metric, kernel="se"):
     """Same value as _negative_log_marginal_likelihood, plus its exact gradient.
 
     dNLML/dtheta_k = 1/2 tr((K^-1 - alpha alpha^T) dK/dtheta_k)  (Rasmussen and
@@ -176,8 +201,8 @@ def _nlml_and_gradient(theta, x, y, dimension, metric):
     precision, cut = _precision_matrix(theta, dimension, metric)
     noise = np.exp(2 * theta[cut])
     delta = x[:, None, :] - x[None, :, :]
-    kernel = np.exp(-0.5 * np.einsum("ijk,kl,ijl->ij", delta, precision, delta))
-    gram = kernel + (noise + 1e-8) * np.eye(len(x))
+    r2 = np.einsum("ijk,kl,ijl->ij", delta, precision, delta)
+    gram = _kernel(r2, kernel) + (noise + 1e-8) * np.eye(len(x))
     try:
         factor = cho_factor(gram, lower=True)
     except np.linalg.LinAlgError:
@@ -185,22 +210,24 @@ def _nlml_and_gradient(theta, x, y, dimension, metric):
     alpha = cho_solve(factor, y)
     value = 0.5 * y @ alpha + np.sum(np.log(np.diag(factor[0])))
     w = cho_solve(factor, np.eye(len(x))) - np.outer(alpha, alpha)
-    weighted = w * kernel
-    grad_m = -0.25 * np.einsum("ij,ijk,ijl->kl", weighted, delta, delta)
+    # dK_ij/dM = k'(r_ij^2) d_ij d_ij^T, so dNLML/dM = 1/2 sum_ij W_ij k'(r_ij^2) d_ij d_ij^T.
+    weighted = w * _kernel_dr2(r2, kernel)
+    grad_m = 0.5 * np.einsum("ij,ijk,ijl->kl", weighted, delta, delta)
     grad = np.zeros_like(theta)
     grad[:cut] = _metric_gradient_to_theta(grad_m, theta, dimension, metric)
     grad[cut] = np.trace(w) * noise
     return float(value), grad
 
 
-def _neg_log_posterior_and_gradient(theta, x, y, dimension, metric, prior_loc, prior_scale):
+def _neg_log_posterior_and_gradient(theta, x, y, dimension, metric, prior_loc, prior_scale,
+                                    kernel="se"):
     """MAP objective of _negative_log_posterior with its exact gradient.
 
     Prior term P = sum_j (log ell_j - mu)^2 / (2 s^2) with log ell_j = -1/2 log lambda_j.
     For distinct eigenvalues d lambda_j = v_j^T dM v_j, so dP/dM = sum_j
     (dP/d lambda_j) v_j v_j^T, chained to theta like the likelihood term.
     """
-    value, grad = _nlml_and_gradient(theta, x, y, dimension, metric)
+    value, grad = _nlml_and_gradient(theta, x, y, dimension, metric, kernel)
     if value >= 1e10:
         return value, grad
     precision, cut = _precision_matrix(theta, dimension, metric)
@@ -220,7 +247,7 @@ def _neg_log_posterior_and_gradient(theta, x, y, dimension, metric, prior_loc, p
 
 
 def fit_gp(x, y, metric, rng, n_restarts=DEFAULT_RESTARTS, prior="lognormal",
-           input_scale=None, prior_scale=PRIOR_SCALE, noise_variance=None):
+           input_scale=None, prior_scale=PRIOR_SCALE, noise_variance=None, kernel="se"):
     """Fit kernel hyperparameters by MAP (default) or maximum likelihood (prior=None).
 
     input_scale is the width of the search box in the problem's units; it sets
@@ -237,14 +264,14 @@ def fit_gp(x, y, metric, rng, n_restarts=DEFAULT_RESTARTS, prior="lognormal",
     n_scale = _n_scales(dimension, metric)
     if prior is None:
         scale_bound = LEGACY_LOG_SCALE_BOUND
-        objective, extra = _nlml_and_gradient, (x, y, dimension, metric)
+        objective, extra = _nlml_and_gradient, (x, y, dimension, metric, kernel)
     elif prior == "lognormal":
         scale_bound = MAP_LOG_SCALE_BOUND
         if input_scale is None:
             input_scale = float(np.max(x.max(axis=0) - x.min(axis=0)))
         prior_loc = lengthscale_prior_loc(dimension, input_scale)
         objective = _neg_log_posterior_and_gradient
-        extra = (x, y, dimension, metric, prior_loc, prior_scale)
+        extra = (x, y, dimension, metric, prior_loc, prior_scale, kernel)
     else:
         raise ValueError("prior must be None or 'lognormal'")
     bounds = ([(-scale_bound, scale_bound)] * n_scale
@@ -273,19 +300,20 @@ def fit_gp(x, y, metric, rng, n_restarts=DEFAULT_RESTARTS, prior="lognormal",
 
     precision, cut = _precision_matrix(best.x, dimension, metric)
     noise = np.exp(2 * best.x[cut])
-    gram = np.exp(-0.5 * _squared_distance(x, x, precision))
+    gram = _kernel(_squared_distance(x, x, precision), kernel)
     gram += (noise + 1e-8) * np.eye(len(x))
     factor = cho_factor(gram, lower=True)
-    nlml = _negative_log_marginal_likelihood(best.x, x, y, dimension, metric)
+    nlml = _negative_log_marginal_likelihood(best.x, x, y, dimension, metric, kernel)
     return {"precision": precision, "factor": factor,
             "alpha": cho_solve(factor, y), "x": x,
             "theta": best.x, "nlml": float(nlml), "objective": float(best.fun),
-            "restarts": restarts}
+            "restarts": restarts, "kernel": kernel}
 
 
 def predict(model, query):
     """Posterior mean and standard deviation at ``query`` (unit prior variance)."""
-    cross = np.exp(-0.5 * _squared_distance(query, model["x"], model["precision"]))
+    cross = _kernel(_squared_distance(query, model["x"], model["precision"]),
+                    model.get("kernel", "se"))
     mean = cross @ model["alpha"]
     reduction = np.einsum("ij,ij->i", cross, cho_solve(model["factor"], cross.T).T)
     return mean, np.sqrt(np.maximum(1.0 - reduction, 1e-12))
@@ -370,7 +398,8 @@ def _transform_targets(y, target_floor=None):
 def bayes_opt(objective, dimension, lower, upper, metric, seed,
               n_initial=None, budget=80, n_candidates=200,
               n_restarts=DEFAULT_RESTARTS, prior="lognormal", prior_scale=PRIOR_SCALE,
-              trace=None, noise_variance=None, acquisition="ei", target_floor=None):
+              trace=None, noise_variance=None, acquisition="ei", target_floor=None,
+              kernel="se", local_candidates=0):
     """Minimise ``objective`` with GP-EI Bayesian optimisation.
 
     ``lower``/``upper`` define the box the acquisition function searches, which
@@ -386,7 +415,12 @@ def bayes_opt(objective, dimension, lower, upper, metric, seed,
     Stage B options (defaults reproduce the earlier runs exactly):
     ``noise_variance`` fixes the GP noise instead of fitting it (B2), and
     ``acquisition="logei"`` maximises log EI instead of EI (B4), and
-    ``target_floor`` fixes the floor in the log transform (B5).  With logei,
+    ``target_floor`` fixes the floor in the log transform (B5).
+    ``local_candidates`` adds that many acquisition candidates drawn around the
+    incumbent, at scales log-uniform in [1e-3, 1] x box width / 10 (Stage C; the
+    same idea as BoTorch's sampling around the best points). With fixed noise,
+    the improving region shrinks to about 0.1 wide, and 200 uniform candidates
+    in the whole box almost never land in it.  With logei,
     the trace's candidate_ei and chosen_ei are log EI values.
     """
     if metric not in ALL_METRICS:
@@ -404,13 +438,19 @@ def bayes_opt(objective, dimension, lower, upper, metric, seed,
         standardised = _transform_targets(y, target_floor)
         model = fit_gp(x, standardised, metric, rng, n_restarts=n_restarts,
                        prior=prior, input_scale=float(upper - lower),
-                       prior_scale=prior_scale, noise_variance=noise_variance)
+                       prior_scale=prior_scale, noise_variance=noise_variance,
+                       kernel=kernel)
         incumbent = standardised.min()
 
         def negative_ei(point):
             return -float(acquire(model, point.reshape(1, -1), incumbent)[0])
 
         candidates = rng.uniform(lower, upper, size=(n_candidates, dimension))
+        if local_candidates:
+            centre = x[int(np.argmin(y))]
+            scale = (upper - lower) / 10 * 10 ** rng.uniform(-3, 0, size=(local_candidates, 1))
+            near = centre + scale * rng.normal(size=(local_candidates, dimension))
+            candidates = np.vstack([candidates, np.clip(near, lower, upper)])
         scores = [negative_ei(c) for c in candidates]
         start = candidates[int(np.argmin(scores))]
         polished = minimize(negative_ei, start, method="L-BFGS-B",
@@ -430,3 +470,66 @@ def bayes_opt(objective, dimension, lower, upper, metric, seed,
     return {"best_value": float(y[order]), "best_point": x[order],
             "evaluations": len(y), "history": np.minimum.accumulate(y),
             "x": x, "y": y}
+
+
+def trust_region_bo(objective, dimension, lower, upper, metric, seed, budget=200,
+                    n_initial=None, n_candidates=1000, noise_variance=1e-6,
+                    n_restarts=DEFAULT_RESTARTS):
+    """TuRBO-style trust-region BO (Eriksson et al. 2019), one trust region, EI inside it.
+
+    Follows TuRBO-1's trust-region rules in the unit-cube scale of the box:
+    side length L starts at 0.8, doubles after 3 consecutive successes (up to
+    1.6), halves after max(4, d) consecutive failures, and the search restarts
+    from a fresh design when L < 2^-7. A success is an improvement of at least
+    1e-3 x |f_best|. Differences from the paper: EI over 1,000 uniform
+    candidates in the region instead of Thompson sampling, and no batch.
+
+    The region's shape is the point of the comparison:
+      metric="ard"   an axis-aligned box whose sides are scaled by the ARD
+                     lengthscales (the published TuRBO; it cannot tilt);
+      metric="full"  a box rotated to the eigenvectors of the full metric M,
+                     sides scaled by its eigen-lengthscales (it can tilt).
+    In both, the side scales are normalised to geometric mean 1, as in TuRBO.
+    """
+    rng = np.random.default_rng(seed)
+    width = float(upper - lower)
+    n_initial = 2 * dimension + 4 if n_initial is None else n_initial
+    l_init, l_max, l_min = 0.8, 1.6, 2.0 ** -7
+    fail_tol, succ_tol = max(4, dimension), 3
+
+    xs, ys = [], []
+    while len(ys) < budget:
+        # (Re)start: a fresh design, a fresh trust region; earlier data are not reused.
+        x = rng.uniform(lower, upper, size=(min(n_initial, budget - len(ys)), dimension))
+        y = np.array([objective(p) for p in x])
+        xs.extend(x); ys.extend(y)
+        length, n_succ, n_fail = l_init, 0, 0
+        while len(ys) < budget and length >= l_min:
+            z = _transform_targets(y)
+            model = fit_gp(x, z, metric, rng, n_restarts=n_restarts, input_scale=width,
+                           noise_variance=noise_variance)
+            if metric == "ard":
+                axes = np.eye(dimension)
+                scales = 1.0 / np.sqrt(np.diag(model["precision"]))
+            else:
+                vals, axes = np.linalg.eigh(model["precision"])
+                scales = 1.0 / np.sqrt(np.maximum(vals, 1e-300))
+            scales = scales / np.exp(np.mean(np.log(scales)))
+            centre = x[int(np.argmin(y))]
+            u = rng.uniform(-0.5, 0.5, size=(n_candidates, dimension)) * scales * length * width
+            candidates = np.clip(centre + u @ axes.T, lower, upper)
+            ei = expected_improvement(model, candidates, z.min())
+            nxt = candidates[int(np.argmax(ei))]
+            value = objective(nxt)
+            if value < y.min() - 1e-3 * abs(y.min()):
+                n_succ, n_fail = n_succ + 1, 0
+            else:
+                n_succ, n_fail = 0, n_fail + 1
+            if n_succ == succ_tol:
+                length, n_succ = min(2.0 * length, l_max), 0
+            elif n_fail == fail_tol:
+                length, n_fail = length / 2.0, 0
+            x = np.vstack([x, nxt]); y = np.append(y, value)
+            xs.append(nxt); ys.append(value)
+    ys = np.asarray(ys[:budget])
+    return {"best_value": float(ys.min()), "y": ys, "x": np.asarray(xs[:budget])}
