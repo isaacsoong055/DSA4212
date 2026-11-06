@@ -16,3 +16,8 @@ report/*.synctex.gz
 *.pdf
 !report/report.pdf
 !report/figures/*.pdf
+
+# Working notes, kept out of the submission
+HANDOFF.md
+PROJECT_GUIDE.md
+PROJECT_GUIDE_flow.png
