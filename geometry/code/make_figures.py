@@ -160,7 +160,7 @@ def interval(ax, y, r, colour, filled=True, size=5):
 
 def fig4_rotation_penalty():
     """The rotation penalty at 200 evaluations, before and after the BO fix."""
-    old = pd.read_csv(R / "e2_summary.csv")
+    old = pd.read_csv(R / "e2_local_summary.csv")   # fitted-noise BO, same machine as the fix
     new = pd.read_csv(R / "e2_bofix_summary.csv")
     pen = lambda s: s[s.comparison.str.endswith("rotated - aligned")].assign(
         method=lambda d: d.comparison.str.split(":").str[0])

@@ -198,9 +198,11 @@ finds $>10\times$ (median about $800\times$) the EI of the point chosen, while o
 points land within 0.1 of the incumbent: 200 uniform candidates in a $10\times10$ box almost never hit it.
 Adding candidates around the incumbent, as BoTorch does, is the natural remedy.
 
-\textbf{E2 with the fix.} Re-running the 180 BO runs (CMA-ES is unaffected) lifted BO in 11 of 12
-condition, geometry and kernel cells, by 0.66--1.39 decades at 200 evaluations. \textbf{The negative
-result reversed} (Fig.~\ref{fig:pen}). BO-ARD's rotation penalty became $+0.54$ \ci{+0.24}{+1.41}
+\textbf{E2 with the fix.} We re-ran the 180 BO runs both ways on one machine, fitted noise and fixed
+noise (CMA-ES is unaffected), so the comparison is paired. The fix lifted BO significantly in 10 of 12
+condition, geometry and kernel cells, by 0.68--1.50 decades at 200 evaluations. \textbf{The negative
+result reversed} (Fig.~\ref{fig:pen}). With fitted noise, neither kernel showed a rotation penalty on
+this machine either (BO-ARD at $\kappa=10^4$: $+0.04$ \ci{-0.27}{+0.71}). BO-ARD's rotation penalty became $+0.54$ \ci{+0.24}{+1.41}
 decades at $\kappa=100$ and $+2.01$ \ci{+1.28}{+2.97} at $\kappa=10^4$; BO-full's stayed non-significant
 ($+0.24$ \ci{-0.43}{+1.13}, $+0.49$ \ci{-0.03}{+0.66}). Paired on the same rotated $\kappa=10^4$
 instances, BO-ARD ended 1.40 \ci{+0.68}{+1.69} decades behind BO-full; on aligned ones the two were level
@@ -215,7 +217,7 @@ overtakes BO's stalled progress. BO's early lead costs about $10^5$ times more c
 \begin{figure}[t]
 \centering\includegraphics[width=0.86\linewidth]{figures/fig4_rotation_penalty.pdf}
 \caption{Rotation penalty at 200 evaluations (median and 95\% bootstrap interval). Hollow: BO before the
-noise fix. The axis-restricted variant pays in both families once BO is no longer stalled.}
+noise fix (same machine, paired instances). The axis-restricted variant pays in both families once BO is no longer stalled.}
 \label{fig:pen}
 \end{figure}
 
@@ -378,8 +380,10 @@ is overconfident (worse log predictive density than ARD nearly everywhere), and 
 miss the best hyperparameter optimum. CMA-ES ran without restarts. A check (E7) shows this does not matter here: full CMA-ES solves every
 quadratic without them, and IPOP-style restarts (4 runs, population doubling from 6 to 48) leave diagonal
 CMA-ES's rotated $\kappa=10^4$ failure in place (7\% reach $10^{-5}$ against 20\% for one long run),
-because a restarted diagonal run still cannot tilt. The E2 before/after comparison spans
-two machines. With noise, the geometry argument predicts little at this budget. Several of our written predictions
+because a restarted diagonal run still cannot tilt. Across machines, BO results agree in distribution but not run for run: re-running the original E2
+elsewhere matched 40--93\% of BO-ARD runs and 0--27\% of BO-full runs to 0.01 decades, and one cell's
+median moved by 0.6 decades. All before/after comparisons in the report are therefore paired on one
+machine. With noise, the geometry argument predicts little at this budget. Several of our written predictions
 failed or held only in part (E5, E6, E9) and are reported as such.
 
 \textbf{For algorithm choice.} The question ``BO or CMA-ES?'' is partly the wrong one. Whether the
