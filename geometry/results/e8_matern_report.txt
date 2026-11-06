@@ -1,0 +1,167 @@
+0 runs already done, 120 to go
+[1/120] bo-full k=100 none inst=7 307s elapsed 309s
+[2/120] bo-full k=100 none inst=5 309s elapsed 311s
+[3/120] bo-full k=100 none inst=4 314s elapsed 315s
+[4/120] bo-full k=100 none inst=3 337s elapsed 338s
+[5/120] bo-full k=100 none inst=2 341s elapsed 342s
+[6/120] bo-full k=100 none inst=1 343s elapsed 344s
+[7/120] bo-full k=100 none inst=0 378s elapsed 380s
+[8/120] bo-full k=100 none inst=6 400s elapsed 401s
+[9/120] bo-full k=100 none inst=8 465s elapsed 773s
+[10/120] bo-full k=100 none inst=9 467s elapsed 778s
+[11/120] bo-full k=100 none inst=12 470s elapsed 812s
+[12/120] bo-full k=100 none inst=10 510s elapsed 825s
+[13/120] bo-full k=100 none inst=11 487s elapsed 825s
+[14/120] bo-full k=100 none inst=13 482s elapsed 826s
+[15/120] bo-full k=100 none inst=14 477s elapsed 856s
+[16/120] bo-full k=100 random inst=0 545s elapsed 947s
+[17/120] bo-full k=100 random inst=1 541s elapsed 1315s
+[18/120] bo-full k=100 random inst=4 535s elapsed 1360s
+[19/120] bo-full k=100 random inst=2 582s elapsed 1360s
+[20/120] bo-full k=100 random inst=3 593s elapsed 1405s
+[21/120] bo-full k=100 random inst=5 583s elapsed 1408s
+[22/120] bo-full k=100 random inst=6 606s elapsed 1432s
+[23/120] bo-full k=100 random inst=7 631s elapsed 1487s
+[24/120] bo-full k=100 random inst=8 614s elapsed 1561s
+[25/120] bo-full k=100 random inst=9 462s elapsed 1777s
+[26/120] bo-full k=100 random inst=10 468s elapsed 1828s
+[27/120] bo-full k=100 random inst=12 540s elapsed 1945s
+[28/120] bo-full k=100 random inst=11 596s elapsed 1956s
+[29/120] bo-full k=10000 none inst=0 509s elapsed 1996s
+[30/120] bo-full k=100 random inst=13 593s elapsed 2001s
+[31/120] bo-full k=100 random inst=14 625s elapsed 2057s
+[32/120] bo-full k=10000 none inst=1 563s elapsed 2123s
+[33/120] bo-full k=10000 none inst=2 603s elapsed 2380s
+[34/120] bo-full k=10000 none inst=3 611s elapsed 2439s
+[35/120] bo-full k=10000 none inst=5 595s elapsed 2551s
+[36/120] bo-full k=10000 none inst=4 625s elapsed 2570s
+[37/120] bo-full k=10000 none inst=6 609s elapsed 2606s
+[38/120] bo-full k=10000 none inst=7 632s elapsed 2633s
+[39/120] bo-full k=10000 none inst=8 600s elapsed 2656s
+[40/120] bo-full k=10000 none inst=9 578s elapsed 2701s
+[41/120] bo-full k=10000 none inst=10 545s elapsed 2925s
+[42/120] bo-full k=10000 none inst=11 555s elapsed 2994s
+[43/120] bo-full k=10000 none inst=12 495s elapsed 3046s
+[44/120] bo-full k=10000 none inst=13 534s elapsed 3104s
+[45/120] bo-full k=10000 none inst=14 581s elapsed 3186s
+[46/120] bo-full k=10000 random inst=1 586s elapsed 3243s
+[47/120] bo-full k=10000 random inst=0 617s elapsed 3250s
+[48/120] bo-full k=10000 random inst=2 625s elapsed 3326s
+[49/120] bo-full k=10000 random inst=3 699s elapsed 3624s
+[50/120] bo-full k=10000 random inst=4 746s elapsed 3740s
+[51/120] bo-full k=10000 random inst=5 726s elapsed 3772s
+[52/120] bo-full k=10000 random inst=6 710s elapsed 3814s
+[53/120] bo-full k=10000 random inst=9 594s elapsed 3844s
+[54/120] bo-full k=10000 random inst=8 617s elapsed 3860s
+[55/120] bo-full k=10000 random inst=7 685s elapsed 3871s
+[56/120] bo-full k=10000 random inst=10 605s elapsed 3931s
+[57/120] bo-ard k=100 none inst=1 308s elapsed 4169s
+[58/120] bo-ard k=100 none inst=0 338s elapsed 4182s
+[59/120] bo-ard k=100 none inst=2 335s elapsed 4206s
+[60/120] bo-ard k=100 none inst=3 333s elapsed 4264s
+[61/120] bo-full k=10000 random inst=11 668s elapsed 4292s
+[62/120] bo-full k=10000 random inst=13 623s elapsed 4396s
+[63/120] bo-full k=10000 random inst=12 690s elapsed 4430s
+[64/120] bo-full k=10000 random inst=14 675s elapsed 4489s
+[65/120] bo-ard k=100 none inst=4 332s elapsed 4500s
+[66/120] bo-ard k=100 none inst=5 324s elapsed 4505s
+[67/120] bo-ard k=100 none inst=6 342s elapsed 4548s
+[68/120] bo-ard k=100 none inst=7 330s elapsed 4594s
+[69/120] bo-ard k=100 none inst=8 364s elapsed 4656s
+[70/120] bo-ard k=100 none inst=9 342s elapsed 4738s
+[71/120] bo-ard k=100 none inst=10 354s elapsed 4784s
+[72/120] bo-ard k=100 none inst=11 331s elapsed 4820s
+[73/120] bo-ard k=100 none inst=12 334s elapsed 4834s
+[74/120] bo-ard k=100 none inst=13 336s elapsed 4842s
+[75/120] bo-ard k=100 none inst=14 318s elapsed 4866s
+[76/120] bo-ard k=100 random inst=0 330s elapsed 4924s
+[77/120] bo-ard k=100 random inst=1 308s elapsed 4963s
+[78/120] bo-ard k=100 random inst=2 322s elapsed 5060s
+[79/120] bo-ard k=100 random inst=3 294s elapsed 5078s
+[80/120] bo-ard k=100 random inst=5 314s elapsed 5148s
+[81/120] bo-ard k=100 random inst=6 316s elapsed 5158s
+[82/120] bo-ard k=100 random inst=4 339s elapsed 5159s
+[83/120] bo-ard k=100 random inst=7 298s elapsed 5164s
+[84/120] bo-ard k=100 random inst=8 330s elapsed 5254s
+[85/120] bo-ard k=100 random inst=9 305s elapsed 5269s
+[86/120] bo-ard k=100 random inst=10 296s elapsed 5357s
+[87/120] bo-ard k=100 random inst=11 307s elapsed 5385s
+[88/120] bo-ard k=100 random inst=13 282s elapsed 5440s
+[89/120] bo-ard k=100 random inst=14 288s elapsed 5447s
+[90/120] bo-ard k=100 random inst=12 310s elapsed 5458s
+[91/120] bo-ard k=10000 none inst=0 315s elapsed 5479s
+[92/120] bo-ard k=10000 none inst=1 310s elapsed 5564s
+[93/120] bo-ard k=10000 none inst=2 311s elapsed 5580s
+[94/120] bo-ard k=10000 none inst=3 314s elapsed 5671s
+[95/120] bo-ard k=10000 none inst=4 331s elapsed 5716s
+[96/120] bo-ard k=10000 none inst=6 325s elapsed 5772s
+[97/120] bo-ard k=10000 none inst=5 336s elapsed 5777s
+[98/120] bo-ard k=10000 none inst=7 325s elapsed 5784s
+[99/120] bo-ard k=10000 none inst=8 345s elapsed 5824s
+[100/120] bo-ard k=10000 none inst=9 344s elapsed 5908s
+[101/120] bo-ard k=10000 none inst=10 336s elapsed 5916s
+[102/120] bo-ard k=10000 none inst=11 330s elapsed 6000s
+[103/120] bo-ard k=10000 none inst=12 337s elapsed 6053s
+[104/120] bo-ard k=10000 none inst=14 308s elapsed 6085s
+[105/120] bo-ard k=10000 none inst=13 318s elapsed 6090s
+[106/120] bo-ard k=10000 random inst=0 319s elapsed 6103s
+[107/120] bo-ard k=10000 random inst=1 297s elapsed 6121s
+[108/120] bo-ard k=10000 random inst=3 227s elapsed 6143s
+[109/120] bo-ard k=10000 random inst=2 329s elapsed 6237s
+[110/120] bo-ard k=10000 random inst=4 290s elapsed 6290s
+[111/120] bo-ard k=10000 random inst=5 536s elapsed 6589s
+[112/120] bo-ard k=10000 random inst=6 505s elapsed 6590s
+[113/120] bo-ard k=10000 random inst=7 500s elapsed 6590s
+[114/120] bo-ard k=10000 random inst=8 497s elapsed 6600s
+[115/120] bo-ard k=10000 random inst=9 490s elapsed 6611s
+[116/120] bo-ard k=10000 random inst=10 482s elapsed 6625s
+[117/120] bo-ard k=10000 random inst=11 694s elapsed 6931s
+[118/120] bo-ard k=10000 random inst=12 669s elapsed 6959s
+[119/120] bo-ard k=10000 random inst=14 388s elapsed 6978s
+[120/120] bo-ard k=10000 random inst=13 389s elapsed 6978s
+
+== median log10 f at 200 evaluations
+kernel             matern52             se        
+method               bo-ard bo-full bo-ard bo-full
+condition geometry                                
+100       none        -2.89   -3.04  -2.67   -2.78
+          random      -1.95   -2.68  -2.13   -2.54
+10000     none        -1.87   -1.74  -1.63   -1.50
+          random      -0.41   -1.47   0.39   -1.01
+
+== rotation penalty at 200, rotated - aligned (unpaired; + = rotation hurts)
+  matern52  k=100    bo-ard                         +0.94 [ +0.17,  +1.37]  <-- differs
+  matern52  k=100    bo-full                        +0.36 [ -0.40,  +0.57]
+  matern52  k=10000  bo-ard                         +1.46 [ +0.64,  +1.98]  <-- differs
+  matern52  k=10000  bo-full                        +0.27 [ -0.24,  +0.59]
+  se        k=100    bo-ard                         +0.54 [ +0.24,  +1.41]  <-- differs
+  se        k=100    bo-full                        +0.24 [ -0.43,  +1.13]
+  se        k=10000  bo-ard                         +2.01 [ +1.28,  +2.97]  <-- differs
+  se        k=10000  bo-full                        +0.49 [ -0.03,  +0.67]
+
+== ARD - full, paired by instance (+ = ARD worse)
+  matern52  k=100    none                           +0.15 [ -0.50,  +0.53]
+  matern52  k=100    random                         +0.73 [ +0.19,  +1.08]  <-- differs
+  matern52  k=10000  none                           -0.13 [ -0.70,  +0.54]
+  matern52  k=10000  random                         +1.06 [ +0.59,  +1.43]  <-- differs
+  se        k=100    none                           +0.11 [ -0.68,  +0.70]
+  se        k=100    random                         +0.41 [ -0.14,  +1.11]
+  se        k=10000  none                           -0.13 [ -1.15,  +0.19]
+  se        k=10000  random                         +1.40 [ +0.68,  +1.69]  <-- differs
+
+== Matern - SE, paired by instance (negative = Matern better)
+  k=100    none    bo-ard                           -0.22 [ -0.58,  +0.62]
+  k=100    none    bo-full                          -0.26 [ -0.65,  +0.68]
+  k=100    random  bo-ard                           +0.18 [ -0.39,  +0.51]
+  k=100    random  bo-full                          -0.13 [ -0.72,  +0.43]
+  k=10000  none    bo-ard                           -0.24 [ -0.78,  +1.09]
+  k=10000  none    bo-full                          -0.24 [ -0.73,  +0.18]
+  k=10000  random  bo-ard                           -0.80 [ -1.37,  -0.03]  <-- differs
+  k=10000  random  bo-full                          -0.46 [ -0.72,  -0.15]  <-- differs
+
+== median wall-clock seconds per run
+kernel    method 
+matern52  bo-ard     330.0
+          bo-full    582.0
+se        bo-ard     196.0
+          bo-full    261.0
