@@ -62,7 +62,8 @@ python -m unittest discover -s tests   # 10 checks, about a second
 The tests check the pieces every result depends on: the test problems
 (optimum, spectrum, rotation), the analytic GP gradient against finite
 differences, LogEI against the direct formula, CMA-ES's exact rank invariance,
-and that a BO run repeats bit for bit with one BLAS thread.
+and that a *short* BO run (20 evaluations, one process) repeats bit for bit.
+Long BO runs are not guaranteed to repeat; see Repeatability below.
 
 `./run_all.sh [workers]` re-runs everything in order (about 6-7 hours on
 8 cores), rebuilds the figures and compiles the report.
@@ -99,13 +100,21 @@ cd report && latexmk -pdf report.tex                 # compiles the report
 Times are for 8 cores. The long sweeps checkpoint to `results/*_partial.jsonl`
 and resume if interrupted; `--report-only` rebuilds the tables from the checkpoint.
 
-**Repeatability.** The scripts pin BLAS to one thread per worker
-(`OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`, `VECLIB_MAXIMUM_THREADS`). With that,
-a BO run is bit-identical on one machine; with multithreaded BLAS two runs of
-one seed differ by about 1e-4 relative, and the difference compounds over 200
-iterations (`results/e2e_determinism.csv`). Across machines, results agree in
-distribution, not run for run. The original E2 (`results/e2_*`) was produced
-before the thread pinning, on another machine.
+**Repeatability.** BO results reproduce in distribution, not run for run.
+The scripts pin BLAS to one thread per worker (`OMP_NUM_THREADS`,
+`OPENBLAS_NUM_THREADS`, `VECLIB_MAXIMUM_THREADS`), which removes one source of
+variation: with multithreaded BLAS two runs of one seed differ by about 1e-4
+relative (`results/e2e_determinism.csv`). It does not make long BO runs
+bit-repeatable. Even with one thread on one machine, the same 200-evaluation
+E6 run with the same code and seed ended at 10^0.06 in one process and
+10^-1.15 in another (7 Nov), because tiny rounding differences in the linear
+algebra are amplified by BO's sequential choices; where exactly they arise was
+not pinned down. The two runs in `results/e2e_determinism.csv` happened to
+match. Re-running a BO sweep therefore gives different individual runs but the
+same medians and intervals up to sampling noise; every conclusion in the report
+rests on those, over 15 instances. CMA-ES runs repeated exactly in our checks.
+The original E2 (`results/e2_*`) was produced on another machine, before the
+thread pinning.
 
 Randomness is controlled by the instance index, which seeds both the problem
 (rotation, optimum location) and the optimiser.

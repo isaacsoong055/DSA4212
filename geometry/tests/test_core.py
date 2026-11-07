@@ -6,7 +6,7 @@ Each test guards a claim the report makes or a step the results depend on.
 """
 
 import os
-os.environ.setdefault("OMP_NUM_THREADS", "1")       # BO is only repeatable with one BLAS thread
+os.environ.setdefault("OMP_NUM_THREADS", "1")       # short BO runs repeat only with one BLAS thread
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 os.environ.setdefault("VECLIB_MAXIMUM_THREADS", "1")
 
@@ -116,7 +116,14 @@ class TestCMAES(unittest.TestCase):
 
 
 class TestDeterminism(unittest.TestCase):
-    def test_bo_run_repeats_exactly(self):
+    def test_short_bo_run_repeats_exactly_in_one_process(self):
+        """A short run (20 evaluations) repeats bit for bit within one process.
+
+        This does NOT hold for long runs: the same 200-evaluation run can end at
+        different values in two processes even with one BLAS thread (readme,
+        Repeatability). The test guards the seeding and the code path, not the
+        bit-repeatability of long runs, which is not guaranteed.
+        """
         f, _ = problems.make_ellipsoid(2, 100, instance=2, rotation="random")
         runs = [bo.bayes_opt(f, 2, -5.0, 5.0, "ard", seed=2, budget=20, noise_variance=1e-6)["y"]
                 for _ in range(2)]
