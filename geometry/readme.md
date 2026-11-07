@@ -5,7 +5,11 @@ DSA4212 project. We ask when a black-box optimiser benefits from learning the
 use that question to explain a difference in behaviour between Bayesian
 optimisation and CMA-ES.
 
-**Report:** `report/report.tex` (compiled PDF submitted on Canvas)
+Paul Ng's part of the group project; the overview, authors and joint report are at the repository root
+(`../readme.md`, `../authors.md`, `../report/`). All commands below are run from this `geometry/` folder.
+
+**Report draft for this part:** `report/report.tex` (9 pages, to be cut down and merged into the joint report
+in `../report/`).
 
 ## The argument in one paragraph
 
@@ -43,7 +47,7 @@ code/
   make_figures.py             rebuilds every report figure from results/ (no experiment is re-run)
 results/                      CSV output of the above (one file per experiment)
 report/                       report.tex, references.bib, figures/ (and the compiled report.pdf)
-geometry_parameterisation_experiment.ipynb   exploratory notebook; Section 8 reloads every result quoted in the report
+notebooks/main.ipynb          exploratory notebook; Section 8 reloads every result quoted in the report (run from notebooks/)
 ```
 
 ## Environment
