@@ -395,11 +395,22 @@ def _transform_targets(y, target_floor=None):
     return (logged - logged.mean()) / (logged.std() + 1e-12)
 
 
+def reflect_into_box(points, lower, upper):
+    """Mirror points back into [lower, upper] (periodic reflection; identity inside the box).
+
+    Clipping instead puts every out-of-box point exactly ON the boundary, which piles
+    local candidates onto an edge whenever the incumbent sits on one (the boundary trap).
+    """
+    width = upper - lower
+    t = np.mod(np.asarray(points, float) - lower, 2 * width)
+    return np.where(t > width, 2 * width - t, t) + lower
+
+
 def bayes_opt(objective, dimension, lower, upper, metric, seed,
               n_initial=None, budget=80, n_candidates=200,
               n_restarts=DEFAULT_RESTARTS, prior="lognormal", prior_scale=PRIOR_SCALE,
               trace=None, noise_variance=None, acquisition="ei", target_floor=None,
-              kernel="se", local_candidates=0):
+              kernel="se", local_candidates=0, local_mode="clip"):
     """Minimise ``objective`` with GP-EI Bayesian optimisation.
 
     ``lower``/``upper`` define the box the acquisition function searches, which
@@ -420,7 +431,9 @@ def bayes_opt(objective, dimension, lower, upper, metric, seed,
     incumbent, at scales log-uniform in [1e-3, 1] x box width / 10 (Stage C; the
     same idea as BoTorch's sampling around the best points). With fixed noise,
     the improving region shrinks to about 0.1 wide, and 200 uniform candidates
-    in the whole box almost never land in it.  With logei,
+    in the whole box almost never land in it.
+    ``local_mode`` says how local candidates outside the box are brought back:
+    "clip" (the default, as in the original runs) or "reflect".  With logei,
     the trace's candidate_ei and chosen_ei are log EI values.
     """
     if metric not in ALL_METRICS:
@@ -450,7 +463,9 @@ def bayes_opt(objective, dimension, lower, upper, metric, seed,
             centre = x[int(np.argmin(y))]
             scale = (upper - lower) / 10 * 10 ** rng.uniform(-3, 0, size=(local_candidates, 1))
             near = centre + scale * rng.normal(size=(local_candidates, dimension))
-            candidates = np.vstack([candidates, np.clip(near, lower, upper)])
+            near = (np.clip(near, lower, upper) if local_mode == "clip"
+                    else reflect_into_box(near, lower, upper))
+            candidates = np.vstack([candidates, near])
         scores = [negative_ei(c) for c in candidates]
         start = candidates[int(np.argmin(scores))]
         polished = minimize(negative_ei, start, method="L-BFGS-B",
@@ -474,7 +489,8 @@ def bayes_opt(objective, dimension, lower, upper, metric, seed,
 
 def trust_region_bo(objective, dimension, lower, upper, metric, seed, budget=200,
                     n_initial=None, n_candidates=1000, noise_variance=1e-6,
-                    n_restarts=DEFAULT_RESTARTS):
+                    n_restarts=DEFAULT_RESTARTS, local_mode="clip", local_fit=False,
+                    local_min_points=None):
     """TuRBO-style trust-region BO (Eriksson et al. 2019), one trust region, EI inside it.
 
     Follows TuRBO-1's trust-region rules in the unit-cube scale of the box:
@@ -490,6 +506,14 @@ def trust_region_bo(objective, dimension, lower, upper, metric, seed, budget=200
       metric="full"  a box rotated to the eigenvectors of the full metric M,
                      sides scaled by its eigen-lengthscales (it can tilt).
     In both, the side scales are normalised to geometric mean 1, as in TuRBO.
+
+    ``local_mode`` = "clip" (default) or "reflect", as in bayes_opt.
+    ``local_fit=True`` fits the GP only to the points inside the current region
+    (the previous iteration's region; at least 2d + 4 points, the nearest ones in
+    that region's own scaled coordinates if fewer are inside; ``local_min_points``
+    raises that minimum), so the learned
+    metric reflects the local shape of the function. TuRBO itself fits all the
+    data of the current run (since the last restart), as the default here does.
     """
     rng = np.random.default_rng(seed)
     width = float(upper - lower)
@@ -504,9 +528,19 @@ def trust_region_bo(objective, dimension, lower, upper, metric, seed, budget=200
         y = np.array([objective(p) for p in x])
         xs.extend(x); ys.extend(y)
         length, n_succ, n_fail = l_init, 0, 0
+        region = None                      # (centre, axes, half-sides) of the last region
         while len(ys) < budget and length >= l_min:
-            z = _transform_targets(y)
-            model = fit_gp(x, z, metric, rng, n_restarts=n_restarts, input_scale=width,
+            xf, yf = x, y
+            if local_fit and region is not None:
+                c0, ax0, half0 = region
+                u = np.abs((x - c0) @ ax0) / half0           # scaled distance per region axis
+                inside = np.all(u <= 1.0, axis=1)
+                k_min = n_initial if local_min_points is None else local_min_points
+                if inside.sum() < k_min:
+                    inside = np.argsort(np.max(u, axis=1))[:k_min]
+                xf, yf = x[inside], y[inside]
+            z = _transform_targets(yf)
+            model = fit_gp(xf, z, metric, rng, n_restarts=n_restarts, input_scale=width,
                            noise_variance=noise_variance)
             if metric == "ard":
                 axes = np.eye(dimension)
@@ -517,7 +551,10 @@ def trust_region_bo(objective, dimension, lower, upper, metric, seed, budget=200
             scales = scales / np.exp(np.mean(np.log(scales)))
             centre = x[int(np.argmin(y))]
             u = rng.uniform(-0.5, 0.5, size=(n_candidates, dimension)) * scales * length * width
-            candidates = np.clip(centre + u @ axes.T, lower, upper)
+            raw = centre + u @ axes.T
+            candidates = (np.clip(raw, lower, upper) if local_mode == "clip"
+                          else reflect_into_box(raw, lower, upper))
+            region = (centre, axes, 0.5 * scales * length * width)
             ei = expected_improvement(model, candidates, z.min())
             nxt = candidates[int(np.argmax(ei))]
             value = objective(nxt)

@@ -1,0 +1,54 @@
+
+== median log10 f (noise-free) of the recommended point
+                    log10_f_R1  log10_f_R2-fitted  log10_f_R2-fixed  log10_f_R2-known
+variant      sigma                                                                   
+bo-base      0.01        -2.37              -2.36             -2.37             -2.45
+             0.10        -1.52              -1.82             -1.52             -1.82
+             1.00        -0.37              -1.05             -0.37             -1.53
+bo-replicate 0.01        -1.99              -1.10             -1.99             -1.99
+             0.10        -1.47              -0.83             -1.47             -1.59
+             1.00        -0.75              -0.61             -0.75             -1.25
+
+== diagnostics of the noise-fitted recommendation GP (medians)
+                    fitted_noise_sd  gp_error_at_best  gap_best_two
+variant      sigma                                                 
+bo-base      0.01             0.219             1.459         0.492
+             0.10             0.215             1.847         1.176
+             1.00             0.322             3.415         2.616
+bo-replicate 0.01             0.368             1.144         0.320
+             0.10             0.385             1.584         0.933
+             1.00             0.360             1.839         0.863
+
+== reproduction of E6 (R1 and R2-fitted must match exactly)
+  bo-base       sigma=0.01  R1: max |difference| = 9.42e-01
+  bo-base       sigma=0.01  R2: max |difference| = 1.08e+00
+  bo-base       sigma=0.1   R1: max |difference| = 7.56e-01
+  bo-base       sigma=0.1   R2: max |difference| = 1.31e+00
+  bo-base       sigma=1.0   R1: max |difference| = 1.37e+00
+  bo-base       sigma=1.0   R2: max |difference| = 1.74e+00
+  bo-replicate  sigma=0.01  R1: max |difference| = 0.00e+00
+  bo-replicate  sigma=0.01  R2: max |difference| = 0.00e+00
+  bo-replicate  sigma=0.1   R1: max |difference| = 0.00e+00
+  bo-replicate  sigma=0.1   R2: max |difference| = 0.00e+00
+  bo-replicate  sigma=1.0   R1: max |difference| = 0.00e+00
+  bo-replicate  sigma=1.0   R2: max |difference| = 0.00e+00
+
+== each rule minus R1, paired (negative = better than the lowest reading)
+  bo-base       sigma=0.01  R2-fitted  - R1   +0.01 [ -0.31,  +0.26]
+  bo-base       sigma=0.01  R2-fixed   - R1   +0.00 [ +0.00,  +0.00]
+  bo-base       sigma=0.01  R2-known   - R1   -0.08 [ -0.31,  +0.00]
+  bo-base       sigma=0.1   R2-fitted  - R1   -0.29 [ -0.92,  -0.14]  <-- differs
+  bo-base       sigma=0.1   R2-fixed   - R1   +0.00 [ +0.00,  +0.00]
+  bo-base       sigma=0.1   R2-known   - R1   -0.29 [ -0.92,  -0.15]  <-- differs
+  bo-base       sigma=1.0   R2-fitted  - R1   -0.68 [ -1.27,  -0.38]  <-- differs
+  bo-base       sigma=1.0   R2-fixed   - R1   +0.00 [ +0.00,  +0.00]
+  bo-base       sigma=1.0   R2-known   - R1   -1.17 [ -1.89,  -0.94]  <-- differs
+  bo-replicate  sigma=0.01  R2-fitted  - R1   +0.89 [ +0.00,  +1.54]
+  bo-replicate  sigma=0.01  R2-fixed   - R1   +0.00 [ +0.00,  +0.00]
+  bo-replicate  sigma=0.01  R2-known   - R1   +0.00 [ -0.05,  +0.00]
+  bo-replicate  sigma=0.1   R2-fitted  - R1   +0.64 [ +0.00,  +1.21]
+  bo-replicate  sigma=0.1   R2-fixed   - R1   +0.00 [ +0.00,  +0.00]
+  bo-replicate  sigma=0.1   R2-known   - R1   -0.12 [ -0.41,  +0.00]
+  bo-replicate  sigma=1.0   R2-fitted  - R1   +0.14 [ -0.55,  +1.15]
+  bo-replicate  sigma=1.0   R2-fixed   - R1   +0.00 [ +0.00,  +0.00]
+  bo-replicate  sigma=1.0   R2-known   - R1   -0.50 [ -1.13,  -0.12]  <-- differs
