@@ -1,0 +1,147 @@
+0 runs already done, 120 to go
+[1/120] tr-ard k=100 none inst=0 31s elapsed 33s
+[2/120] tr-ard k=100 none inst=3 32s elapsed 33s
+[3/120] tr-ard k=100 none inst=2 32s elapsed 33s
+[4/120] tr-ard k=100 none inst=1 38s elapsed 40s
+[5/120] tr-full k=100 none inst=0 64s elapsed 65s
+[6/120] tr-full k=100 none inst=3 64s elapsed 66s
+[7/120] tr-ard k=100 none inst=4 35s elapsed 68s
+[8/120] tr-ard k=100 none inst=5 47s elapsed 80s
+[9/120] tr-full k=100 none inst=2 79s elapsed 81s
+[10/120] tr-full k=100 none inst=1 86s elapsed 87s
+[11/120] tr-ard k=100 none inst=6 39s elapsed 104s
+[12/120] tr-ard k=100 none inst=7 41s elapsed 109s
+[13/120] tr-ard k=100 none inst=8 36s elapsed 116s
+[14/120] tr-full k=100 none inst=4 84s elapsed 117s
+[15/120] tr-full k=100 none inst=6 85s elapsed 150s
+[16/120] tr-full k=100 none inst=5 111s elapsed 151s
+[17/120] tr-ard k=100 none inst=10 41s elapsed 157s
+[18/120] tr-ard k=100 none inst=9 54s elapsed 158s
+[19/120] tr-full k=100 none inst=8 73s elapsed 161s
+[20/120] tr-full k=100 none inst=7 83s elapsed 163s
+[21/120] tr-ard k=100 none inst=11 41s elapsed 191s
+[22/120] tr-full k=100 none inst=10 76s elapsed 193s
+[23/120] tr-full k=100 none inst=9 85s elapsed 194s
+[24/120] tr-ard k=100 none inst=13 37s elapsed 198s
+[25/120] tr-ard k=100 none inst=12 44s elapsed 202s
+[26/120] tr-full k=100 none inst=12 63s elapsed 221s
+[27/120] tr-ard k=100 none inst=14 39s elapsed 230s
+[28/120] tr-full k=100 none inst=11 81s elapsed 232s
+[29/120] tr-ard k=100 random inst=0 40s elapsed 234s
+[30/120] tr-ard k=100 random inst=1 45s elapsed 247s
+[31/120] tr-full k=100 none inst=13 84s elapsed 247s
+[32/120] tr-full k=100 random inst=0 72s elapsed 269s
+[33/120] tr-full k=100 none inst=14 79s elapsed 272s
+[34/120] tr-ard k=100 random inst=3 42s elapsed 276s
+[35/120] tr-ard k=100 random inst=2 48s elapsed 278s
+[36/120] tr-ard k=100 random inst=4 43s elapsed 290s
+[37/120] tr-full k=100 random inst=1 81s elapsed 302s
+[38/120] tr-full k=100 random inst=2 77s elapsed 309s
+[39/120] tr-ard k=100 random inst=5 47s elapsed 318s
+[40/120] tr-ard k=100 random inst=6 45s elapsed 323s
+[41/120] tr-full k=100 random inst=3 90s elapsed 337s
+[42/120] tr-full k=100 random inst=5 69s elapsed 345s
+[43/120] tr-ard k=100 random inst=7 50s elapsed 352s
+[44/120] tr-full k=100 random inst=6 68s elapsed 358s
+[45/120] tr-full k=100 random inst=4 91s elapsed 360s
+[46/120] tr-ard k=100 random inst=8 44s elapsed 363s
+[47/120] tr-ard k=100 random inst=9 38s elapsed 375s
+[48/120] tr-full k=100 random inst=7 84s elapsed 394s
+[49/120] tr-ard k=100 random inst=10 44s elapsed 396s
+[50/120] tr-full k=100 random inst=8 77s elapsed 400s
+[51/120] tr-ard k=100 random inst=11 44s elapsed 404s
+[52/120] tr-full k=100 random inst=11 63s elapsed 426s
+[53/120] tr-full k=100 random inst=10 72s elapsed 429s
+[54/120] tr-ard k=100 random inst=12 55s elapsed 430s
+[55/120] tr-full k=100 random inst=9 87s elapsed 432s
+[56/120] tr-ard k=100 random inst=13 51s elapsed 447s
+[57/120] tr-ard k=100 random inst=14 53s elapsed 457s
+[58/120] tr-ard k=10000 none inst=0 39s elapsed 468s
+[59/120] tr-ard k=10000 none inst=1 39s elapsed 471s
+[60/120] tr-full k=100 random inst=13 76s elapsed 476s
+[61/120] tr-full k=100 random inst=12 84s elapsed 478s
+[62/120] tr-ard k=10000 none inst=2 35s elapsed 493s
+[63/120] tr-full k=10000 none inst=0 75s elapsed 504s
+[64/120] tr-ard k=10000 none inst=3 36s elapsed 507s
+[65/120] tr-full k=100 random inst=14 84s elapsed 510s
+[66/120] tr-ard k=10000 none inst=4 42s elapsed 521s
+[67/120] tr-full k=10000 none inst=1 79s elapsed 526s
+[68/120] tr-full k=10000 none inst=2 69s elapsed 537s
+[69/120] tr-ard k=10000 none inst=5 45s elapsed 549s
+[70/120] tr-full k=10000 none inst=3 78s elapsed 554s
+[71/120] tr-ard k=10000 none inst=6 49s elapsed 558s
+[72/120] tr-ard k=10000 none inst=7 36s elapsed 562s
+[73/120] tr-ard k=10000 none inst=8 35s elapsed 584s
+[74/120] tr-full k=10000 none inst=4 92s elapsed 584s
+[75/120] tr-full k=10000 none inst=6 68s elapsed 589s
+[76/120] tr-full k=10000 none inst=5 82s elapsed 589s
+[77/120] tr-ard k=10000 none inst=9 39s elapsed 598s
+[78/120] tr-ard k=10000 none inst=10 35s elapsed 619s
+[79/120] tr-ard k=10000 none inst=11 32s elapsed 621s
+[80/120] tr-full k=10000 none inst=7 91s elapsed 628s
+[81/120] tr-ard k=10000 none inst=12 39s elapsed 637s
+[82/120] tr-full k=10000 none inst=9 79s elapsed 641s
+[83/120] tr-full k=10000 none inst=8 92s elapsed 647s
+[84/120] tr-ard k=10000 none inst=13 34s elapsed 655s
+[85/120] tr-full k=10000 none inst=10 81s elapsed 666s
+[86/120] tr-full k=10000 none inst=11 78s elapsed 666s
+[87/120] tr-ard k=10000 none inst=14 34s elapsed 671s
+[88/120] tr-full k=10000 none inst=12 65s elapsed 683s
+[89/120] tr-ard k=10000 random inst=0 38s elapsed 684s
+[90/120] tr-full k=10000 none inst=13 67s elapsed 695s
+[91/120] tr-ard k=10000 random inst=1 38s elapsed 703s
+[92/120] tr-full k=10000 none inst=14 63s elapsed 704s
+[93/120] tr-ard k=10000 random inst=3 34s elapsed 718s
+[94/120] tr-ard k=10000 random inst=2 55s elapsed 726s
+[95/120] tr-full k=10000 random inst=0 79s elapsed 733s
+[96/120] tr-full k=10000 random inst=1 85s elapsed 751s
+[97/120] tr-ard k=10000 random inst=5 36s elapsed 754s
+[98/120] tr-ard k=10000 random inst=4 55s elapsed 759s
+[99/120] tr-full k=10000 random inst=2 78s elapsed 761s
+[100/120] tr-full k=10000 random inst=3 69s elapsed 764s
+[101/120] tr-ard k=10000 random inst=6 39s elapsed 772s
+[102/120] tr-full k=10000 random inst=4 77s elapsed 782s
+[103/120] tr-ard k=10000 random inst=7 44s elapsed 798s
+[104/120] tr-ard k=10000 random inst=8 42s elapsed 803s
+[105/120] tr-full k=10000 random inst=5 79s elapsed 805s
+[106/120] tr-ard k=10000 random inst=9 40s elapsed 812s
+[107/120] tr-full k=10000 random inst=6 74s elapsed 825s
+[108/120] tr-ard k=10000 random inst=10 38s elapsed 836s
+[109/120] tr-full k=10000 random inst=8 77s elapsed 841s
+[110/120] tr-ard k=10000 random inst=11 45s elapsed 850s
+[111/120] tr-full k=10000 random inst=7 98s elapsed 856s
+[112/120] tr-full k=10000 random inst=9 81s elapsed 863s
+[113/120] tr-ard k=10000 random inst=13 43s elapsed 885s
+[114/120] tr-full k=10000 random inst=10 82s elapsed 885s
+[115/120] tr-full k=10000 random inst=11 79s elapsed 891s
+[116/120] tr-ard k=10000 random inst=14 44s elapsed 901s
+[117/120] tr-full k=10000 random inst=12 67s elapsed 903s
+[118/120] tr-ard k=10000 random inst=12 80s elapsed 905s
+[119/120] tr-full k=10000 random inst=13 66s elapsed 916s
+[120/120] tr-full k=10000 random inst=14 57s elapsed 919s
+
+== median log10 f at 50 and 200 evaluations
+                   log10_f_200         log10_f_50        
+method                  tr-ard tr-full     tr-ard tr-full
+condition geometry                                       
+100       none           -5.38   -4.81      -3.63   -2.60
+          random         -4.57   -4.47      -2.82   -3.30
+10000     none           -3.29   -2.90       0.76    0.73
+          random         -0.93   -3.85       0.67   -1.63
+
+== rotation penalty at 200, rotated - aligned (unpaired; + = rotation hurts)
+  k=100    tr-ard                       +0.81 [ +0.33,  +1.45]  <-- differs
+  k=100    tr-full                      +0.34 [ -0.37,  +0.79]
+  k=10000  tr-ard                       +2.36 [ -1.77,  +3.54]
+  k=10000  tr-full                      -0.95 [ -3.44,  +1.13]
+
+== tr-ard - tr-full, paired by instance (+ = ARD box worse)
+  k=100    none                         -0.57 [ -1.04,  -0.27]  <-- differs
+  k=100    random                       -0.10 [ -0.64,  +0.76]
+  k=10000  none                         -0.39 [ -3.11,  +4.65]
+  k=10000  random                       +2.92 [ +1.27,  +3.79]  <-- differs
+
+== median wall-clock seconds per run
+method
+tr-ard     41.0
+tr-full    79.0

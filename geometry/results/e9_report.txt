@@ -1,0 +1,32 @@
+target 0.1: % reaching / median evaluations among successes
+                            success  median
+problem           variant                  
+rosenbrock:none   diagonal      100   180.0
+                  full          100   243.0
+rosenbrock:random diagonal       87   391.0
+                  full          100   260.0
+target 0.001: % reaching / median evaluations among successes
+                            success  median
+problem           variant                  
+rosenbrock:none   diagonal       60  3454.0
+                  full          100   430.0
+rosenbrock:random diagonal       53  1619.5
+                  full          100   408.0
+target 1e-05: % reaching / median evaluations among successes
+                            success  median
+problem           variant                  
+rosenbrock:none   diagonal        0     NaN
+                  full          100   535.0
+rosenbrock:random diagonal       27  2607.5
+                  full          100   492.0
+target 1e-08: % reaching / median evaluations among successes
+                            success  median
+problem           variant                  
+rosenbrock:none   diagonal        0     NaN
+                  full          100   609.0
+rosenbrock:random diagonal       13  2222.5
+                  full          100   605.0
+
+full - diagonal, paired by instance: evaluations to 1e-5 (failures count as 4,000)
+  rosenbrock:none      -3465 [  -3634,   -3267] evaluations (negative = full faster)
+  rosenbrock:random    -3508 [  -3543,   -2654] evaluations (negative = full faster)

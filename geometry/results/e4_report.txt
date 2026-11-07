@@ -1,0 +1,227 @@
+0 runs already done, 450 to go
+[1/450] bo-ard k=1 centre inst=7 109s elapsed 111s
+[2/450] bo-ard k=1 centre inst=4 112s elapsed 113s
+[3/450] bo-ard k=1 centre inst=2 113s elapsed 115s
+[4/450] bo-ard k=1 centre inst=0 115s elapsed 116s
+[5/450] bo-ard k=1 centre inst=5 117s elapsed 118s
+[6/450] bo-ard k=1 centre inst=3 124s elapsed 125s
+[7/450] bo-ard k=1 centre inst=6 128s elapsed 129s
+[8/450] bo-ard k=1 centre inst=1 146s elapsed 148s
+[9/450] bo-ard k=1 centre inst=11 179s elapsed 295s
+[10/450] bo-ard k=1 centre inst=10 181s elapsed 296s
+[11/450] bo-ard k=1 centre inst=9 186s elapsed 300s
+[12/450] bo-ard k=1 centre inst=12 184s elapsed 302s
+[13/450] bo-ard k=1 centre inst=13 186s elapsed 311s
+[14/450] bo-ard k=1 centre inst=8 204s elapsed 314s
+[15/450] bo-ard k=1 centre inst=14 187s elapsed 316s
+[16/450] bo-ard k=1 interior-far inst=0 184s elapsed 332s
+[17/450] bo-ard k=1 interior-far inst=1 176s elapsed 471s
+[18/450] bo-ard k=1 interior-far inst=4 171s elapsed 473s
+[19/450] bo-ard k=1 interior-far inst=6 164s elapsed 478s
+[20/450] bo-ard k=1 interior-far inst=2 183s elapsed 479s
+[21/450] bo-ard k=1 interior-far inst=5 181s elapsed 492s
+[22/450] bo-ard k=1 interior-far inst=7 180s elapsed 496s
+[23/450] bo-ard k=1 interior-far inst=3 198s elapsed 498s
+[24/450] bo-ard k=1 interior-far inst=8 175s elapsed 507s
+[25/450] bo-ard k=1 interior-far inst=11 167s elapsed 646s
+[26/450] bo-ard k=1 interior-far inst=9 179s elapsed 650s
+[27/450] bo-ard k=1 interior-far inst=10 180s elapsed 652s
+[28/450] bo-ard k=1 interior-far inst=13 162s elapsed 655s
+[29/450] bo-ard k=1 interior-far inst=14 167s elapsed 663s
+[30/450] bo-ard k=1 interior-far inst=12 186s elapsed 665s
+[31/450] bo-ard k=1 near-edge inst=1 161s elapsed 668s
+[32/450] bo-ard k=1 near-edge inst=0 176s elapsed 674s
+[33/450] bo-ard k=1 near-edge inst=8 157s elapsed 825s
+[34/450] bo-ard k=1 near-edge inst=2 183s elapsed 828s
+[35/450] bo-ard k=1 near-edge inst=4 178s elapsed 831s
+[36/450] bo-ard k=1 near-edge inst=3 181s elapsed 831s
+[37/450] bo-ard k=1 near-edge inst=5 181s elapsed 836s
+[38/450] bo-ard k=1 near-edge inst=7 172s elapsed 837s
+[39/450] bo-ard k=1 near-edge inst=9 169s elapsed 843s
+[40/450] bo-ard k=1 near-edge inst=6 181s elapsed 844s
+[41/450] bo-ard k=1 near-edge inst=11 169s elapsed 998s
+[42/450] bo-ard k=1 near-edge inst=13 170s elapsed 1001s
+[43/450] bo-ard k=1 on-edge inst=0 169s elapsed 1006s
+[44/450] bo-ard k=1 on-edge inst=2 170s elapsed 1014s
+[45/450] bo-ard k=1 near-edge inst=10 198s elapsed 1023s
+[46/450] bo-ard k=1 near-edge inst=12 194s elapsed 1025s
+[47/450] bo-ard k=1 on-edge inst=1 192s elapsed 1035s
+[48/450] bo-ard k=1 near-edge inst=14 205s elapsed 1040s
+[49/450] bo-ard k=1 on-edge inst=3 160s elapsed 1158s
+[50/450] bo-ard k=1 on-edge inst=5 154s elapsed 1160s
+[51/450] bo-ard k=1 on-edge inst=4 174s elapsed 1175s
+[52/450] bo-ard k=1 on-edge inst=6 176s elapsed 1190s
+[53/450] bo-ard k=1 on-edge inst=7 173s elapsed 1195s
+[54/450] bo-ard k=1 on-edge inst=9 162s elapsed 1196s
+[55/450] bo-ard k=1 on-edge inst=8 173s elapsed 1198s
+[56/450] bo-ard k=1 on-edge inst=10 160s elapsed 1200s
+[57/450] bo-ard k=1 corner inst=0 131s elapsed 1326s
+[58/450] bo-ard k=1 on-edge inst=12 167s elapsed 1328s
+[59/450] bo-ard k=1 corner inst=2 134s elapsed 1332s
+[60/450] bo-ard k=1 on-edge inst=11 179s elapsed 1337s
+[61/450] bo-ard k=1 corner inst=1 143s elapsed 1340s
+[62/450] bo-ard k=1 corner inst=3 142s elapsed 1342s
+[63/450] bo-ard k=1 on-edge inst=13 179s elapsed 1354s
+[64/450] bo-ard k=1 on-edge inst=14 180s elapsed 1371s
+[65/450] bo-ard k=1 corner inst=4 129s elapsed 1456s
+[66/450] bo-ard k=1 corner inst=6 134s elapsed 1466s
+[67/450] bo-ard k=1 corner inst=5 142s elapsed 1470s
+[68/450] bo-ard k=1 corner inst=8 132s elapsed 1472s
+[69/450] bo-ard k=1 corner inst=7 136s elapsed 1473s
+[70/450] bo-ard k=1 corner inst=9 138s elapsed 1480s
+[71/450] bo-ard k=1 corner inst=10 132s elapsed 1486s
+[72/450] bo-ard k=1 corner inst=11 140s elapsed 1510s
+[73/450] bo-ard k=1 corner inst=12 138s elapsed 1593s
+[74/450] bo-ard k=1 corner inst=13 132s elapsed 1598s
+[75/450] bo-ard k=1 corner inst=14 134s elapsed 1604s
+[76/450] bo-ard k=100 centre inst=0 185s elapsed 1656s
+[77/450] bo-ard k=100 centre inst=3 174s elapsed 1660s
+[78/450] bo-ard k=100 centre inst=1 192s elapsed 1665s
+[79/450] bo-ard k=100 centre inst=2 195s elapsed 1675s
+[80/450] bo-ard k=100 centre inst=4 185s elapsed 1696s
+[81/450] bo-ard k=100 centre inst=6 163s elapsed 1761s
+[82/450] bo-ard k=100 centre inst=5 174s elapsed 1768s
+[83/450] bo-ard k=100 centre inst=7 178s elapsed 1782s
+[84/450] bo-ard k=100 centre inst=8 177s elapsed 1833s
+[85/450] bo-ard k=100 centre inst=9 175s elapsed 1835s
+[86/450] bo-ard k=100 centre inst=11 170s elapsed 1846s
+[87/450] bo-ard k=100 centre inst=10 196s elapsed 1861s
+[88/450] bo-ard k=100 centre inst=12 196s elapsed 1892s
+[89/450] bo-ard k=100 centre inst=13 189s elapsed 1950s
+[90/450] bo-ard k=100 centre inst=14 184s elapsed 1952s
+[91/450] bo-ard k=100 interior-far inst=0 188s elapsed 1969s
+[92/450] bo-ard k=100 interior-far inst=1 189s elapsed 2022s
+[93/450] bo-ard k=100 interior-far inst=2 187s elapsed 2022s
+[94/450] bo-ard k=100 interior-far inst=3 179s elapsed 2025s
+[95/450] bo-ard k=100 interior-far inst=4 191s elapsed 2052s
+[96/450] bo-ard k=100 interior-far inst=5 202s elapsed 2094s
+[97/450] bo-ard k=100 interior-far inst=7 168s elapsed 2119s
+[98/450] bo-ard k=100 interior-far inst=6 183s elapsed 2134s
+[99/450] bo-ard k=100 interior-far inst=8 177s elapsed 2146s
+[100/450] bo-ard k=100 interior-far inst=10 182s elapsed 2204s
+[101/450] bo-ard k=100 interior-far inst=11 180s elapsed 2205s
+[102/450] bo-ard k=100 interior-far inst=9 184s elapsed 2206s
+[103/450] bo-ard k=100 interior-far inst=12 194s elapsed 2246s
+[104/450] bo-ard k=100 interior-far inst=13 185s elapsed 2279s
+[105/450] bo-ard k=100 interior-far inst=14 200s elapsed 2320s
+[106/450] bo-ard k=100 near-edge inst=1 177s elapsed 2323s
+[107/450] bo-ard k=100 near-edge inst=0 191s elapsed 2325s
+[108/450] bo-ard k=100 near-edge inst=3 186s elapsed 2391s
+[109/450] bo-ard k=100 near-edge inst=4 200s elapsed 2406s
+[110/450] bo-ard k=100 near-edge inst=2 204s elapsed 2409s
+[111/450] bo-ard k=100 near-edge inst=5 186s elapsed 2431s
+[112/450] bo-ard k=100 near-edge inst=6 201s elapsed 2480s
+[113/450] bo-ard k=100 near-edge inst=7 187s elapsed 2507s
+[114/450] bo-ard k=100 near-edge inst=9 188s elapsed 2513s
+[115/450] bo-ard k=100 near-edge inst=8 209s elapsed 2533s
+[116/450] bo-ard k=100 near-edge inst=11 162s elapsed 2568s
+[117/450] bo-ard k=100 near-edge inst=12 165s elapsed 2574s
+[118/450] bo-ard k=100 near-edge inst=10 184s elapsed 2575s
+[119/450] bo-ard k=100 near-edge inst=13 165s elapsed 2597s
+[120/450] bo-ard k=100 on-edge inst=1 151s elapsed 2664s
+[121/450] bo-ard k=100 on-edge inst=0 161s elapsed 2667s
+[122/450] bo-ard k=100 near-edge inst=14 189s elapsed 2669s
+[123/450] bo-ard k=100 on-edge inst=2 164s elapsed 2696s
+[124/450] bo-ard k=100 on-edge inst=5 156s elapsed 2731s
+[125/450] bo-ard k=100 on-edge inst=3 172s elapsed 2740s
+[126/450] bo-ard k=100 on-edge inst=4 177s elapsed 2751s
+[127/450] bo-ard k=100 on-edge inst=6 180s elapsed 2777s
+[128/450] bo-ard k=100 on-edge inst=9 157s elapsed 2826s
+[129/450] bo-ard k=100 on-edge inst=7 164s elapsed 2829s
+[130/450] bo-ard k=100 on-edge inst=8 189s elapsed 2856s
+[131/450] bo-ard k=100 on-edge inst=10 166s elapsed 2862s
+[132/450] bo-ard k=100 on-edge inst=11 158s elapsed 2888s
+[133/450] bo-ard k=100 on-edge inst=12 159s elapsed 2899s
+[134/450] bo-ard k=100 on-edge inst=13 159s elapsed 2910s
+[135/450] bo-ard k=100 corner inst=0 117s elapsed 2943s
+[136/450] bo-ard k=100 on-edge inst=14 186s elapsed 2963s
+[137/450] bo-ard k=100 corner inst=2 140s elapsed 2997s
+[138/450] bo-ard k=100 corner inst=1 1127s elapsed 3955s
+[139/450] bo-ard k=100 corner inst=3 3631s elapsed 6493s
+[140/450] bo-ard k=100 corner inst=4 3623s elapsed 6512s
+[141/450] bo-ard k=100 corner inst=5 3620s elapsed 6518s
+[142/450] bo-ard k=100 corner inst=6 3624s elapsed 6534s
+[143/450] bo-ard k=100 corner inst=7 3599s elapsed 6541s
+[150/450] cmaes-full k=1 centre inst=3 0s elapsed 6541s
+[200/450] cmaes-full k=1 interior-far inst=13 0s elapsed 6541s
+[250/450] cmaes-full k=1 on-edge inst=8 0s elapsed 6542s
+[300/450] cmaes-full k=100 centre inst=3 0s elapsed 6542s
+[350/450] cmaes-full k=100 interior-far inst=13 0s elapsed 6542s
+[400/450] cmaes-full k=100 on-edge inst=8 0s elapsed 6542s
+[444/450] bo-ard k=100 corner inst=8 3595s elapsed 6558s
+[445/450] bo-ard k=100 corner inst=9 3574s elapsed 6571s
+[446/450] bo-ard k=100 corner inst=10 2620s elapsed 6575s
+[447/450] bo-ard k=100 corner inst=12 87s elapsed 6599s
+[448/450] bo-ard k=100 corner inst=11 109s elapsed 6602s
+[449/450] bo-ard k=100 corner inst=13 85s elapsed 6604s
+[450/450] bo-ard k=100 corner inst=14 84s elapsed 6618s
+
+== median log10 f at 50 and 200 evaluations
+                       log10_f_200                               log10_f_50                              
+method                      bo-ard cmaes-full cmaes-full-reflect     bo-ard cmaes-full cmaes-full-reflect
+condition position                                                                                       
+1         centre             -3.78      -6.74              -6.70      -3.32      -2.02              -1.75
+          corner           -300.00      -5.85              -5.85    -300.00      -0.52              -0.52
+          interior-far       -3.92      -6.22              -5.18      -2.83      -1.14              -1.41
+          near-edge          -2.30      -6.15              -6.08      -2.29      -1.46              -1.32
+          on-edge            -4.87      -6.22              -6.22      -4.36      -1.68              -1.56
+100       centre             -2.61      -4.02              -3.21      -1.91      -0.23              -0.23
+          corner           -300.00      -2.65              -2.72    -300.00       0.87               0.78
+          interior-far       -3.01      -2.35              -2.07      -1.58       0.55               0.12
+          near-edge          -2.28      -2.87              -2.52      -1.26       0.05              -0.04
+          on-edge            -4.69      -2.69              -3.14      -2.70       0.36               0.21
+
+== % of runs reaching 1e-3 within 200
+method                  bo-ard  cmaes-full  cmaes-full-reflect
+condition position                                            
+1         centre         100.0       100.0               100.0
+          corner         100.0       100.0               100.0
+          interior-far   100.0       100.0                93.0
+          near-edge       33.0       100.0               100.0
+          on-edge        100.0       100.0                93.0
+100       centre          47.0        80.0                67.0
+          corner         100.0        27.0                33.0
+          interior-far    53.0        20.0                27.0
+          near-edge       20.0        47.0                40.0
+          on-edge         73.0        47.0                60.0
+
+== % of evaluations on the box boundary / outside the box (median over runs)
+                       pct_on_boundary                               pct_outside_box                              
+method                          bo-ard cmaes-full cmaes-full-reflect          bo-ard cmaes-full cmaes-full-reflect
+condition position                                                                                                
+1         centre                   0.0        1.5                0.0             0.0        1.5                0.0
+          corner                   3.0       62.6                0.0             0.0       62.6                0.0
+          interior-far             2.5        7.1                0.0             0.0        7.1                0.0
+          near-edge                9.0       24.2                0.0             0.0       24.2                0.0
+          on-edge                  8.5       46.5                0.0             0.0       46.5                0.0
+100       centre                   4.0        3.0                0.0             0.0        3.0                0.0
+          corner                   4.5       58.6                0.0             0.0       58.6                0.0
+          interior-far             7.0        8.1                0.0             0.0        8.1                0.0
+          near-edge               14.5       31.8                0.0             0.0       31.8                0.0
+          on-edge                 11.5       50.0                0.0             0.0       50.0                0.0
+
+== position minus interior-far, paired by instance: median log10 f (+ = worse than the same-distance interior control)
+  k=1    centre     bo-ard               +0.14 [ -0.53,  +0.75]
+  k=1    centre     cmaes-full           -0.52 [ -0.98,  -0.18]  <-- differs
+  k=1    centre     cmaes-full-reflect   -1.51 [ -2.39,  -0.65]  <-- differs
+  k=1    near-edge  bo-ard               +1.62 [ +0.57,  +2.10]  <-- differs
+  k=1    near-edge  cmaes-full           +0.07 [ -0.35,  +0.52]
+  k=1    near-edge  cmaes-full-reflect   -0.90 [ -1.37,  -0.14]  <-- differs
+  k=1    on-edge    bo-ard               -0.95 [ -1.66,  -0.09]  <-- differs
+  k=1    on-edge    cmaes-full           +0.00 [ -0.63,  +0.47]
+  k=1    on-edge    cmaes-full-reflect   -1.04 [ -1.75,  -0.75]  <-- differs
+  k=1    corner     bo-ard              -296.08 [-296.48, -295.60]  <-- differs
+  k=1    corner     cmaes-full           +0.37 [ -0.12,  +0.81]
+  k=1    corner     cmaes-full-reflect   -0.67 [ -1.29,  -0.38]  <-- differs
+  k=100  centre     bo-ard               +0.40 [ -0.60,  +0.74]
+  k=100  centre     cmaes-full           -1.67 [ -2.12,  -0.98]  <-- differs
+  k=100  centre     cmaes-full-reflect   -1.14 [ -2.74,  -0.17]  <-- differs
+  k=100  near-edge  bo-ard               +0.73 [ +0.31,  +0.99]  <-- differs
+  k=100  near-edge  cmaes-full           -0.53 [ -1.33,  -0.16]  <-- differs
+  k=100  near-edge  cmaes-full-reflect   -0.45 [ -1.85,  -0.08]  <-- differs
+  k=100  on-edge    bo-ard               -1.68 [ -2.22,  -0.03]  <-- differs
+  k=100  on-edge    cmaes-full           -0.35 [ -1.06,  +0.31]
+  k=100  on-edge    cmaes-full-reflect   -1.06 [ -2.14,  -0.01]  <-- differs
+  k=100  corner     bo-ard              -296.99 [-297.33, -296.83]  <-- differs
+  k=100  corner     cmaes-full           -0.30 [ -0.74,  +0.46]
+  k=100  corner     cmaes-full-reflect   -0.65 [ -1.43,  +0.28]

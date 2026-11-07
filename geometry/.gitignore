@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+.DS_Store
+report/*.aux
+report/*.log
+report/*.out
+report/*.bbl
+report/*.blg
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
+
+# Course materials: not for the repository
+*.pdf
+!report/report.pdf
+!report/figures/*.pdf
+
+# Working notes, kept out of the submission
+HANDOFF.md
+PROJECT_GUIDE.md
+PROJECT_GUIDE_flow.png
+PROJECT_ANSWERS.md

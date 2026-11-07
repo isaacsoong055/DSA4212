@@ -1,0 +1,286 @@
+0 runs already done, 480 to go
+[1/480] bo-ard baseline inst=1 132s elapsed 134s
+[2/480] bo-ard baseline inst=0 135s elapsed 136s
+[3/480] bo-ard baseline inst=3 141s elapsed 142s
+[4/480] bo-ard baseline inst=2 142s elapsed 144s
+[5/480] bo-full baseline inst=3 193s elapsed 195s
+[6/480] bo-full baseline inst=2 201s elapsed 202s
+[7/480] bo-full baseline inst=0 212s elapsed 214s
+[8/480] bo-full baseline inst=1 216s elapsed 217s
+[9/480] bo-ard baseline inst=4 186s elapsed 320s
+[10/480] bo-ard baseline inst=5 188s elapsed 331s
+[11/480] bo-ard baseline inst=6 160s elapsed 355s
+[12/480] bo-ard baseline inst=7 172s elapsed 386s
+[13/480] bo-full baseline inst=4 254s elapsed 390s
+[14/480] bo-full baseline inst=5 257s elapsed 400s
+[15/480] bo-full baseline inst=6 241s elapsed 443s
+[16/480] bo-full baseline inst=7 252s elapsed 469s
+[17/480] bo-ard baseline inst=8 168s elapsed 488s
+[18/480] bo-ard baseline inst=9 171s elapsed 526s
+[19/480] bo-full baseline inst=8 226s elapsed 556s
+[20/480] bo-ard baseline inst=10 186s elapsed 576s
+[21/480] bo-ard baseline inst=11 181s elapsed 624s
+[22/480] bo-full baseline inst=9 239s elapsed 625s
+[23/480] bo-full baseline inst=10 255s elapsed 655s
+[24/480] bo-ard baseline inst=12 185s elapsed 673s
+[25/480] bo-full baseline inst=11 246s elapsed 715s
+[26/480] bo-ard baseline inst=13 173s elapsed 730s
+[27/480] bo-full baseline inst=12 252s elapsed 778s
+[28/480] bo-ard baseline inst=14 166s elapsed 790s
+[29/480] bo-full baseline inst=13 242s elapsed 818s
+[30/480] bo-ard units-default:1,10 inst=0 186s elapsed 841s
+[31/480] bo-full baseline inst=14 250s elapsed 876s
+[32/480] bo-ard units-default:1,10 inst=1 194s elapsed 909s
+[33/480] bo-full units-default:1,10 inst=0 261s elapsed 934s
+[34/480] bo-ard units-default:1,10 inst=2 175s elapsed 954s
+[35/480] bo-full units-default:1,10 inst=1 248s elapsed 978s
+[36/480] bo-ard units-default:1,10 inst=3 199s elapsed 1017s
+[37/480] bo-full units-default:1,10 inst=2 262s elapsed 1052s
+[38/480] bo-ard units-default:1,10 inst=4 209s elapsed 1085s
+[39/480] bo-full units-default:1,10 inst=3 253s elapsed 1094s
+[40/480] bo-ard units-default:1,10 inst=5 203s elapsed 1137s
+[41/480] bo-ard units-default:1,10 inst=6 178s elapsed 1156s
+[42/480] bo-full units-default:1,10 inst=4 254s elapsed 1163s
+[43/480] bo-full units-default:1,10 inst=5 252s elapsed 1205s
+[44/480] bo-ard units-default:1,10 inst=7 203s elapsed 1256s
+[45/480] bo-full units-default:1,10 inst=6 253s elapsed 1271s
+[46/480] bo-ard units-default:1,10 inst=8 197s elapsed 1291s
+[47/480] bo-full units-default:1,10 inst=7 251s elapsed 1336s
+[48/480] bo-ard units-default:1,10 inst=9 210s elapsed 1367s
+[49/480] bo-full units-default:1,10 inst=8 264s elapsed 1401s
+[50/480] bo-ard units-default:1,10 inst=10 200s elapsed 1405s
+[51/480] bo-full units-default:1,10 inst=9 252s elapsed 1415s
+[52/480] bo-ard units-default:1,10 inst=11 189s elapsed 1460s
+[53/480] bo-full units-default:1,10 inst=10 250s elapsed 1506s
+[54/480] bo-ard units-default:1,10 inst=12 194s elapsed 1530s
+[55/480] bo-full units-default:1,10 inst=11 259s elapsed 1549s
+[56/480] bo-ard units-default:1,10 inst=14 183s elapsed 1598s
+[57/480] bo-ard units-default:1,10 inst=13 205s elapsed 1606s
+[58/480] bo-full units-default:1,10 inst=12 258s elapsed 1625s
+[59/480] bo-full units-default:1,10 inst=13 264s elapsed 1668s
+[60/480] bo-ard units-default:10,1 inst=0 165s elapsed 1671s
+[61/480] bo-full units-default:1,10 inst=14 268s elapsed 1728s
+[62/480] bo-ard units-default:10,1 inst=1 210s elapsed 1760s
+[63/480] bo-full units-default:10,1 inst=0 237s elapsed 1766s
+[64/480] bo-ard units-default:10,1 inst=2 172s elapsed 1778s
+[65/480] bo-ard units-default:10,1 inst=3 169s elapsed 1838s
+[66/480] bo-full units-default:10,1 inst=1 262s elapsed 1860s
+[67/480] bo-full units-default:10,1 inst=2 245s elapsed 1870s
+[68/480] bo-ard units-default:10,1 inst=4 159s elapsed 1887s
+[69/480] bo-full units-default:10,1 inst=3 261s elapsed 1932s
+[70/480] bo-ard units-default:10,1 inst=5 177s elapsed 1943s
+[71/480] bo-full units-default:10,1 inst=4 248s elapsed 2007s
+[72/480] bo-ard units-default:10,1 inst=6 175s elapsed 2013s
+[73/480] bo-ard units-default:10,1 inst=7 173s elapsed 2043s
+[74/480] bo-full units-default:10,1 inst=5 269s elapsed 2047s
+[75/480] bo-ard units-default:10,1 inst=8 161s elapsed 2093s
+[76/480] bo-full units-default:10,1 inst=7 230s elapsed 2116s
+[77/480] bo-full units-default:10,1 inst=6 260s elapsed 2120s
+[78/480] bo-full units-default:10,1 inst=8 236s elapsed 2179s
+[79/480] bo-ard units-default:10,1 inst=9 183s elapsed 2190s
+[80/480] bo-ard units-default:10,1 inst=10 165s elapsed 2207s
+[81/480] bo-full units-default:10,1 inst=9 234s elapsed 2246s
+[82/480] bo-ard units-default:10,1 inst=11 177s elapsed 2271s
+[83/480] bo-ard units-default:10,1 inst=12 168s elapsed 2288s
+[84/480] bo-full units-default:10,1 inst=10 246s elapsed 2292s
+[85/480] bo-full units-default:10,1 inst=11 231s elapsed 2347s
+[86/480] bo-ard units-default:10,1 inst=13 184s elapsed 2374s
+[87/480] bo-ard units-default:10,1 inst=14 167s elapsed 2414s
+[88/480] bo-full units-default:10,1 inst=12 245s elapsed 2424s
+[89/480] bo-full units-default:10,1 inst=13 247s elapsed 2454s
+[90/480] bo-ard monotone:log1p inst=0 187s elapsed 2475s
+[91/480] bo-full units-default:10,1 inst=14 236s elapsed 2507s
+[92/480] bo-ard monotone:log1p inst=1 174s elapsed 2522s
+[93/480] bo-full monotone:log1p inst=0 263s elapsed 2556s
+[94/480] bo-ard monotone:log1p inst=2 187s elapsed 2600s
+[95/480] bo-full monotone:log1p inst=1 252s elapsed 2626s
+[96/480] bo-ard monotone:log1p inst=3 207s elapsed 2661s
+[97/480] bo-full monotone:log1p inst=2 270s elapsed 2694s
+[98/480] bo-ard monotone:log1p inst=4 227s elapsed 2734s
+[99/480] bo-full monotone:log1p inst=3 277s elapsed 2753s
+[100/480] bo-ard monotone:log1p inst=5 209s elapsed 2765s
+[101/480] bo-full monotone:log1p inst=4 289s elapsed 2811s
+[102/480] bo-ard monotone:log1p inst=6 191s elapsed 2817s
+[103/480] bo-full monotone:log1p inst=5 287s elapsed 2887s
+[104/480] bo-ard monotone:log1p inst=7 214s elapsed 2908s
+[105/480] bo-full monotone:log1p inst=6 297s elapsed 2957s
+[106/480] bo-ard monotone:log1p inst=8 211s elapsed 2964s
+[107/480] bo-ard monotone:log1p inst=9 183s elapsed 2994s
+[108/480] bo-full monotone:log1p inst=7 286s elapsed 3019s
+[109/480] bo-full monotone:log1p inst=8 269s elapsed 3034s
+[110/480] bo-ard monotone:log1p inst=10 182s elapsed 3069s
+[111/480] bo-full monotone:log1p inst=9 258s elapsed 3075s
+[112/480] bo-ard monotone:log1p inst=11 207s elapsed 3164s
+[113/480] bo-full monotone:log1p inst=10 271s elapsed 3179s
+[114/480] bo-ard monotone:log1p inst=12 190s elapsed 3183s
+[115/480] bo-ard monotone:log1p inst=13 188s elapsed 3222s
+[116/480] bo-full monotone:log1p inst=11 292s elapsed 3255s
+[117/480] bo-ard monotone:log1p inst=14 184s elapsed 3260s
+[118/480] bo-ard monotone:cube inst=0 97s elapsed 3276s
+[119/480] bo-full monotone:log1p inst=12 257s elapsed 3277s
+[120/480] bo-full monotone:log1p inst=13 257s elapsed 3326s
+[121/480] bo-full monotone:cube inst=0 144s elapsed 3327s
+[122/480] bo-ard monotone:cube inst=1 107s elapsed 3329s
+[123/480] bo-ard monotone:cube inst=2 111s elapsed 3371s
+[124/480] bo-ard monotone:cube inst=3 117s elapsed 3394s
+[125/480] bo-full monotone:cube inst=1 152s elapsed 3407s
+[126/480] bo-full monotone:cube inst=2 152s elapsed 3428s
+[127/480] bo-full monotone:log1p inst=14 268s elapsed 3432s
+[128/480] bo-ard monotone:cube inst=4 119s elapsed 3446s
+[129/480] bo-full monotone:cube inst=3 141s elapsed 3467s
+[130/480] bo-ard monotone:cube inst=5 116s elapsed 3487s
+[131/480] bo-full monotone:cube inst=4 159s elapsed 3488s
+[132/480] bo-ard monotone:cube inst=6 112s elapsed 3519s
+[133/480] bo-ard monotone:cube inst=7 115s elapsed 3547s
+[134/480] bo-full monotone:cube inst=5 160s elapsed 3554s
+[135/480] bo-ard monotone:cube inst=8 108s elapsed 3575s
+[136/480] bo-full monotone:cube inst=7 154s elapsed 3601s
+[137/480] bo-ard monotone:cube inst=9 113s elapsed 3601s
+[138/480] bo-full monotone:cube inst=6 173s elapsed 3602s
+[139/480] bo-full monotone:cube inst=8 158s elapsed 3645s
+[140/480] bo-ard monotone:cube inst=10 106s elapsed 3653s
+[141/480] bo-ard monotone:cube inst=11 104s elapsed 3679s
+[142/480] bo-full monotone:cube inst=9 160s elapsed 3680s
+[143/480] bo-ard monotone:cube inst=12 109s elapsed 3711s
+[144/480] bo-full monotone:cube inst=10 169s elapsed 3723s
+[145/480] bo-full monotone:cube inst=12 149s elapsed 3751s
+[146/480] bo-full monotone:cube inst=11 151s elapsed 3752s
+[147/480] bo-ard monotone:cube inst=13 111s elapsed 3756s
+[148/480] bo-ard monotone:cube inst=14 117s elapsed 3796s
+[149/480] bo-full monotone:cube inst=13 163s elapsed 3816s
+[150/480] bo-full monotone:cube inst=14 155s elapsed 3835s
+[151/480] bo-ard monotone:sqrt inst=0 188s elapsed 3899s
+[152/480] bo-ard monotone:sqrt inst=1 171s elapsed 3922s
+[153/480] bo-ard monotone:sqrt inst=2 184s elapsed 3941s
+[154/480] bo-full monotone:sqrt inst=0 273s elapsed 3996s
+[155/480] bo-ard monotone:sqrt inst=3 211s elapsed 4027s
+[156/480] bo-full monotone:sqrt inst=1 284s elapsed 4035s
+[157/480] bo-full monotone:sqrt inst=2 246s elapsed 4042s
+[158/480] bo-ard monotone:sqrt inst=4 176s elapsed 4075s
+[159/480] bo-full monotone:sqrt inst=3 248s elapsed 4084s
+[160/480] bo-ard monotone:sqrt inst=5 182s elapsed 4123s
+[161/480] bo-full monotone:sqrt inst=4 245s elapsed 4167s
+[162/480] bo-ard monotone:sqrt inst=6 183s elapsed 4210s
+[163/480] bo-ard monotone:sqrt inst=7 183s elapsed 4225s
+[164/480] bo-full monotone:sqrt inst=5 243s elapsed 4239s
+[165/480] bo-ard monotone:sqrt inst=8 213s elapsed 4297s
+[166/480] bo-full monotone:sqrt inst=6 271s elapsed 4306s
+[167/480] bo-full monotone:sqrt inst=7 260s elapsed 4335s
+[168/480] bo-ard monotone:sqrt inst=9 185s elapsed 4352s
+[169/480] bo-full monotone:sqrt inst=8 256s elapsed 4379s
+[170/480] bo-ard monotone:sqrt inst=10 187s elapsed 4412s
+[171/480] bo-full monotone:sqrt inst=10 239s elapsed 4478s
+[172/480] bo-full monotone:sqrt inst=9 279s elapsed 4489s
+[173/480] bo-ard monotone:sqrt inst=11 195s elapsed 4491s
+[174/480] bo-ard monotone:sqrt inst=12 201s elapsed 4536s
+[175/480] bo-ard monotone:sqrt inst=13 179s elapsed 4558s
+[176/480] bo-full monotone:sqrt inst=11 253s elapsed 4559s
+[177/480] bo-full monotone:sqrt inst=12 273s elapsed 4625s
+[178/480] bo-ard monotone:plus1 inst=0 164s elapsed 4656s
+[179/480] bo-ard monotone:sqrt inst=14 180s elapsed 4658s
+[180/480] bo-full monotone:sqrt inst=13 252s elapsed 4664s
+[181/480] bo-ard monotone:plus1 inst=1 182s elapsed 4739s
+[182/480] bo-full monotone:sqrt inst=14 266s elapsed 4755s
+[183/480] bo-ard monotone:plus1 inst=2 161s elapsed 4786s
+[184/480] bo-full monotone:plus1 inst=0 279s elapsed 4816s
+[185/480] bo-full monotone:plus1 inst=1 297s elapsed 4856s
+[186/480] bo-ard monotone:plus1 inst=3 200s elapsed 4858s
+[187/480] bo-full monotone:plus1 inst=3 250s elapsed 4914s
+[188/480] bo-full monotone:plus1 inst=2 261s elapsed 4916s
+[189/480] bo-ard monotone:plus1 inst=4 178s elapsed 4917s
+[190/480] bo-ard monotone:plus1 inst=5 181s elapsed 4966s
+[191/480] bo-full monotone:plus1 inst=4 242s elapsed 4997s
+[192/480] bo-ard monotone:plus1 inst=6 164s elapsed 5020s
+[193/480] bo-full monotone:plus1 inst=5 257s elapsed 5073s
+[194/480] bo-ard monotone:plus1 inst=8 177s elapsed 5094s
+[195/480] bo-ard monotone:plus1 inst=7 183s elapsed 5098s
+[196/480] bo-full monotone:plus1 inst=6 263s elapsed 5121s
+[197/480] bo-full monotone:plus1 inst=7 258s elapsed 5174s
+[198/480] bo-ard monotone:plus1 inst=9 178s elapsed 5174s
+[199/480] bo-ard monotone:plus1 inst=10 174s elapsed 5247s
+[200/480] bo-full monotone:plus1 inst=8 284s elapsed 5250s
+[201/480] bo-ard monotone:plus1 inst=11 187s elapsed 5284s
+[202/480] bo-full monotone:plus1 inst=9 267s elapsed 5287s
+[203/480] bo-ard monotone:plus1 inst=12 179s elapsed 5354s
+[250/480] cmaes-full units-default:1,10 inst=8 0s elapsed 5354s
+[300/480] cmaes-full units-matched:1,10 inst=3 0s elapsed 5354s
+[350/480] cmaes-full units-matched:10,1 inst=13 0s elapsed 5354s
+[400/480] cmaes-full monotone:cube inst=8 0s elapsed 5355s
+[450/480] cmaes-full monotone:plus1 inst=3 0s elapsed 5355s
+[474/480] bo-full monotone:plus1 inst=10 265s elapsed 5359s
+[475/480] bo-full monotone:plus1 inst=11 244s elapsed 5364s
+[476/480] bo-ard monotone:plus1 inst=13 165s elapsed 5411s
+[477/480] bo-full monotone:plus1 inst=12 238s elapsed 5412s
+[478/480] bo-ard monotone:plus1 inst=14 147s elapsed 5432s
+[479/480] bo-full monotone:plus1 inst=13 208s elapsed 5458s
+[480/480] bo-full monotone:plus1 inst=14 178s elapsed 5464s
+
+== median log10 f (untransformed) at fixed budgets
+                   log10_f_200                                   log10_f_50                                  
+method                  bo-ard bo-full cmaes-diagonal cmaes-full     bo-ard bo-full cmaes-diagonal cmaes-full
+condition                                                                                                    
+baseline                 -2.74   -2.55          -4.00      -4.02      -1.91   -1.47          -0.05      -0.23
+units-default:1,10       -1.33   -1.22          -0.11      -0.15       0.67   -0.04           0.84       0.88
+units-default:10,1       -2.28   -1.63          -5.03      -4.82      -1.55   -0.87          -0.08       0.19
+units-matched:1,10         NaN     NaN          -4.00      -3.81        NaN     NaN          -0.05      -0.02
+units-matched:10,1         NaN     NaN          -4.00      -4.14        NaN     NaN          -0.05      -0.46
+monotone:log1p           -3.43   -3.07          -4.00      -4.02      -2.62   -1.89          -0.05      -0.23
+monotone:cube            -1.02   -0.81          -4.00      -4.02      -0.97   -0.65          -0.05      -0.23
+monotone:sqrt            -2.64   -2.63          -4.00      -4.02      -1.88   -1.40          -0.05      -0.23
+monotone:plus1           -2.54   -3.22          -4.00      -4.02      -1.72   -1.49          -0.05      -0.23
+
+== % of runs reaching each target within 200 evaluations
+-- target 0.001
+method              bo-ard  bo-full  cmaes-diagonal  cmaes-full
+condition                                                      
+baseline              40.0     20.0            87.0        80.0
+units-default:1,10     7.0      7.0             0.0         7.0
+units-default:10,1    20.0      7.0           100.0       100.0
+units-matched:1,10     NaN      NaN            87.0        73.0
+units-matched:10,1     NaN      NaN            87.0        80.0
+monotone:log1p        87.0     60.0            87.0        80.0
+monotone:cube          0.0      0.0            87.0        80.0
+monotone:sqrt         20.0     33.0            87.0        80.0
+monotone:plus1        33.0     67.0            87.0        80.0
+-- target 1e-05
+method              bo-ard  bo-full  cmaes-diagonal  cmaes-full
+condition                                                      
+baseline               0.0      7.0             7.0        13.0
+units-default:1,10     0.0      0.0             0.0         0.0
+units-default:10,1     0.0      0.0            53.0        47.0
+units-matched:1,10     NaN      NaN             7.0        33.0
+units-matched:10,1     NaN      NaN             7.0        20.0
+monotone:log1p         0.0      0.0             7.0        13.0
+monotone:cube          0.0      0.0             7.0        13.0
+monotone:sqrt          0.0      0.0             7.0        13.0
+monotone:plus1         7.0      7.0             7.0        13.0
+
+== condition minus baseline, paired by instance: median log10 f (+ = worse than baseline); identical = runs whose 200-step curves match the baseline's exactly
+  units-default:1,10   cmaes-full      n=200  +3.87 [ +3.13,  +4.58]  identical 0/15  <-- differs
+  units-default:1,10   cmaes-diagonal  n=200  +3.89 [ +3.20,  +4.74]  identical 0/15  <-- differs
+  units-default:1,10   bo-ard          n=200  +1.41 [ +0.65,  +2.00]  identical 0/15  <-- differs
+  units-default:1,10   bo-full         n=200  +1.32 [ +1.00,  +1.71]  identical 0/15  <-- differs
+  units-default:10,1   cmaes-full      n=200  -0.80 [ -1.72,  +0.01]  identical 0/15
+  units-default:10,1   cmaes-diagonal  n=200  -1.04 [ -1.69,  -0.07]  identical 0/15  <-- differs
+  units-default:10,1   bo-ard          n=200  +0.45 [ -0.44,  +1.07]  identical 0/15
+  units-default:10,1   bo-full         n=200  +0.91 [ +0.62,  +1.47]  identical 0/15  <-- differs
+  units-matched:1,10   cmaes-full      n=200  +0.21 [ -1.07,  +0.85]  identical 0/15
+  units-matched:1,10   cmaes-diagonal  n=200  -0.00 [ -0.00,  +0.00]  identical 0/15
+  units-matched:10,1   cmaes-full      n=200  -0.12 [ -0.84,  +0.73]  identical 0/15
+  units-matched:10,1   cmaes-diagonal  n=200  -0.00 [ -0.00,  +0.00]  identical 0/15
+  monotone:log1p       cmaes-full      n=200  +0.00 [ +0.00,  +0.00]  identical 15/15
+  monotone:log1p       cmaes-diagonal  n=200  +0.00 [ +0.00,  +0.00]  identical 15/15
+  monotone:log1p       bo-ard          n=200  -0.69 [ -1.37,  +0.01]  identical 0/15
+  monotone:log1p       bo-full         n=200  -0.52 [ -0.98,  -0.03]  identical 0/15  <-- differs
+  monotone:cube        cmaes-full      n=200  +0.00 [ +0.00,  +0.00]  identical 15/15
+  monotone:cube        cmaes-diagonal  n=200  +0.00 [ +0.00,  +0.00]  identical 15/15
+  monotone:cube        bo-ard          n=200  +1.72 [ +1.14,  +2.22]  identical 0/15  <-- differs
+  monotone:cube        bo-full         n=200  +1.74 [ +1.20,  +2.22]  identical 0/15  <-- differs
+  monotone:sqrt        cmaes-full      n=200  +0.00 [ +0.00,  +0.00]  identical 15/15
+  monotone:sqrt        cmaes-diagonal  n=200  +0.00 [ +0.00,  +0.00]  identical 15/15
+  monotone:sqrt        bo-ard          n=200  +0.10 [ -0.51,  +0.75]  identical 0/15
+  monotone:sqrt        bo-full         n=200  -0.08 [ -0.74,  +0.40]  identical 0/15
+  monotone:plus1       cmaes-full      n=200  +0.00 [ +0.00,  +0.00]  identical 15/15
+  monotone:plus1       cmaes-diagonal  n=200  +0.00 [ +0.00,  +0.00]  identical 15/15
+  monotone:plus1       bo-ard          n=200  +0.20 [ -0.56,  +0.69]  identical 0/15
+  monotone:plus1       bo-full         n=200  -0.68 [ -1.33,  -0.21]  identical 0/15  <-- differs
