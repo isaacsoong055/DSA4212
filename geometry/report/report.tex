@@ -119,10 +119,13 @@ rotation is drawn together with the optimum.
 
 \textbf{Reproducibility.} Each experiment is one script in \texttt{code/} that writes CSVs to
 \texttt{results/}. Section 8 of the notebook reloads every number quoted here, and
-\texttt{code/make\_figures.py} rebuilds every figure from the CSVs. BO runs are bit-reproducible when
-BLAS is single-threaded, which the scripts enforce. With multithreaded BLAS, two runs of one seed
-differed by $6\times10^{-5}$ in relative terms, and the difference compounds; results are reproducible
-in distribution across machines, not run for run (details in \texttt{readme.md}).
+\texttt{code/make\_figures.py} rebuilds every figure from the CSVs. Long BO runs are \emph{not}
+bit-repeatable. Even on one machine with BLAS pinned to one thread (as the scripts do), the same
+200-evaluation run with the same code and seed ended at $10^{0.06}$ in one process and $10^{-1.15}$ in
+another: tiny rounding differences in the linear algebra are amplified by BO's sequential choices. We
+did not pin down where the differences arise. Every comparison is therefore statistical (medians and
+paired bootstrap intervals over 15 instances), and BO results reproduce in distribution, not run for
+run. CMA-ES runs repeated exactly in our checks (E3).
 
 %=====================================================================
 \section{The tilt in each family}
@@ -204,7 +207,7 @@ aligned cell ended at $f\approx5$, with the incumbent on the valley floor \emph{
 incumbent there, and searching around it keeps BO there.
 
 \textbf{E2 with the fix.} We re-ran the 180 BO runs both ways on one machine, fitted noise and fixed
-noise (CMA-ES is unaffected), so the comparison is paired. The fix lifted BO significantly in 10 of 12
+noise (CMA-ES is unaffected), paired by instance. The fix lifted BO significantly in 10 of 12
 condition, geometry and kernel cells, by 0.68--1.50 decades at 200 evaluations. \textbf{The negative
 result reversed} (Fig.~\ref{fig:pen}). With fitted noise, neither kernel showed a rotation penalty on
 this machine either (BO-ARD at $\kappa=10^4$: $+0.04$ \ci{-0.27}{+0.71}). BO-ARD's rotation penalty became $+0.54$ \ci{+0.24}{+1.41}
@@ -418,10 +421,11 @@ is overconfident (worse log predictive density than ARD nearly everywhere), and 
 miss the best hyperparameter optimum. CMA-ES ran without restarts. A check (E7) shows this does not matter here: full CMA-ES solves every
 quadratic without them, and IPOP-style restarts (4 runs, population doubling from 6 to 48) leave diagonal
 CMA-ES's rotated $\kappa=10^4$ failure in place (7\% reach $10^{-5}$ against 20\% for one long run),
-because a restarted diagonal run still cannot tilt. Across machines, BO results agree in distribution but not run for run: re-running the original E2
-elsewhere matched 40--93\% of BO-ARD runs and 0--27\% of BO-full runs to 0.01 decades, and one cell's
-median moved by 0.6 decades. All before/after comparisons in the report are therefore paired on one
-machine. With noise, the geometry argument predicts little at this budget. Several of our written predictions
+because a restarted diagonal run still cannot tilt. BO results reproduce in distribution, not run for run. Re-running the original E2 on another machine
+matched 40--93\% of BO-ARD runs and 0--27\% of BO-full runs to 0.01 decades and moved one cell's median
+by 0.6 decades, and even on one machine a long BO run can diverge between processes (Section~2). Our
+conclusions therefore rest on medians and intervals over 15 instances, never on single runs, and the
+before/after comparisons are run on one machine to avoid adding cross-machine differences. With noise, the geometry argument predicts little at this budget. Several of our written predictions
 failed or held only in part (E5, E6, E9) and are reported as such.
 
 \textbf{For algorithm choice.} The question ``BO or CMA-ES?'' is partly the wrong one. Whether the
