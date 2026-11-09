@@ -349,11 +349,20 @@ Trust region, ARD box vs rotated box & $+2.92$ \ci{+1.27}{+3.79} & $-0.39$ \ci{-
 A quadratic has the same orientation everywhere; Rosenbrock (COCO f8/f9
 \citep{hansen2009bbobfunctions}) bends, so its local orientation changes along the path, and even ``aligned'' f8
 is tilted $63.5^\circ$ near its optimum. With 4,000 evaluations full CMA-ES reaches $10^{-5}$ in every run (median
-about 500 evaluations), diagonal in 0\% (f8) and 27\% (f9): what matters is the local orientation. For BO (300
-evaluations) the trust region beats plain BO by 3.5--3.7 decades and its tilted box beats the axis-aligned one by
-2.0--2.5 decades, even on f8. We predicted that fitting the GP only to points inside the region would follow the
-bend better; it was 1.8--2.0 decades \emph{worse}, and worse still (2.7) on a quadratic control where local and
-global shape coincide, so the loss is discarded data, not geometry.
+about 500 evaluations), diagonal in 0\% (f8) and 27\% (f9): what matters is the local orientation. For BO we compared three versions at 300 evaluations, which differ in where they search and which points
+they learn the valley's shape from: plain BO (one GP fitted to all points, searching the whole box), a
+trust region (the same fitting, but searching only a box around the best point that grows and shrinks),
+and a trust region whose GP is fitted only to the points inside that box (at least 20). The trust region
+beat plain BO by 3.5--3.7 decades, and its tilted box beat the axis-aligned one by 2.0--2.5 decades, even
+on f8. Plain BO's kernel does adapt its lengthscales, but it is stationary: one metric for the whole box,
+which on a curving valley can only average the directions along it, whereas within a small box the
+valley is close to a straight, tilted one. We predicted that fitting the GP only to the nearby points
+would follow the bend better still. It did not: it trailed the ordinary trust region by 1.8--2.0 decades
+(though it stayed about 1.7 decades ahead of plain BO). On a quadratic control, whose shape is the same
+everywhere so that a local fit can gain nothing, it lost 2.7 decades; the loss therefore comes from
+fitting the GP to fewer points, not from the geometry. Part of the trust region's lead over plain BO may
+also come from its denser candidates near the best point (1,000 inside the box against 200 across the
+whole box), which this experiment does not separate.
 
 \subsection{CMA-ES keeps its rank invariance; BO keeps neither, and the box edge can trap it (E3, E4, E11)}
 CMA-ES runs were bit-identical to the baseline under every monotone
