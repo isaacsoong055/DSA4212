@@ -1,12 +1,13 @@
 """Build the report figures from results/ (no experiment is re-run).
 
 Encoding, fixed across every figure so a method looks the same everywhere:
-  colour     = family      CMA-ES blue, BO orange
+  colour     = method      full CMA-ES blue, diagonal CMA-ES aqua, BO orange
   line style = geometry    solid = can tilt (full covariance, full GP metric)
                            dashed = axis-aligned (diagonal covariance, ARD kernel)
-Palette: the dataviz skill's reference categorical slots 1-2 (slot 3, aqua, is
-kept for reflected CMA-ES but no current figure plots it), validated all-pairs
-in light mode.
+Palette: the dataviz skill's reference categorical slots 1-3 (blue, orange,
+aqua), validated all-pairs in light mode. Aqua is below 3:1 contrast on the
+surface, so diagonal CMA-ES is always named in a legend or label as well.
+Reflected CMA-ES (no current figure plots it) takes slot 7, violet.
 
 Writes report/figures/fig*.pdf (for the report) and .png (for previews).
 Usage: python code/make_figures.py
@@ -29,16 +30,16 @@ OUT = ROOT / "report" / "figures"
 sys.path.insert(0, str(ROOT / "code"))
 import analysis
 
-BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
+BLUE, ORANGE, AQUA, VIOLET = "#2a78d6", "#eb6834", "#1baf7a", "#6250d6"
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#898781"
 GRID, AXIS, SURFACE = "#e1e0d9", "#c3c2b7", "#ffffff"
 
 STYLE = {   # method -> (label, colour, dash)
     "cmaes-full": ("CMA-ES, full", BLUE, "-"),
-    "cmaes-diagonal": ("CMA-ES, diagonal", BLUE, "--"),
+    "cmaes-diagonal": ("CMA-ES, diagonal", AQUA, "--"),
     "bo-full": ("BO, full metric", ORANGE, "-"),
     "bo-ard": ("BO, ARD", ORANGE, "--"),
-    "cmaes-full-reflect": ("CMA-ES, full + reflection", AQUA, "-"),
+    "cmaes-full-reflect": ("CMA-ES, full + reflection", VIOLET, "-"),
     "bo-ard-fitnoise": ("BO, ARD, noise fitted (original)", ORANGE, ":"),
 }
 GEO = {"none": "aligned", "random": "Haar-random rotation"}
