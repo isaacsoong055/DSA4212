@@ -12,6 +12,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{float}   % [H]: keep each part's tables and late figures inside that part
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{xcolor}
 \usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
@@ -240,7 +241,7 @@ CMA-ES on Schwefel (16/20 default, 20/20 capped, against at most 8/50). \textit{
 were checked and no bug or configuration slip was found. \textit{Caveat.} the two seed sets differ more than expected
 for some defaults (BO at $w=0.6$: 23/50 against 10/50), unexplained; BO's validation runs use 20 seeds.
 
-\begin{figure}[t]
+\begin{figure}[H]
 \centering\includegraphics[width=0.9\linewidth]{figures/mm_exp8_width.png}
 \caption{Part A, Exp 8. Success against well width for the defaults and the best variants (fresh seeds), far and near well.}
 \label{fig:width}
@@ -248,7 +249,7 @@ for some defaults (BO at $w=0.6$: 23/50 against 10/50), unexplained; BO's valida
 
 \subsection{Predictions against outcomes}
 %% AUTHOR (Isaac): outcomes drafted from docs/report_log.md readings; confirm each against docs/scoreboard.csv.
-\begin{table}[h]
+\begin{table}[H]
 \centering\footnotesize
 \begin{tabular}{p{6.0cm}lp{1.9cm}p{6.0cm}}
 \toprule
@@ -409,7 +410,7 @@ replicates), the noise-fitting GP had absorbed the best averages as noise; a cor
 than the lowest reading. \textit{Caveat.} one problem, one noise model and one budget.
 
 \subsection{Predictions against outcomes}
-\begin{table}[h]
+\begin{table}[H]
 \centering\footnotesize
 \begin{tabular}{p{6.0cm}lp{1.9cm}p{6.0cm}}
 \toprule
