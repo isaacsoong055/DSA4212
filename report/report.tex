@@ -1,7 +1,7 @@
 % Joint report, DSA4212 group project. DRAFT assembled from the two parts:
-%   Part I (geometry): condensed from geometry/report/report.tex; numbers from geometry/results/.
-%   Part II (multimodality): written from multimodality/docs/report_log.md; numbers checked against
+%   Part A (multimodality): written from multimodality/docs/report_log.md; numbers checked against
 %   multimodality/results/summary/.
+%   Part B (geometry): condensed from geometry/report/report.tex; numbers from geometry/results/.
 % Every section must be rewritten by its author in their own words before submission (see %% AUTHOR notes).
 \documentclass[10pt,a4paper]{article}
 \usepackage[margin=1.8cm]{geometry}
@@ -38,43 +38,196 @@ Bayesian optimisation (BO) and CMA-ES both carry an implicit model of the landsc
 search distribution with a covariance (its shape) and a step size (its scale), BO a Gaussian-process
 surrogate whose kernel metric and lengthscales play the same two roles. We test one explanation in two
 settings: a method succeeds when its model's shape and scale can match the problem, whatever its family.
-\emph{Part I (geometry)} asks whether the model can \emph{tilt}: on rotated, ill-conditioned valleys
-diagonal CMA-ES, the ARD kernel and TuRBO's axis-aligned trust region all fail, while their tilting
-counterparts do not, once BO's own fitting failures are removed. \emph{Part II (multimodality)} asks
+\emph{Part A (multimodality)} asks
 whether the model's scale lets a method \emph{find} and then \emph{refine} a narrow distant basin: neither
 default method finds it; CMA-ES's step size cannot do both jobs at once, and BO succeeds once its lengthscale
-is capped (1/50 to 44/50 on fresh seeds) while acquisition tuning helps far less. In both parts the decisive
+is capped (1/50 to 44/50 on fresh seeds) while acquisition tuning helps far less. \emph{Part B (geometry)}
+asks whether the model can \emph{tilt}: on rotated, ill-conditioned valleys diagonal CMA-ES, the ARD kernel
+and TuRBO's axis-aligned trust region all fail, while their tilting counterparts do not, once BO's own fitting
+failures are removed. In both parts the decisive
 BO changes were to the model fit, not the acquisition function. All results are in 2-D and pre-registered
 predictions are reported whether they held or failed.
 \end{abstract}
 
 %=====================================================================
-\section{Shared framing}
+\section{Introduction}
 %=====================================================================
-%% AUTHORS: joint section, rewrite together.
-CMA-ES adapts a covariance matrix and a step size from the ranking of sampled candidates
-\citep{hansen2016tutorial}; BO fits a Gaussian-process (GP) surrogate and chooses points with an
-acquisition function such as expected improvement (EI) \citep{frazier2018tutorial}. Each carries a model of
-the landscape. Its \emph{shape} is the orientation and relative stretch it can represent: a full or
-diagonal covariance for CMA-ES, a full or diagonal (ARD) kernel metric for BO. Its \emph{scale} is the size
-of region it treats as one feature: CMA-ES's step size $\sigma$, BO's lengthscales. Our shared explanation
-is that a method succeeds when its model's shape and scale can match the problem's, and fails when a
-restriction or a fitting failure prevents it, whichever family it belongs to.
+%% AUTHORS: joint section, rewrite together in your own words.
+\subsection{Motivation and the two methods}
+Many optimisation problems give only function values: tuning a model's hyperparameters, calibrating a
+simulator, choosing a design. There are no gradients, and each evaluation can cost a training run or a
+simulation, so a method must decide where to evaluate next from the values it has seen, and its budget is
+counted in evaluations. Bayesian optimisation (BO) and the covariance matrix adaptation evolution strategy
+(CMA-ES) are two of the most widely used methods for this setting, and they embody opposite design choices:
+BO models the function, while CMA-ES adapts a search distribution.
 
-The two parts test this from different sides of the brief. Part I (Paul Ng) takes the direction
-\emph{geometry and parameterisation}: conditioning, rotations, changes of units, boundaries and which
-invariances survive the implementation, plus noisy evaluations. Part II (Isaac Soong) takes
-\emph{multimodality}: how population size, restarts, step size and acquisition and surrogate choices change
-the probability of finding a narrow or distant global basin. The parts use different budgets (200 and 300
-evaluations), metrics ($\log_{10}$ regret; success rate) and BO implementations (NumPy/SciPy; BoTorch
-\citep{balandat2020botorch}), so their results are never put on common axes. Both follow the same
-discipline: the budget is counted in objective evaluations, including initial designs and restarts; every
-comparison reuses the same seeds; predictions were committed to the repository before the runs that
-tested them; and uncertainty is reported as 95\% intervals (bootstrap over instances in Part I, Wilson and
-Newcombe intervals for success rates in Part II), following COCO practice \citep{hansen2021coco}.
+\emph{BO} \citep{frazier2018tutorial} fits a Gaussian-process (GP) surrogate to all evaluations so far. Its
+kernel encodes smoothness and lengthscales, and its posterior gives a prediction and an uncertainty everywhere.
+An acquisition function, such as expected improvement (EI), turns these into the next point, trading off
+exploiting good predictions against exploring uncertain regions. \emph{CMA-ES} \citep{hansen2016tutorial}
+samples a population of $\lambda$ candidates from a Gaussian $\mathcal N(m,\sigma^2C)$, ranks them, moves the
+mean towards the best, and adapts the covariance $C$ and the step size $\sigma$ from successful steps. It uses
+only the ranking of the values. The basic trade-off follows: BO is sample-efficient because it uses every value
+through a global model, but each step is expensive (fitting the GP grows cubically with the number of points)
+and its success depends on that model being right; CMA-ES needs more evaluations but each step is nearly free,
+and it learns the \emph{local} geometry of the problem.
+
+\subsection{What the literature says, and what it leaves open}
+Our questions came from the readings. Hansen's tutorial \citep{hansen2016tutorial} states the invariances
+CMA-ES is designed to have: to any order-preserving transformation of $f$, and to rotations and other linear
+maps of the search space provided the initial conditions are mapped too; its covariance comes to approximate
+the inverse Hessian on a convex quadratic. This raised the question of which invariances survive in practice
+and whether a model that cannot rotate pays for it. Restart schemes that grow or mix the population size
+(IPOP, BIPOP \citep{auger2005ipop,hansen2009bipop}) were introduced for multimodal functions, which raised the
+question of whether population and restarts help find a narrow basin. TuRBO \citep{eriksson2019turbo} restricts
+BO's search to local trust regions whose sides are set per coordinate from the ARD lengthscales, an axis-aligned
+shape;
+COCO \citep{hansen2021coco} sets the benchmarking practice we follow (budgets in evaluations, random instances,
+targets and intervals).
+
+The literature also shows that BO's results depend on settings that are rarely reported. Hvarfner et al.
+\citep{hvarfner2024vanilla} argue that BO's poor high-dimensional performance owes much to its lengthscale
+prior, and that a dimension-scaled prior makes plain BO competitive. Ament et al. \citep{ament2023logei} show
+that EI's values and gradients vanish numerically, so the acquisition optimiser can fail; and Siivola et al.
+\citep{siivola2018boundary} show that GP-based BO over-explores the boundary of the search box. A comparison of
+``BO against CMA-ES'' run with library defaults therefore mixes the family with hidden choices: kernel fitting,
+lengthscale bounds, noise handling, step size. What remains open is which of those properties actually
+decides success.
+
+\subsection{Problem formulation}
+\emph{Research question.} When BO and CMA-ES succeed or fail on a black-box problem, which property of the
+method decides the outcome, and does it matter more than the choice of family?
+
+\emph{Guiding hypothesis.} Each method carries an implicit model of the landscape. For CMA-ES it is the search
+distribution: the covariance sets its \emph{shape} (orientation and relative stretch) and the step size its
+\emph{scale}. For BO it is the GP: the kernel metric sets the shape (a full metric, or the diagonal ARD metric)
+and the lengthscales the scale. A method succeeds when its model can match the landscape's shape (orientation,
+conditioning) and scale (the size of the features it must find and resolve), and fails when a restriction or a
+fitting failure prevents it, whichever family it belongs to.
+
+\subsection{Shared experimental approach}
+Both parts fix a budget counted in objective evaluations, with initial designs and restarts included; run
+every variant on the same seeds, so comparisons are paired; change one setting at a time against a baseline;
+and commit their predictions to the repository before the runs that test them, reporting each as held, partly
+held or failed. A method's recommendation is its best evaluated point, judged on the true objective: in Part A
+by whether its regret reaches a success threshold, in Part B by its regret in decades of $\log_{10} f$. With
+noisy evaluations the recommended point is scored on the noise-free objective, and several recommendation
+rules are compared. Uncertainty is given as 95\% intervals (Wilson and Newcombe intervals for success rates;
+paired bootstrap intervals over instances for regret). The two parts use different budgets, measures and BO
+implementations (BoTorch \citep{balandat2020botorch}; NumPy/SciPy), so their numbers are never put on common
+axes.
+
+\subsection{The two directions}
+\emph{Part A, multimodality} (Isaac Soong), asks whether each method can \emph{find} a narrow, distant global
+basin and then \emph{refine} it, within 300 evaluations. It varies CMA-ES's population size, restarts and step
+size, and BO's acquisition function, GP fitting settings and kernel, on a decoy bowl with a narrow Gaussian well
+(whose width and distance are varied), with a sphere as a unimodal control and Rastrigin and Schwefel as
+validation functions.
+
+\emph{Part B, geometry and parameterisation} (Paul Ng), asks whether a method's model can \emph{tilt} to a
+rotated, ill-conditioned valley, and which theoretical invariances survive the implementation. It varies the
+conditioning and rotation of the problem and whether each method's model can rotate (full against diagonal
+covariance; full against ARD kernel metric; a rotated against an axis-aligned trust region), and also tests
+changes of units, monotone transformations of $f$, the box boundary and noisy evaluations, on ellipsoids,
+Rosenbrock (COCO f8/f9 \citep{hansen2009bbobfunctions}) and a noisy quadratic, within 200 evaluations.
+
+\subsection{Preview of findings and contributions}
+In Part A neither default method finds the well (CMA-ES 0/50 runs, BO 5/50). For CMA-ES, a larger population
+and restarts change how often the well is touched but not success, because one step size cannot both find the
+well and refine it. For BO, capping the GP lengthscale raises success to 39/50 (44/50 on fresh seeds), while
+tuning the acquisition function reaches at most 17/50. In Part B, the axis-restricted version fails under
+rotation in both families (diagonal CMA-ES solves no instance between $30^\circ$ and $60^\circ$; BO with ARD
+loses 2.0 decades), but this became visible for BO only after a fitting failure that stalled every BO run was
+diagnosed and fixed; the result then held across two kernels, two acquisition searches and a TuRBO-style trust
+region. CMA-ES's rank invariance survives exactly; BO has neither invariance.
+
+Together the parts contribute a tested account of shape and scale across both families; the shared, unplanned
+finding that BO's decisive fixes were to the \emph{model fit}, not to the acquisition function; and a set of
+negative and surprising results reported as such: pre-registered predictions that failed, an initial negative
+result that turned out to be a fitting failure, a boundary trap, and BO runs that do not repeat bit for bit.
+
+\emph{Roadmap.} Section~\ref{sec:partA} presents Part A and Section~\ref{sec:partB} Part B, each as question,
+set-up, results and caveats. Section~\ref{sec:synth} draws the two together and states the limitations.
 
 %=====================================================================
-\section{Part I: can the search tilt? (geometry and parameterisation)}
+\section{Part A: finding and refining a narrow basin (multimodality)}\label{sec:partA}
+%=====================================================================
+%% AUTHOR: Isaac Soong. Written from multimodality/docs/report_log.md; rewrite in your own words.
+\textbf{Question and predictions.} At a fixed budget of $N=300$ evaluations, how do population size, restarts,
+step size and acquisition and surrogate choices change the probability of finding a narrow, distant global basin,
+and why? Predictions H1--H6 and M1--M3 were committed before any optimiser result was inspected; BO1--BO13 and
+CMA1--CMA6 were added later, each before the experiment that tested it, except BO1 (post hoc, labelled as such).
+
+\textbf{Set-up.} The primary landscape is a broad decoy bowl with a narrow, deep Gaussian well,
+$f(x)=\lVert x-c\rVert^2/s-A\exp(-\lVert x-x_g\rVert^2/2w^2)$ with $c=0$, $s=10$, $A=4$, width $w=0.3$, the
+well at $(3,3)$ (Fig.~\ref{fig:land}), on $[-5,5]^2$. A run succeeds when its regret falls to $\varepsilon=0.05$,
+a threshold chosen from random sampling alone. CMA-ES is the \texttt{cma} library (default $\lambda=6$,
+$\sigma_0=2$, start $x_0\sim U[-4,4]^2$); BO is BoTorch GP-EI (Mat\'ern-5/2, 10 initial points, refit every 5
+evaluations, lengthscale upper bound 20, fixed noise $10^{-6}$). Each variant changes one setting and uses seeds
+1000--1049; success rates carry Wilson intervals and differences Newcombe intervals.
+
+\begin{figure}[t]
+\centering\includegraphics[width=0.7\linewidth]{figures/mm_landscape.png}
+\caption{Part A. Primary landscape: a decoy bowl centred at the origin and a narrow global well at $(3,3)$, $w=0.3$.}
+\label{fig:land}
+\end{figure}
+
+\textbf{Baselines (Exp 0).} Neither default finds the well: CMA-ES 0/50, BO 5/50, random sampling 2/50, with
+pairwise-overlapping intervals. CMA-ES's $\sigma$ falls below 0.2 by generation 19 (median) and from evaluation 100
+on at least 97.5\% of its samples lie within 0.5 of the decoy centre (H1 supported). BO's lengthscale runs to its
+upper bound in 42 of 50 runs, none of which succeeds, and in the 45 failures no sample ever enters the well. Both
+fail at \emph{discovery}, not refinement: every BO run that sampled the well succeeded.
+
+\textbf{CMA-ES: population, restarts and step size (Exps 1--3).} A larger population raises the number of runs that
+touch the well (1, 7 and 13 of 50 for $\lambda=6,12,24$) but success stays 0/50 at every $\lambda$, also with five
+times the budget (H2 contradicted). IPOP and BIPOP \citep{auger2005ipop,hansen2009bipop} are identical at this
+budget, because only one restart fits, and also give 0/50 (H3 contradicted on success). The step size explains why
+(Fig.~\ref{fig:sig}): from a start 1.0 from the well, $\sigma_0=0.3$ succeeds in 33/50 runs and the default
+$\sigma_0=2$ in 2/50 ($+0.62$ \ci{+0.45}{+0.74}), while from a random start no $\sigma_0$ exceeds 1/50. A mean trace
+shows the mechanism: with $\sigma_0=2$, a single well sample is outvoted by the other selected points on the bowl,
+which drag the mean back to the decoy. Finding the well needs a large $\sigma$ and refining it a small one, and
+the default has to choose.
+
+\begin{figure}[t]
+\centering\includegraphics[width=0.66\linewidth]{figures/mm_exp3_oracle.png}
+\caption{Part A, Exp 3. CMA-ES success against initial step size from a start 1.0 from the well (a diagnostic of
+refinement, not a method comparison).}
+\label{fig:sig}
+\end{figure}
+
+\textbf{BO: acquisition against model fit (Exps 4--7).} Exploration in EI helps a little: $\xi=0.1$ reaches 17/50
+($+0.24$ \ci{+0.08}{+0.39} over $\xi=0$), and larger $\xi$ touches the well more often but refines it less (17/45 to
+3/42 given a touch). LCB ($\beta$ from 0.5 to 32), Thompson sampling and BoTorch's default MAP recipe all stay at 3--4/50.
+The model fit matters far more (Fig.~\ref{fig:fit}): capping the lengthscale at 1 gives 39/50 ($+0.68$
+\ci{+0.51}{+0.79}), because the default fit runs to the bound and the search stays near the bowl centre, while a cap makes
+it sweep the box (about 100 of 100 grid cells visited, against 10). The cap has an optimum: 0.25 drops back to 6/50.
+Changing the kernel at the default cap changes nothing; at cap 1 RBF matches Mat\'ern-5/2 (39/50) but the rougher
+Mat\'ern-3/2 and 1/2 collapse (6 and 3/50) by failing to discover the well.
+
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{figures/mm_exp6_fitting.png}
+\caption{Part A, Exp 6. BO fitting settings changed one at a time: lengthscale cap and noise level (BoTorch, $N=300$).}
+\label{fig:fit}
+\end{figure}
+
+\textbf{Width, control and validation (Exps 8--10).} Across well widths (Fig.~\ref{fig:width}) the capped BO,
+evaluated on fresh seeds 2000--2049 to avoid selection bias, succeeds in 44/50 at $w=0.3$ and 50/50 at $w=0.6$ and
+1.0, against 1, 10 and 39/50 for default BO; CMA-ES needs a wide well (35/50 at $w=1.0$, 0/50 at $w=0.3$), and the
+best CMA-ES variant ($\sigma_0=1$) gives no gain at any width. On a near well, default CMA-ES beats default BO (30 against
+13/50 at $w=0.3$). The capped BO has a cost on a unimodal sphere (regret $8.9\times10^{-4}$ against $1.2\times10^{-6}$
+at evaluation 100), and a larger $\lambda$ worsens CMA-ES there (H5 supported). On Rastrigin and Schwefel the cap's gain
+is small and uncertain, and BO is far stronger than CMA-ES on Schwefel (16/20 default, 20/20 capped, against at most
+8/50); whether $\lambda$ helps more on Rastrigin than on Schwefel (H6) could not be distinguished.
+
+\begin{figure}[t]
+\centering\includegraphics[width=0.9\linewidth]{figures/mm_exp8_width.png}
+\caption{Part A, Exp 8. Success against well width for the defaults and the best variants (fresh seeds),
+far and near well.}
+\label{fig:width}
+\end{figure}
+
+%=====================================================================
+\section{Part B: can the search tilt? (geometry and parameterisation)}\label{sec:partB}
 %=====================================================================
 %% AUTHOR: Paul Ng. Condensed from geometry/report/report.tex; rewrite in your own words.
 \textbf{Question and predictions.} Near a minimum $f\approx f^*+\tfrac12h^\top Hh$. The Hessian's eigenvalues
@@ -103,7 +256,7 @@ evaluations under Haar rotation) and costs up to 21.6\% more evaluations on alig
 
 \begin{figure}[t]
 \centering\includegraphics[width=0.78\linewidth]{figures/geom_e1_angle.pdf}
-\caption{Part I, E1. Success of full (solid) and diagonal (dashed) CMA-ES against the angle of a 2-D valley.}
+\caption{Part B, E1. Success of full (solid) and diagonal (dashed) CMA-ES against the angle of a 2-D valley.}
 \label{fig:e1}
 \end{figure}
 
@@ -130,7 +283,7 @@ at $\kappa\le100$ (1.2--2.7 decades).
 
 \begin{figure}[t]
 \centering\includegraphics[width=0.86\linewidth]{figures/geom_rotation_penalty.pdf}
-\caption{Part I. Rotation penalty at 200 evaluations (median, 95\% bootstrap interval, 15 instances). Hollow: BO
+\caption{Part B. Rotation penalty at 200 evaluations (median, 95\% bootstrap interval, 15 instances). Hollow: BO
 before the noise fix. The axis-restricted variant pays in both families once BO is no longer stalled.}
 \label{fig:pen}
 \end{figure}
@@ -147,7 +300,7 @@ EI + local candidates & $+1.28$ \ci{+0.12}{+2.36} & $-2.96$ \ci{-3.44}{+2.61} \\
 Trust region, ARD box vs rotated box & $+2.92$ \ci{+1.27}{+3.79} & $-0.39$ \ci{-3.11}{+4.65} \\
 \bottomrule
 \end{tabular}
-\caption{Part I. Axis-restricted minus tilting version, median $\log_{10}f$ at 200 evaluations, paired by instance
+\caption{Part B. Axis-restricted minus tilting version, median $\log_{10}f$ at 200 evaluations, paired by instance
 (+ = axis-restricted worse). Wide aligned intervals come from the boundary trap (text).}
 \label{tab:robust}
 \end{table}
@@ -180,100 +333,23 @@ The one anomaly, a worse model-based pick with replicates, is again the noise-fi
 on the raw values never does worse than the lowest reading.
 
 %=====================================================================
-\section{Part II: finding and refining a narrow basin (multimodality)}
-%=====================================================================
-%% AUTHOR: Isaac Soong. Written from multimodality/docs/report_log.md; rewrite in your own words.
-\textbf{Question and predictions.} At a fixed budget of $N=300$ evaluations, how do population size, restarts,
-step size and acquisition and surrogate choices change the probability of finding a narrow, distant global basin,
-and why? Predictions H1--H6 and M1--M3 were committed before any optimiser result was inspected; BO1--BO13 and
-CMA1--CMA6 were added later, each before the experiment that tested it, except BO1 (post hoc, labelled as such).
-
-\textbf{Set-up.} The primary landscape is a broad decoy bowl with a narrow, deep Gaussian well,
-$f(x)=\lVert x-c\rVert^2/s-A\exp(-\lVert x-x_g\rVert^2/2w^2)$ with $c=0$, $s=10$, $A=4$, width $w=0.3$, the
-well at $(3,3)$ (Fig.~\ref{fig:land}), on $[-5,5]^2$. A run succeeds when its regret falls to $\varepsilon=0.05$,
-a threshold chosen from random sampling alone. CMA-ES is the \texttt{cma} library (default $\lambda=6$,
-$\sigma_0=2$, start $x_0\sim U[-4,4]^2$); BO is BoTorch GP-EI (Mat\'ern-5/2, 10 initial points, refit every 5
-evaluations, lengthscale upper bound 20, fixed noise $10^{-6}$). Each variant changes one setting and uses seeds
-1000--1049; success rates carry Wilson intervals and differences Newcombe intervals.
-
-\begin{figure}[t]
-\centering\includegraphics[width=0.7\linewidth]{figures/mm_landscape.png}
-\caption{Part II. Primary landscape: a decoy bowl centred at the origin and a narrow global well at $(3,3)$, $w=0.3$.}
-\label{fig:land}
-\end{figure}
-
-\textbf{Baselines (Exp 0).} Neither default finds the well: CMA-ES 0/50, BO 5/50, random sampling 2/50, with
-pairwise-overlapping intervals. CMA-ES's $\sigma$ falls below 0.2 by generation 19 (median) and from evaluation 100
-on at least 97.5\% of its samples lie within 0.5 of the decoy centre (H1 supported). BO's lengthscale runs to its
-upper bound in 42 of 50 runs, none of which succeeds, and in the 45 failures no sample ever enters the well. Both
-fail at \emph{discovery}, not refinement: every BO run that sampled the well succeeded.
-
-\textbf{CMA-ES: population, restarts and step size (Exps 1--3).} A larger population raises the number of runs that
-touch the well (1, 7 and 13 of 50 for $\lambda=6,12,24$) but success stays 0/50 at every $\lambda$, also with five
-times the budget (H2 contradicted). IPOP and BIPOP \citep{auger2005ipop,hansen2009bipop} are identical at this
-budget, because only one restart fits, and also give 0/50 (H3 contradicted on success). The step size explains why
-(Fig.~\ref{fig:sig}): from a start 1.0 from the well, $\sigma_0=0.3$ succeeds in 33/50 runs and the default
-$\sigma_0=2$ in 2/50 ($+0.62$ \ci{+0.45}{+0.74}), while from a random start no $\sigma_0$ exceeds 1/50. A mean trace
-shows the mechanism: with $\sigma_0=2$, a single well sample is outvoted by the other selected points on the bowl,
-which drag the mean back to the decoy. Finding the well needs a large $\sigma$ and refining it a small one, and
-the default has to choose.
-
-\begin{figure}[t]
-\centering\includegraphics[width=0.66\linewidth]{figures/mm_exp3_oracle.png}
-\caption{Part II, Exp 3. CMA-ES success against initial step size from a start 1.0 from the well (a diagnostic of
-refinement, not a method comparison).}
-\label{fig:sig}
-\end{figure}
-
-\textbf{BO: acquisition against model fit (Exps 4--7).} Exploration in EI helps a little: $\xi=0.1$ reaches 17/50
-($+0.24$ \ci{+0.08}{+0.39} over $\xi=0$), and larger $\xi$ touches the well more often but refines it less (17/45 to
-3/42 given a touch). LCB ($\beta$ from 0.5 to 32), Thompson sampling and BoTorch's default MAP recipe all stay at 3--4/50.
-The model fit matters far more (Fig.~\ref{fig:fit}): capping the lengthscale at 1 gives 39/50 ($+0.68$
-\ci{+0.51}{+0.79}), because the default fit runs to the bound and the search stays near the bowl centre, while a cap makes
-it sweep the box (about 100 of 100 grid cells visited, against 10). The cap has an optimum: 0.25 drops back to 6/50.
-Changing the kernel at the default cap changes nothing; at cap 1 RBF matches Mat\'ern-5/2 (39/50) but the rougher
-Mat\'ern-3/2 and 1/2 collapse (6 and 3/50) by failing to discover the well.
-
-\begin{figure}[t]
-\centering\includegraphics[width=\linewidth]{figures/mm_exp6_fitting.png}
-\caption{Part II, Exp 6. BO fitting settings changed one at a time: lengthscale cap and noise level (BoTorch, $N=300$).}
-\label{fig:fit}
-\end{figure}
-
-\textbf{Width, control and validation (Exps 8--10).} Across well widths (Fig.~\ref{fig:width}) the capped BO,
-evaluated on fresh seeds 2000--2049 to avoid selection bias, succeeds in 44/50 at $w=0.3$ and 50/50 at $w=0.6$ and
-1.0, against 1, 10 and 39/50 for default BO; CMA-ES needs a wide well (35/50 at $w=1.0$, 0/50 at $w=0.3$), and the
-best CMA-ES variant ($\sigma_0=1$) gives no gain at any width. On a near well, default CMA-ES beats default BO (30 against
-13/50 at $w=0.3$). The capped BO has a cost on a unimodal sphere (regret $8.9\times10^{-4}$ against $1.2\times10^{-6}$
-at evaluation 100), and a larger $\lambda$ worsens CMA-ES there (H5 supported). On Rastrigin and Schwefel the cap's gain
-is small and uncertain, and BO is far stronger than CMA-ES on Schwefel (16/20 default, 20/20 capped, against at most
-8/50); whether $\lambda$ helps more on Rastrigin than on Schwefel (H6) could not be distinguished.
-
-\begin{figure}[t]
-\centering\includegraphics[width=0.9\linewidth]{figures/mm_exp8_width.png}
-\caption{Part II, Exp 8. Success against well width for the defaults and the best variants (fresh seeds),
-far and near well.}
-\label{fig:width}
-\end{figure}
-
-%=====================================================================
-\section{Synthesis: what the two parts establish together}
+\section{Synthesis: what the two parts establish together}\label{sec:synth}
 %=====================================================================
 %% AUTHORS: joint section, rewrite together.
-\textbf{Shape and scale both decide success, within each family.} Part I shows that a model restricted in
-\emph{shape} fails on tilted valleys in both families, and Part II that a model with the wrong \emph{scale} fails to
-find or to refine a narrow basin. In neither part does the family alone predict the outcome: diagonal and full
+\textbf{Shape and scale both decide success, within each family.} Part A shows that a model with the wrong
+\emph{scale} fails to find or to refine a narrow basin, and Part B that a model restricted in \emph{shape} fails on
+tilted valleys in both families. In neither part does the family alone predict the outcome: diagonal and full
 CMA-ES differ by up to 100 percentage points on the same rotated problem, and capped and default BO by 43 successes out of 50
 on the same landscape (44 against 1 on fresh seeds).
 
 \textbf{BO's decisive fixes were to the model fit, not the acquisition.} Independently, both parts found BO
-failing because its GP was mis-fitted, and both found acquisition changes nearly powerless: in Part I the fitted
-noise absorbed the best points (fixing it gained over a decade; LogEI nothing), in Part II the lengthscale ran to its
-bound (capping it took success from 5 to 39/50; $\xi$, LCB and Thompson sampling at most 17/50). In both, BO's
+failing because its GP was mis-fitted, and both found acquisition changes nearly powerless: in Part A the lengthscale
+ran to its bound (capping it took success from 5 to 39/50; $\xi$, LCB and Thompson sampling at most 17/50), in Part B
+the fitted noise absorbed the best points (fixing it gained over a decade; LogEI nothing). In both, BO's
 results depend on implementation choices that published defaults leave open.
 
-\textbf{CMA-ES adapts shape well but must commit to a scale.} Its covariance follows a rotated valley reliably (Part I),
-but one step size cannot both find a distant basin and refine a narrow one (Part II); population size and restarts,
+\textbf{CMA-ES adapts shape well but must commit to a scale.} One step size cannot both find a distant basin and refine a
+narrow one (Part A), but its covariance follows a rotated valley reliably (Part B); population size and restarts,
 which change only how much is sampled, did not move success on the primary landscape.
 
 \textbf{Trade-offs.} BO leads early in both parts and costs roughly $10^5$ times more computation per run; settings
