@@ -1,12 +1,17 @@
 """Build the report figures from results/ (no experiment is re-run).
 
 Encoding, fixed across every figure so a method looks the same everywhere:
-  colour     = family      CMA-ES blue, BO orange
+  colour     = method      CMA-ES cool (full blue, diagonal aqua),
+                           BO warm (full metric red, ARD yellow)
   line style = geometry    solid = can tilt (full covariance, full GP metric)
                            dashed = axis-aligned (diagonal covariance, ARD kernel)
-Palette: the dataviz skill's reference categorical slots 1-2 (slot 3, aqua, is
-kept for reflected CMA-ES but no current figure plots it), validated all-pairs
-in light mode.
+Palette: the dataviz skill's reference categorical slots blue, aqua, yellow and
+red. Of all 70 four-colour sets in that palette, 16 pass every all-pairs check
+(colour-blind separation and the normal-vision floor) and none contains orange,
+so BO moved from orange to this warm pair. Aqua and yellow are below 3:1
+contrast on the surface, so those methods are always named in a legend or
+label as well; line style (solid / dashed) still repeats the geometry.
+Reflected CMA-ES (no current figure plots it) takes slot 7, violet.
 
 Writes report/figures/fig*.pdf (for the report) and .png (for previews).
 Usage: python code/make_figures.py
@@ -29,17 +34,18 @@ OUT = ROOT / "report" / "figures"
 sys.path.insert(0, str(ROOT / "code"))
 import analysis
 
-BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
+BLUE, AQUA, RED, YELLOW, VIOLET = "#2a78d6", "#1baf7a", "#e34948", "#eda100", "#6250d6"
+ORANGE = "#eb6834"   # no longer used for a method; kept for reference
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#898781"
 GRID, AXIS, SURFACE = "#e1e0d9", "#c3c2b7", "#ffffff"
 
 STYLE = {   # method -> (label, colour, dash)
     "cmaes-full": ("CMA-ES, full", BLUE, "-"),
-    "cmaes-diagonal": ("CMA-ES, diagonal", BLUE, "--"),
-    "bo-full": ("BO, full metric", ORANGE, "-"),
-    "bo-ard": ("BO, ARD", ORANGE, "--"),
-    "cmaes-full-reflect": ("CMA-ES, full + reflection", AQUA, "-"),
-    "bo-ard-fitnoise": ("BO, ARD, noise fitted (original)", ORANGE, ":"),
+    "cmaes-diagonal": ("CMA-ES, diagonal", AQUA, "--"),
+    "bo-full": ("BO, full metric", RED, "-"),
+    "bo-ard": ("BO, ARD", YELLOW, "--"),
+    "cmaes-full-reflect": ("CMA-ES, full + reflection", VIOLET, "-"),
+    "bo-ard-fitnoise": ("BO, ARD, noise fitted (original)", YELLOW, ":"),
 }
 GEO = {"none": "aligned", "random": "Haar-random rotation"}
 
@@ -314,13 +320,13 @@ def fig8_e6_noise():
         ("Recommendation rule: model estimate − lowest observed", [
             ("cmaes-base: R2 - R1", "CMA-ES, λ = 6: mean", BLUE),
             ("cmaes-pop24: R2 - R1", "CMA-ES, λ = 24: mean", BLUE),
-            ("bo-base: R2 - R1", "BO: posterior-mean minimiser", ORANGE)]),
+            ("bo-base: R2 - R1", "BO: posterior-mean minimiser", YELLOW)]),
         ("Budget split − baseline (both read through the model)", [
             ("cmaes-resample - cmaes-base (R2)", "CMA-ES: resample ×4", BLUE),
             ("cmaes-pop24 - cmaes-base (R2)", "CMA-ES: population ×4", BLUE),
             ("cmaes-reserve R3 - cmaes-base R2", "CMA-ES: final re-evaluation", BLUE),
-            ("bo-replicate - bo-base (R2)", "BO: replicates ×4", ORANGE),
-            ("bo-reserve R3 - bo-base R2", "BO: final re-evaluation", ORANGE)]),
+            ("bo-replicate - bo-base (R2)", "BO: replicates ×4", YELLOW),
+            ("bo-reserve R3 - bo-base R2", "BO: final re-evaluation", YELLOW)]),
     ]
     sigmas = (0.01, 0.1, 1.0)
     fig, axes = plt.subplots(2, 1, figsize=(5.6, 6.2),
