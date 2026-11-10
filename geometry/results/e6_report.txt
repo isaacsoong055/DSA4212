@@ -1,0 +1,230 @@
+0 runs already done, 315 to go
+[1/315] bo-replicate sigma=0.01 inst=1 4s elapsed 6s
+[2/315] bo-replicate sigma=0.01 inst=0 5s elapsed 6s
+[3/315] bo-replicate sigma=0.01 inst=2 5s elapsed 7s
+[4/315] bo-replicate sigma=0.01 inst=3 5s elapsed 12s
+[5/315] bo-reserve sigma=0.01 inst=1 63s elapsed 65s
+[6/315] bo-reserve sigma=0.01 inst=0 65s elapsed 67s
+[7/315] bo-reserve sigma=0.01 inst=2 64s elapsed 69s
+[8/315] bo-replicate sigma=0.01 inst=4 5s elapsed 72s
+[9/315] bo-reserve sigma=0.01 inst=3 65s elapsed 77s
+[10/315] bo-replicate sigma=0.01 inst=5 4s elapsed 81s
+[11/315] bo-base sigma=0.01 inst=0 109s elapsed 111s
+[12/315] bo-base sigma=0.01 inst=2 115s elapsed 117s
+[13/315] bo-replicate sigma=0.01 inst=6 4s elapsed 121s
+[14/315] bo-base sigma=0.01 inst=3 118s elapsed 124s
+[15/315] bo-base sigma=0.01 inst=1 124s elapsed 126s
+[16/315] bo-replicate sigma=0.01 inst=7 5s elapsed 131s
+[17/315] bo-reserve sigma=0.01 inst=4 70s elapsed 139s
+[18/315] bo-reserve sigma=0.01 inst=5 65s elapsed 146s
+[19/315] bo-replicate sigma=0.01 inst=8 5s elapsed 151s
+[20/315] bo-base sigma=0.01 inst=4 120s elapsed 185s
+[21/315] bo-reserve sigma=0.01 inst=6 65s elapsed 186s
+[22/315] bo-replicate sigma=0.01 inst=9 4s elapsed 190s
+[23/315] bo-reserve sigma=0.01 inst=7 67s elapsed 197s
+[24/315] bo-base sigma=0.01 inst=5 132s elapsed 203s
+[25/315] bo-replicate sigma=0.01 inst=10 5s elapsed 208s
+[26/315] bo-reserve sigma=0.01 inst=8 82s elapsed 233s
+[27/315] bo-base sigma=0.01 inst=6 123s elapsed 234s
+[28/315] bo-replicate sigma=0.01 inst=11 4s elapsed 239s
+[29/315] bo-base sigma=0.01 inst=7 123s elapsed 247s
+[30/315] bo-reserve sigma=0.01 inst=9 63s elapsed 253s
+[31/315] bo-replicate sigma=0.01 inst=12 4s elapsed 257s
+[32/315] bo-base sigma=0.01 inst=8 125s elapsed 265s
+[33/315] bo-reserve sigma=0.01 inst=10 65s elapsed 273s
+[34/315] bo-replicate sigma=0.01 inst=13 4s elapsed 277s
+[35/315] bo-reserve sigma=0.01 inst=11 64s elapsed 303s
+[36/315] bo-base sigma=0.01 inst=9 127s elapsed 312s
+[37/315] bo-replicate sigma=0.01 inst=14 5s elapsed 317s
+[38/315] bo-reserve sigma=0.01 inst=12 68s elapsed 325s
+[39/315] bo-base sigma=0.01 inst=10 130s elapsed 327s
+[40/315] bo-replicate sigma=0.1 inst=0 5s elapsed 332s
+[41/315] bo-reserve sigma=0.01 inst=13 72s elapsed 349s
+[42/315] bo-base sigma=0.01 inst=11 138s elapsed 371s
+[43/315] bo-base sigma=0.01 inst=12 126s elapsed 373s
+[44/315] bo-replicate sigma=0.1 inst=1 4s elapsed 375s
+[45/315] bo-reserve sigma=0.01 inst=14 74s elapsed 391s
+[46/315] bo-base sigma=0.01 inst=13 128s elapsed 393s
+[47/315] bo-reserve sigma=0.1 inst=0 64s elapsed 395s
+[48/315] bo-replicate sigma=0.1 inst=2 5s elapsed 396s
+[49/315] bo-replicate sigma=0.1 inst=3 5s elapsed 401s
+[50/315] bo-reserve sigma=0.1 inst=1 65s elapsed 438s
+[51/315] bo-base sigma=0.01 inst=14 136s elapsed 439s
+[52/315] bo-replicate sigma=0.1 inst=4 5s elapsed 444s
+[53/315] bo-base sigma=0.1 inst=0 120s elapsed 445s
+[54/315] bo-reserve sigma=0.1 inst=2 71s elapsed 464s
+[55/315] bo-replicate sigma=0.1 inst=5 5s elapsed 469s
+[56/315] bo-reserve sigma=0.1 inst=3 74s elapsed 474s
+[57/315] bo-base sigma=0.1 inst=1 128s elapsed 477s
+[58/315] bo-replicate sigma=0.1 inst=6 6s elapsed 483s
+[59/315] bo-reserve sigma=0.1 inst=4 79s elapsed 523s
+[60/315] bo-base sigma=0.1 inst=2 150s elapsed 525s
+[61/315] bo-replicate sigma=0.1 inst=7 6s elapsed 531s
+[62/315] bo-base sigma=0.1 inst=3 156s elapsed 551s
+[63/315] bo-reserve sigma=0.1 inst=5 85s elapsed 553s
+[64/315] bo-replicate sigma=0.1 inst=8 6s elapsed 559s
+[65/315] bo-reserve sigma=0.1 inst=6 78s elapsed 561s
+[66/315] bo-base sigma=0.1 inst=4 151s elapsed 589s
+[67/315] bo-base sigma=0.1 inst=5 149s elapsed 595s
+[68/315] bo-replicate sigma=0.1 inst=9 6s elapsed 595s
+[69/315] bo-reserve sigma=0.1 inst=7 84s elapsed 615s
+[70/315] bo-replicate sigma=0.1 inst=10 5s elapsed 620s
+[71/315] bo-base sigma=0.1 inst=6 147s elapsed 621s
+[72/315] bo-reserve sigma=0.1 inst=8 78s elapsed 637s
+[73/315] bo-replicate sigma=0.1 inst=11 5s elapsed 643s
+[74/315] bo-base sigma=0.1 inst=7 155s elapsed 678s
+[75/315] bo-reserve sigma=0.1 inst=9 85s elapsed 680s
+[76/315] bo-replicate sigma=0.1 inst=12 6s elapsed 686s
+[77/315] bo-reserve sigma=0.1 inst=10 81s elapsed 701s
+[78/315] bo-base sigma=0.1 inst=8 151s elapsed 702s
+[79/315] bo-base sigma=0.1 inst=9 145s elapsed 706s
+[80/315] bo-replicate sigma=0.1 inst=13 5s elapsed 707s
+[81/315] bo-reserve sigma=0.1 inst=11 77s elapsed 720s
+[82/315] bo-replicate sigma=0.1 inst=14 6s elapsed 726s
+[83/315] bo-base sigma=0.1 inst=10 147s elapsed 741s
+[84/315] bo-reserve sigma=0.1 inst=12 84s elapsed 769s
+[85/315] bo-replicate sigma=1.0 inst=0 6s elapsed 775s
+[86/315] bo-base sigma=0.1 inst=11 154s elapsed 776s
+[87/315] bo-reserve sigma=0.1 inst=13 78s elapsed 783s
+[88/315] bo-replicate sigma=1.0 inst=1 6s elapsed 789s
+[89/315] bo-reserve sigma=0.1 inst=14 85s elapsed 811s
+[90/315] bo-base sigma=0.1 inst=12 149s elapsed 826s
+[91/315] bo-replicate sigma=1.0 inst=2 5s elapsed 832s
+[92/315] bo-base sigma=0.1 inst=13 152s elapsed 853s
+[93/315] bo-reserve sigma=1.0 inst=0 81s elapsed 856s
+[94/315] bo-replicate sigma=1.0 inst=3 6s elapsed 862s
+[95/315] bo-reserve sigma=1.0 inst=1 82s elapsed 871s
+[96/315] bo-base sigma=0.1 inst=14 170s elapsed 877s
+[97/315] bo-replicate sigma=1.0 inst=4 6s elapsed 883s
+[98/315] bo-base sigma=1.0 inst=0 147s elapsed 888s
+[99/315] bo-reserve sigma=1.0 inst=2 77s elapsed 908s
+[100/315] bo-replicate sigma=1.0 inst=5 5s elapsed 914s
+[101/315] bo-base sigma=1.0 inst=1 151s elapsed 927s
+[102/315] bo-reserve sigma=1.0 inst=3 77s elapsed 939s
+[103/315] bo-replicate sigma=1.0 inst=6 6s elapsed 945s
+[104/315] bo-reserve sigma=1.0 inst=4 81s elapsed 964s
+[105/315] bo-base sigma=1.0 inst=2 157s elapsed 968s
+[106/315] bo-replicate sigma=1.0 inst=7 5s elapsed 974s
+[107/315] bo-base sigma=1.0 inst=3 141s elapsed 994s
+[108/315] bo-reserve sigma=1.0 inst=5 81s elapsed 995s
+[109/315] bo-replicate sigma=1.0 inst=8 5s elapsed 999s
+[110/315] bo-base sigma=1.0 inst=4 146s elapsed 1017s
+[111/315] bo-reserve sigma=1.0 inst=6 75s elapsed 1020s
+[112/315] bo-replicate sigma=1.0 inst=9 5s elapsed 1025s
+[113/315] bo-base sigma=1.0 inst=5 156s elapsed 1044s
+[114/315] bo-reserve sigma=1.0 inst=7 80s elapsed 1054s
+[115/315] bo-replicate sigma=1.0 inst=10 5s elapsed 1059s
+[116/315] bo-base sigma=1.0 inst=6 145s elapsed 1072s
+[117/315] bo-reserve sigma=1.0 inst=8 82s elapsed 1082s
+[118/315] bo-replicate sigma=1.0 inst=11 5s elapsed 1087s
+[119/315] bo-reserve sigma=1.0 inst=9 80s elapsed 1105s
+[120/315] bo-base sigma=1.0 inst=7 142s elapsed 1107s
+[121/315] bo-replicate sigma=1.0 inst=12 6s elapsed 1113s
+[122/315] bo-reserve sigma=1.0 inst=10 64s elapsed 1123s
+[123/315] bo-base sigma=1.0 inst=9 140s elapsed 1158s
+[124/315] bo-base sigma=1.0 inst=8 166s elapsed 1160s
+[125/315] bo-base sigma=1.0 inst=10 117s elapsed 1161s
+[126/315] bo-replicate sigma=1.0 inst=13 5s elapsed 1163s
+[127/315] bo-replicate sigma=1.0 inst=14 6s elapsed 1169s
+[128/315] bo-reserve sigma=1.0 inst=11 88s elapsed 1175s
+[150/315] cmaes-resample sigma=0.01 inst=5 0s elapsed 1175s
+[200/315] cmaes-reserve sigma=0.1 inst=2 0s elapsed 1175s
+[250/315] cmaes-resample sigma=1.0 inst=0 0s elapsed 1176s
+[300/315] cmaes-reserve sigma=1.0 inst=12 0s elapsed 1176s
+[309/315] bo-reserve sigma=1.0 inst=12 81s elapsed 1194s
+[310/315] bo-base sigma=1.0 inst=11 147s elapsed 1219s
+[311/315] bo-reserve sigma=1.0 inst=13 74s elapsed 1234s
+[312/315] bo-reserve sigma=1.0 inst=14 70s elapsed 1239s
+[313/315] bo-base sigma=1.0 inst=12 135s elapsed 1240s
+[314/315] bo-base sigma=1.0 inst=13 130s elapsed 1253s
+[315/315] bo-base sigma=1.0 inst=14 106s elapsed 1267s
+
+== median log10 f (noise-free) of the recommended point, by variant and rule
+sigma                0.01  0.10  1.00
+variant        rule                  
+bo-base        R1   -2.36 -1.58 -0.37
+               R2   -2.68 -1.88 -1.45
+bo-replicate   R1   -1.99 -1.47 -0.75
+               R2   -1.10 -0.83 -0.61
+bo-reserve     R1   -2.35 -1.34 -0.37
+               R2   -2.19 -1.76 -1.35
+               R3   -2.44 -1.70 -0.60
+cmaes-base     R1   -2.59 -1.84 -0.70
+               R2   -2.70 -1.96 -0.70
+cmaes-pop24    R1   -1.91 -1.31 -0.93
+               R2   -2.09 -1.79 -1.27
+cmaes-resample R1   -0.05 -0.05 -0.05
+               R2    0.32  0.32  0.40
+cmaes-reserve  R1   -2.07 -1.65 -0.58
+               R2   -2.34 -1.69 -0.72
+               R3   -2.27 -1.65 -0.94
+
+== evaluations used and distinct points (median)
+                evaluations  distinct_points
+variant                                     
+bo-base               200.0            200.0
+bo-replicate          200.0             50.0
+bo-reserve            200.0            160.0
+cmaes-base            198.0            198.0
+cmaes-pop24           192.0            192.0
+cmaes-resample        192.0             48.0
+cmaes-reserve         196.0            156.0
+
+== Part A: rules on the same runs, R2 - R1 (negative = model estimate better)
+  sigma=0.01  cmaes-base      R2 - R1                   -0.12 [ -0.58,  +0.37]
+  sigma=0.01  cmaes-resample  R2 - R1                   +0.37 [ -0.25,  +1.00]
+  sigma=0.01  cmaes-pop24     R2 - R1                   -0.17 [ -0.47,  +0.70]
+  sigma=0.01  cmaes-reserve   R2 - R1                   -0.27 [ -0.82,  +0.05]
+  sigma=0.01  bo-base         R2 - R1                   -0.32 [ -0.68,  +0.00]
+  sigma=0.01  bo-replicate    R2 - R1                   +0.89 [ +0.00,  +1.54]
+  sigma=0.01  bo-reserve      R2 - R1                   +0.16 [ -0.31,  +0.77]
+  sigma=0.1   cmaes-base      R2 - R1                   -0.12 [ -0.59,  +0.62]
+  sigma=0.1   cmaes-resample  R2 - R1                   +0.37 [ -0.25,  +1.00]
+  sigma=0.1   cmaes-pop24     R2 - R1                   -0.47 [ -0.96,  -0.12]  <-- differs
+  sigma=0.1   cmaes-reserve   R2 - R1                   -0.05 [ -0.59,  +0.36]
+  sigma=0.1   bo-base         R2 - R1                   -0.30 [ -0.78,  -0.15]  <-- differs
+  sigma=0.1   bo-replicate    R2 - R1                   +0.64 [ +0.00,  +1.21]
+  sigma=0.1   bo-reserve      R2 - R1                   -0.42 [ -0.65,  -0.17]  <-- differs
+  sigma=1.0   cmaes-base      R2 - R1                   +0.00 [ -0.53,  +0.36]
+  sigma=1.0   cmaes-resample  R2 - R1                   +0.45 [ +0.01,  +0.94]  <-- differs
+  sigma=1.0   cmaes-pop24     R2 - R1                   -0.33 [ -0.94,  -0.12]  <-- differs
+  sigma=1.0   cmaes-reserve   R2 - R1                   -0.14 [ -0.44,  +0.20]
+  sigma=1.0   bo-base         R2 - R1                   -1.08 [ -1.29,  -0.28]  <-- differs
+  sigma=1.0   bo-replicate    R2 - R1                   +0.14 [ -0.55,  +1.15]
+  sigma=1.0   bo-reserve      R2 - R1                   -0.98 [ -1.29,  -0.28]  <-- differs
+  sigma=0.01  cmaes-reserve   R3 - R2                   +0.06 [ -0.69,  +0.52]
+  sigma=0.01  bo-reserve      R3 - R2                   -0.25 [ -0.95,  +0.13]
+  sigma=0.1   cmaes-reserve   R3 - R2                   +0.05 [ -0.32,  +0.59]
+  sigma=0.1   bo-reserve      R3 - R2                   +0.07 [ +0.00,  +0.26]
+  sigma=1.0   cmaes-reserve   R3 - R2                   -0.22 [ -0.54,  +0.22]
+  sigma=1.0   bo-reserve      R3 - R2                   +0.75 [ -0.15,  +1.01]
+
+== Part B: split minus base, both under R2 (negative = split better)
+  sigma=0.01  cmaes-resample - cmaes-base (R2)          +3.02 [ +2.21,  +3.67]  <-- differs
+  sigma=0.01  cmaes-pop24 - cmaes-base (R2)             +0.62 [ +0.18,  +1.25]  <-- differs
+  sigma=0.01  cmaes-reserve - cmaes-base (R2)           +0.37 [ -0.28,  +0.67]
+  sigma=0.01  bo-replicate - bo-base (R2)               +1.58 [ +0.65,  +2.25]  <-- differs
+  sigma=0.01  bo-reserve - bo-base (R2)                 +0.49 [ -0.10,  +1.28]
+  sigma=0.1   cmaes-resample - cmaes-base (R2)          +2.28 [ +1.34,  +2.90]  <-- differs
+  sigma=0.1   cmaes-pop24 - cmaes-base (R2)             +0.17 [ -0.28,  +0.54]
+  sigma=0.1   cmaes-reserve - cmaes-base (R2)           +0.27 [ -0.50,  +0.43]
+  sigma=0.1   bo-replicate - bo-base (R2)               +1.05 [ +0.41,  +1.60]  <-- differs
+  sigma=0.1   bo-reserve - bo-base (R2)                 +0.11 [ -0.02,  +0.57]
+  sigma=1.0   cmaes-resample - cmaes-base (R2)          +1.10 [ +0.75,  +1.82]  <-- differs
+  sigma=1.0   cmaes-pop24 - cmaes-base (R2)             -0.57 [ -0.85,  -0.08]  <-- differs
+  sigma=1.0   cmaes-reserve - cmaes-base (R2)           -0.02 [ -0.24,  +0.35]
+  sigma=1.0   bo-replicate - bo-base (R2)               +0.84 [ -0.14,  +1.68]
+  sigma=1.0   bo-reserve - bo-base (R2)                 +0.10 [ -0.14,  +0.56]
+
+== P3: CMA-ES population vs resampling, both R2
+  sigma=0.01  cmaes-pop24 - cmaes-resample (R2)         -2.41 [ -3.01,  -1.32]  <-- differs
+  sigma=0.1   cmaes-pop24 - cmaes-resample (R2)         -2.11 [ -2.75,  -1.38]  <-- differs
+  sigma=1.0   cmaes-pop24 - cmaes-resample (R2)         -1.67 [ -2.23,  -1.19]  <-- differs
+
+== Reserve with R3 vs base with R2 (the full cost of re-evaluation)
+  sigma=0.01  cmaes-reserve R3 - cmaes-base R2          +0.43 [ -0.32,  +0.69]
+  sigma=0.01  bo-reserve R3 - bo-base R2                +0.24 [ -0.10,  +0.90]
+  sigma=0.1   cmaes-reserve R3 - cmaes-base R2          +0.31 [ -0.30,  +0.64]
+  sigma=0.1   bo-reserve R3 - bo-base R2                +0.18 [ +0.04,  +0.56]  <-- differs
+  sigma=1.0   cmaes-reserve R3 - cmaes-base R2          -0.24 [ -0.48,  +0.24]
+  sigma=1.0   bo-reserve R3 - bo-base R2                +0.85 [ -0.08,  +1.04]

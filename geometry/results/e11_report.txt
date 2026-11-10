@@ -1,0 +1,344 @@
+0 runs already done, 300 to go
+[1/300] part A bo-ard k=100 none inst=1 154s elapsed 155s
+[2/300] part A bo-ard k=100 none inst=3 168s elapsed 169s
+[3/300] part A bo-ard k=100 none inst=2 168s elapsed 170s
+[4/300] part A bo-ard k=100 none inst=0 180s elapsed 181s
+[5/300] part A bo-full k=100 none inst=3 206s elapsed 208s
+[6/300] part A bo-full k=100 none inst=1 208s elapsed 209s
+[7/300] part A bo-full k=100 none inst=0 214s elapsed 216s
+[8/300] part A bo-full k=100 none inst=2 223s elapsed 224s
+[9/300] part A bo-ard k=100 none inst=5 116s elapsed 286s
+[10/300] part A bo-ard k=100 none inst=4 154s elapsed 310s
+[11/300] part A bo-ard k=100 none inst=6 116s elapsed 324s
+[12/300] part A bo-ard k=100 none inst=7 166s elapsed 381s
+[13/300] part A bo-full k=100 none inst=4 226s elapsed 396s
+[14/300] part A bo-full k=100 none inst=5 236s elapsed 418s
+[15/300] part A bo-ard k=100 none inst=8 157s elapsed 443s
+[16/300] part A bo-full k=100 none inst=6 240s elapsed 449s
+[17/300] part A bo-full k=100 none inst=7 225s elapsed 449s
+[18/300] part A bo-ard k=100 none inst=9 167s elapsed 491s
+[19/300] part A bo-ard k=100 none inst=10 100s elapsed 496s
+[20/300] part A bo-full k=100 none inst=8 207s elapsed 517s
+[21/300] part A bo-ard k=100 none inst=12 111s elapsed 560s
+[22/300] part A bo-ard k=100 none inst=11 165s elapsed 608s
+[23/300] part A bo-ard k=100 none inst=13 114s elapsed 610s
+[24/300] part A bo-full k=100 none inst=9 248s elapsed 629s
+[25/300] part A bo-full k=100 none inst=10 223s elapsed 641s
+[26/300] part A bo-full k=100 none inst=12 184s elapsed 675s
+[27/300] part A bo-full k=100 none inst=11 247s elapsed 696s
+[28/300] part A bo-full k=100 none inst=13 218s elapsed 735s
+[29/300] part A bo-ard k=100 none inst=14 193s elapsed 753s
+[30/300] part A bo-ard k=10000 none inst=0 192s elapsed 802s
+[31/300] part A bo-ard k=10000 none inst=1 169s elapsed 810s
+[32/300] part A bo-ard k=10000 none inst=2 165s elapsed 861s
+[33/300] part A bo-full k=100 none inst=14 276s elapsed 883s
+[34/300] part A bo-full k=10000 none inst=0 263s elapsed 892s
+[35/300] part A bo-full k=10000 none inst=1 256s elapsed 932s
+[36/300] part A bo-ard k=10000 none inst=3 199s elapsed 951s
+[37/300] part A bo-ard k=10000 none inst=4 188s elapsed 998s
+[38/300] part A bo-full k=10000 none inst=2 283s elapsed 1018s
+[39/300] part A bo-ard k=10000 none inst=5 185s elapsed 1068s
+[40/300] part A bo-full k=10000 none inst=3 276s elapsed 1078s
+[41/300] part A bo-ard k=10000 none inst=6 193s elapsed 1125s
+[42/300] part A bo-full k=10000 none inst=4 288s elapsed 1149s
+[43/300] part A bo-full k=10000 none inst=5 265s elapsed 1157s
+[44/300] part A bo-ard k=10000 none inst=7 166s elapsed 1164s
+[45/300] part A bo-full k=10000 none inst=6 252s elapsed 1203s
+[46/300] part A bo-ard k=10000 none inst=8 181s elapsed 1248s
+[47/300] part A bo-full k=10000 none inst=7 247s elapsed 1265s
+[48/300] part A bo-ard k=10000 none inst=9 162s elapsed 1287s
+[49/300] part A bo-full k=10000 none inst=8 250s elapsed 1328s
+[50/300] part A bo-ard k=10000 none inst=11 141s elapsed 1344s
+[51/300] part A bo-ard k=10000 none inst=10 188s elapsed 1345s
+[52/300] part A bo-full k=10000 none inst=9 249s elapsed 1398s
+[53/300] part A bo-full k=10000 none inst=10 301s elapsed 1465s
+[54/300] part A bo-ard k=10000 none inst=12 201s elapsed 1466s
+[55/300] part A bo-ard k=10000 none inst=13 179s elapsed 1507s
+[56/300] part A bo-full k=10000 none inst=11 260s elapsed 1508s
+[57/300] part A bo-full k=10000 none inst=12 260s elapsed 1546s
+[58/300] part A bo-ard k=10000 none inst=14 225s elapsed 1570s
+[59/300] part A bo-full k=10000 none inst=13 258s elapsed 1602s
+[60/300] part B bo-ard k=100 none inst=0 191s elapsed 1655s
+[61/300] part B bo-ard k=100 none inst=1 156s elapsed 1663s
+[62/300] part A bo-full k=10000 none inst=14 273s elapsed 1670s
+[63/300] part B bo-full k=100 none inst=0 241s elapsed 1707s
+[64/300] part B bo-ard k=100 none inst=2 172s elapsed 1719s
+[65/300] part B bo-full k=100 none inst=1 249s elapsed 1757s
+[66/300] part B bo-ard k=100 none inst=3 182s elapsed 1784s
+[67/300] part B bo-full k=100 none inst=2 244s elapsed 1815s
+[68/300] part B bo-ard k=100 none inst=4 170s elapsed 1833s
+[69/300] part B bo-ard k=100 none inst=5 126s elapsed 1834s
+[70/300] part B bo-ard k=100 none inst=6 126s elapsed 1883s
+[71/300] part B bo-full k=100 none inst=3 261s elapsed 1916s
+[72/300] part B bo-full k=100 none inst=4 249s elapsed 1919s
+[73/300] part B bo-full k=100 none inst=5 266s elapsed 1985s
+[74/300] part B bo-ard k=100 none inst=7 185s elapsed 2000s
+[75/300] part B bo-ard k=100 none inst=8 196s elapsed 2029s
+[76/300] part B bo-full k=100 none inst=6 277s elapsed 2061s
+[77/300] part B bo-ard k=100 none inst=10 126s elapsed 2112s
+[78/300] part B bo-full k=100 none inst=7 293s elapsed 2126s
+[79/300] part B bo-full k=100 none inst=8 250s elapsed 2133s
+[80/300] part B bo-ard k=100 none inst=9 218s elapsed 2134s
+[81/300] part B bo-full k=100 none inst=9 280s elapsed 2199s
+[82/300] part B bo-ard k=100 none inst=11 208s elapsed 2238s
+[83/300] part B bo-ard k=100 none inst=12 151s elapsed 2262s
+[84/300] part B bo-full k=100 none inst=10 289s elapsed 2289s
+[85/300] part B bo-ard k=100 none inst=13 158s elapsed 2291s
+[86/300] part B bo-full k=100 none inst=12 245s elapsed 2371s
+[87/300] part B bo-full k=100 none inst=11 373s elapsed 2434s
+[88/300] part B bo-ard k=100 random inst=0 185s elapsed 2447s
+[89/300] part B bo-full k=100 none inst=13 313s elapsed 2447s
+[90/300] part B bo-ard k=100 none inst=14 266s elapsed 2465s
+[91/300] part B bo-ard k=100 random inst=1 237s elapsed 2528s
+[92/300] part B bo-full k=100 none inst=14 313s elapsed 2551s
+[93/300] part B bo-ard k=100 random inst=3 158s elapsed 2605s
+[94/300] part B bo-ard k=100 random inst=2 185s elapsed 2619s
+[95/300] part B bo-full k=100 random inst=0 341s elapsed 2630s
+[96/300] part B bo-full k=100 random inst=1 278s elapsed 2650s
+[97/300] part B bo-ard k=100 random inst=4 166s elapsed 2693s
+[98/300] part B bo-full k=100 random inst=2 287s elapsed 2734s
+[99/300] part B bo-full k=100 random inst=3 277s elapsed 2741s
+[100/300] part B bo-ard k=100 random inst=5 168s elapsed 2773s
+[101/300] part B bo-full k=100 random inst=4 230s elapsed 2781s
+[102/300] part B bo-ard k=100 random inst=6 184s elapsed 2814s
+[103/300] part B bo-ard k=100 random inst=7 167s elapsed 2860s
+[104/300] part B bo-full k=100 random inst=5 247s elapsed 2866s
+[105/300] part B bo-ard k=100 random inst=8 172s elapsed 2913s
+[106/300] part B bo-full k=100 random inst=6 271s elapsed 2921s
+[107/300] part B bo-ard k=100 random inst=9 162s elapsed 2944s
+[108/300] part B bo-ard k=100 random inst=10 105s elapsed 2965s
+[109/300] part B bo-full k=100 random inst=7 235s elapsed 2968s
+[110/300] part B bo-full k=100 random inst=8 227s elapsed 3000s
+[111/300] part B bo-full k=100 random inst=9 237s elapsed 3050s
+[112/300] part B bo-ard k=100 random inst=11 171s elapsed 3084s
+[113/300] part B bo-full k=100 random inst=10 226s elapsed 3092s
+[114/300] part B bo-ard k=100 random inst=12 150s elapsed 3094s
+[115/300] part B bo-ard k=100 random inst=13 179s elapsed 3147s
+[116/300] part B bo-full k=100 random inst=11 270s elapsed 3191s
+[117/300] part B bo-ard k=100 random inst=14 148s elapsed 3198s
+[118/300] part B bo-full k=100 random inst=12 246s elapsed 3211s
+[119/300] part B bo-ard k=10000 none inst=0 161s elapsed 3253s
+[120/300] part B bo-full k=100 random inst=13 256s elapsed 3256s
+[121/300] part B bo-ard k=10000 none inst=1 142s elapsed 3289s
+[122/300] part B bo-full k=100 random inst=14 262s elapsed 3346s
+[123/300] part B bo-full k=10000 none inst=0 279s elapsed 3373s
+[124/300] part B bo-ard k=10000 none inst=2 180s elapsed 3378s
+[125/300] part B bo-full k=10000 none inst=1 328s elapsed 3519s
+[126/300] part B bo-ard k=10000 none inst=3 272s elapsed 3525s
+[127/300] part B bo-full k=10000 none inst=2 379s elapsed 3590s
+[128/300] part B bo-ard k=10000 none inst=4 351s elapsed 3640s
+[129/300] part B bo-full k=10000 none inst=3 443s elapsed 3700s
+[130/300] part B bo-ard k=10000 none inst=5 357s elapsed 3730s
+[131/300] part B bo-full k=10000 none inst=5 419s elapsed 3797s
+[132/300] part B bo-full k=10000 none inst=4 462s elapsed 3808s
+[133/300] part B bo-ard k=10000 none inst=6 321s elapsed 3841s
+[134/300] part B bo-ard k=10000 none inst=7 320s elapsed 3910s
+[135/300] part B bo-full k=10000 none inst=6 434s elapsed 3959s
+[136/300] part B bo-ard k=10000 none inst=8 303s elapsed 4003s
+[137/300] part B bo-ard k=10000 none inst=9 241s elapsed 4038s
+[138/300] part B bo-full k=10000 none inst=7 424s elapsed 4065s
+[139/300] part B bo-ard k=10000 none inst=10 276s elapsed 4117s
+[140/300] part B bo-full k=10000 none inst=9 380s elapsed 4188s
+[141/300] part B bo-ard k=10000 none inst=11 234s elapsed 4193s
+[142/300] part B bo-full k=10000 none inst=8 503s elapsed 4233s
+[143/300] part B bo-full k=10000 none inst=10 420s elapsed 4329s
+[144/300] part B bo-ard k=10000 none inst=12 318s elapsed 4356s
+[145/300] part B bo-ard k=10000 none inst=13 264s elapsed 4382s
+[146/300] part B bo-full k=10000 none inst=11 427s elapsed 4430s
+[147/300] part B bo-ard k=10000 none inst=14 280s elapsed 4473s
+[148/300] part B bo-full k=10000 none inst=12 443s elapsed 4507s
+[149/300] part B bo-full k=10000 none inst=13 374s elapsed 4562s
+[150/300] part B bo-ard k=10000 random inst=0 250s elapsed 4579s
+[151/300] part B bo-full k=10000 none inst=14 378s elapsed 4611s
+[152/300] part B bo-ard k=10000 random inst=1 239s elapsed 4620s
+[153/300] part B bo-ard k=10000 random inst=2 225s elapsed 4698s
+[154/300] part B bo-full k=10000 random inst=1 323s elapsed 4754s
+[155/300] part B bo-ard k=10000 random inst=3 221s elapsed 4783s
+[156/300] part B bo-ard k=10000 random inst=4 201s elapsed 4813s
+[157/300] part B bo-full k=10000 random inst=0 475s elapsed 4832s
+[158/300] part B bo-full k=10000 random inst=2 362s elapsed 4870s
+[159/300] part B bo-full k=10000 random inst=3 352s elapsed 4931s
+[160/300] part B bo-ard k=10000 random inst=5 244s elapsed 4942s
+[161/300] part B bo-full k=10000 random inst=4 329s elapsed 4949s
+[162/300] part B bo-ard k=10000 random inst=6 240s elapsed 5023s
+[163/300] part B bo-ard k=10000 random inst=7 204s elapsed 5036s
+[164/300] part B bo-full k=10000 random inst=5 375s elapsed 5128s
+[165/300] part B bo-ard k=10000 random inst=8 212s elapsed 5143s
+[166/300] part B bo-ard k=10000 random inst=9 207s elapsed 5156s
+[167/300] part B bo-full k=10000 random inst=6 355s elapsed 5168s
+[168/300] part B bo-full k=10000 random inst=7 367s elapsed 5237s
+[169/300] part B bo-ard k=10000 random inst=10 221s elapsed 5257s
+[170/300] part B bo-full k=10000 random inst=8 361s elapsed 5304s
+[171/300] part B bo-full k=10000 random inst=9 322s elapsed 5345s
+[172/300] part B bo-ard k=10000 random inst=11 209s elapsed 5352s
+[173/300] part B bo-ard k=10000 random inst=12 210s elapsed 5378s
+[174/300] part C tr-ard k=100 none inst=0 29s elapsed 5407s
+[175/300] part C tr-full k=100 none inst=0 52s elapsed 5459s
+[176/300] part B bo-ard k=10000 random inst=13 204s elapsed 5461s
+[177/300] part B bo-full k=10000 random inst=10 355s elapsed 5484s
+[178/300] part C tr-ard k=100 none inst=1 30s elapsed 5488s
+[179/300] part C tr-full k=100 none inst=1 48s elapsed 5508s
+[180/300] part C tr-ard k=100 none inst=2 26s elapsed 5510s
+[181/300] part B bo-full k=10000 random inst=11 359s elapsed 5515s
+[182/300] part C tr-ard k=100 none inst=3 28s elapsed 5537s
+[183/300] part C tr-full k=100 none inst=2 52s elapsed 5540s
+[184/300] part C tr-ard k=100 none inst=4 26s elapsed 5541s
+[185/300] part B bo-ard k=10000 random inst=14 196s elapsed 5541s
+[186/300] part C tr-full k=100 none inst=3 48s elapsed 5557s
+[187/300] part C tr-ard k=100 none inst=5 23s elapsed 5564s
+[188/300] part C tr-ard k=100 none inst=6 26s elapsed 5568s
+[189/300] part C tr-full k=100 none inst=4 46s elapsed 5583s
+[190/300] part C tr-full k=100 none inst=5 46s elapsed 5587s
+[191/300] part C tr-ard k=100 none inst=7 27s elapsed 5590s
+[192/300] part B bo-full k=10000 random inst=12 367s elapsed 5604s
+[193/300] part B bo-full k=10000 random inst=13 302s elapsed 5606s
+[194/300] part C tr-full k=100 none inst=7 39s elapsed 5607s
+[195/300] part C tr-full k=100 none inst=6 50s elapsed 5607s
+[196/300] part C tr-ard k=100 none inst=8 25s elapsed 5608s
+[197/300] part C tr-ard k=100 none inst=9 24s elapsed 5614s
+[198/300] part C tr-ard k=100 none inst=10 23s elapsed 5629s
+[199/300] part C tr-full k=100 none inst=8 45s elapsed 5631s
+[200/300] part C tr-ard k=100 none inst=11 28s elapsed 5635s
+[201/300] part C tr-ard k=100 none inst=12 25s elapsed 5639s
+[202/300] part C tr-full k=100 none inst=11 44s elapsed 5653s
+[203/300] part C tr-ard k=100 none inst=13 25s elapsed 5657s
+[204/300] part C tr-full k=100 none inst=9 57s elapsed 5661s
+[205/300] part C tr-full k=100 none inst=10 55s elapsed 5661s
+[206/300] part C tr-ard k=100 none inst=14 26s elapsed 5666s
+[207/300] part C tr-full k=100 none inst=12 45s elapsed 5674s
+[208/300] part C tr-full k=100 none inst=13 47s elapsed 5682s
+[209/300] part C tr-ard k=100 random inst=0 31s elapsed 5688s
+[210/300] part C tr-ard k=100 random inst=1 29s elapsed 5691s
+[211/300] part C tr-ard k=100 random inst=2 29s elapsed 5703s
+[212/300] part C tr-full k=100 none inst=14 54s elapsed 5707s
+[213/300] part C tr-ard k=100 random inst=3 26s elapsed 5714s
+[214/300] part C tr-full k=100 random inst=0 54s elapsed 5715s
+[215/300] part C tr-full k=100 random inst=1 52s elapsed 5718s
+[216/300] part C tr-ard k=100 random inst=4 34s elapsed 5737s
+[217/300] part C tr-full k=100 random inst=2 55s elapsed 5737s
+[218/300] part C tr-full k=100 random inst=3 52s elapsed 5743s
+[219/300] part C tr-ard k=100 random inst=5 30s elapsed 5744s
+[220/300] part B bo-full k=10000 random inst=14 395s elapsed 5746s
+[221/300] part C tr-ard k=100 random inst=6 29s elapsed 5747s
+[222/300] part C tr-full k=100 random inst=4 53s elapsed 5761s
+[223/300] part C tr-ard k=100 random inst=7 32s elapsed 5770s
+[224/300] part C tr-ard k=100 random inst=9 29s elapsed 5776s
+[225/300] part C tr-ard k=100 random inst=8 34s elapsed 5778s
+[226/300] part C tr-full k=100 random inst=6 47s elapsed 5784s
+[227/300] part C tr-full k=100 random inst=5 70s elapsed 5785s
+[228/300] part C tr-full k=100 random inst=7 49s elapsed 5792s
+[229/300] part C tr-ard k=100 random inst=10 33s elapsed 5802s
+[230/300] part C tr-full k=100 random inst=8 57s elapsed 5803s
+[231/300] part C tr-ard k=100 random inst=11 27s elapsed 5805s
+[232/300] part C tr-ard k=100 random inst=12 25s elapsed 5810s
+[233/300] part C tr-full k=100 random inst=9 53s elapsed 5814s
+[234/300] part C tr-full k=100 random inst=11 38s elapsed 5822s
+[235/300] part C tr-full k=100 random inst=10 49s elapsed 5825s
+[236/300] part C tr-ard k=100 random inst=13 27s elapsed 5829s
+[237/300] part C tr-full k=100 random inst=12 42s elapsed 5833s
+[238/300] part C tr-ard k=100 random inst=14 29s elapsed 5834s
+[239/300] part C tr-ard k=10000 none inst=0 25s elapsed 5839s
+[240/300] part C tr-full k=100 random inst=13 43s elapsed 5846s
+[241/300] part C tr-ard k=10000 none inst=1 27s elapsed 5851s
+[242/300] part C tr-full k=100 random inst=14 44s elapsed 5854s
+[243/300] part C tr-ard k=10000 none inst=2 24s elapsed 5858s
+[244/300] part C tr-ard k=10000 none inst=3 24s elapsed 5863s
+[245/300] part C tr-full k=10000 none inst=1 49s elapsed 5878s
+[246/300] part C tr-full k=10000 none inst=2 50s elapsed 5883s
+[247/300] part C tr-ard k=10000 none inst=4 33s elapsed 5885s
+[248/300] part C tr-full k=10000 none inst=0 63s elapsed 5885s
+[249/300] part C tr-ard k=10000 none inst=5 30s elapsed 5888s
+[250/300] part C tr-full k=10000 none inst=3 60s elapsed 5905s
+[251/300] part C tr-ard k=10000 none inst=6 29s elapsed 5907s
+[252/300] part C tr-full k=10000 none inst=4 57s elapsed 5911s
+[253/300] part C tr-full k=10000 none inst=5 54s elapsed 5916s
+[254/300] part C tr-ard k=10000 none inst=7 35s elapsed 5919s
+[255/300] part C tr-ard k=10000 none inst=8 34s elapsed 5922s
+[256/300] part C tr-full k=10000 none inst=7 49s elapsed 5934s
+[257/300] part C tr-ard k=10000 none inst=10 27s elapsed 5943s
+[258/300] part C tr-ard k=10000 none inst=9 37s elapsed 5944s
+[259/300] part C tr-full k=10000 none inst=6 66s elapsed 5949s
+[260/300] part C tr-ard k=10000 none inst=11 34s elapsed 5956s
+[261/300] part C tr-full k=10000 none inst=8 51s elapsed 5956s
+[262/300] part C tr-full k=10000 none inst=10 49s elapsed 5968s
+[263/300] part C tr-ard k=10000 none inst=12 29s elapsed 5972s
+[264/300] part C tr-full k=10000 none inst=9 60s elapsed 5972s
+[265/300] part C tr-ard k=10000 none inst=13 28s elapsed 5977s
+[266/300] part C tr-ard k=10000 none inst=14 26s elapsed 5983s
+[267/300] part C tr-full k=10000 none inst=11 53s elapsed 5987s
+[268/300] part C tr-full k=10000 none inst=12 53s elapsed 5996s
+[269/300] part C tr-ard k=10000 random inst=0 30s elapsed 6001s
+[270/300] part C tr-full k=10000 none inst=13 61s elapsed 6017s
+[271/300] part C tr-full k=10000 none inst=14 49s elapsed 6017s
+[272/300] part C tr-ard k=10000 random inst=3 19s elapsed 6021s
+[273/300] part C tr-ard k=10000 random inst=1 43s elapsed 6021s
+[274/300] part C tr-full k=10000 random inst=0 58s elapsed 6030s
+[275/300] part C tr-ard k=10000 random inst=2 49s elapsed 6036s
+[276/300] part C tr-full k=10000 random inst=1 55s elapsed 6037s
+[277/300] part C tr-full k=10000 random inst=2 53s elapsed 6049s
+[278/300] part C tr-ard k=10000 random inst=4 38s elapsed 6055s
+[279/300] part C tr-ard k=10000 random inst=5 34s elapsed 6055s
+[280/300] part C tr-ard k=10000 random inst=6 27s elapsed 6063s
+[281/300] part C tr-full k=10000 random inst=4 46s elapsed 6067s
+[282/300] part C tr-full k=10000 random inst=3 52s elapsed 6069s
+[283/300] part C tr-full k=10000 random inst=5 48s elapsed 6078s
+[284/300] part C tr-full k=10000 random inst=6 43s elapsed 6081s
+[285/300] part C tr-ard k=10000 random inst=8 32s elapsed 6088s
+[286/300] part C tr-ard k=10000 random inst=7 52s elapsed 6101s
+[287/300] part C tr-full k=10000 random inst=7 52s elapsed 6107s
+[288/300] part C tr-ard k=10000 random inst=10 34s elapsed 6112s
+[289/300] part C tr-full k=10000 random inst=9 48s elapsed 6117s
+[290/300] part C tr-full k=10000 random inst=8 56s elapsed 6119s
+[291/300] part C tr-ard k=10000 random inst=11 32s elapsed 6119s
+[292/300] part C tr-ard k=10000 random inst=12 26s elapsed 6133s
+[293/300] part C tr-full k=10000 random inst=10 55s elapsed 6136s
+[294/300] part C tr-ard k=10000 random inst=13 30s elapsed 6147s
+[295/300] part C tr-ard k=10000 random inst=14 30s elapsed 6149s
+[296/300] part C tr-full k=10000 random inst=12 41s elapsed 6153s
+[297/300] part C tr-full k=10000 random inst=11 53s elapsed 6154s
+[298/300] part C tr-full k=10000 random inst=13 42s elapsed 6161s
+[299/300] part C tr-full k=10000 random inst=14 39s elapsed 6171s
+[300/300] part C tr-ard k=10000 random inst=9 120s elapsed 6187s
+
+== Part A reproduces e2_lc: max |log10 f difference| = 5.21e+00
+Part A: % of evaluations on the box edge, stuck vs not stuck runs (median)
+stuck              False  True 
+condition method               
+100       bo-ard     2.0   96.0
+          bo-full    3.0   94.0
+10000     bo-ard     9.0   66.0
+          bo-full   10.0   52.0
+
+Part A, iterations after 100: medians (stuck runs vs others)
+       incumbent_on_edge  chosen_on_edge  n_global_improving  log10_chosen_ei  log10_best_ei_global_improving  log10_best_ei_local
+stuck                                                                                                                             
+False              0.033           0.048                 0.0           -2.153                         -18.875               -2.177
+True               0.951           0.916                 2.0           -4.544                         -33.673               -4.547
+
+== Part B: local candidates (reflect) vs clip, at 200
+  k=100    none    bo-ard   stuck  5 ->  5   reflect - clip  -0.29 [ -0.45,  +0.61]
+  k=100    none    bo-full  stuck  4 ->  4   reflect - clip  -0.29 [ -2.13,  +0.89]
+  k=100    random  bo-ard   stuck  2 ->  2   reflect - clip  -0.16 [ -1.84,  +1.15]
+  k=100    random  bo-full  stuck  0 ->  0   reflect - clip  -0.39 [ -1.31,  +0.01]
+  k=10000  none    bo-ard   stuck  5 ->  4   reflect - clip  -0.16 [ -3.06,  +0.31]
+  k=10000  none    bo-full  stuck  8 ->  8   reflect - clip  +0.00 [ -3.35,  +3.11]
+  k=10000  random  bo-ard   stuck  5 ->  5   reflect - clip  -0.16 [ -1.09,  +1.00]
+  k=10000  random  bo-full  stuck  1 ->  0   reflect - clip  -0.34 [ -1.18,  +0.38]
+  k=100    none    bo-ard - bo-full (+ = axis-restricted worse)  +0.46 [ -0.39,  +5.35]
+  k=100    random  bo-ard - bo-full (+ = axis-restricted worse)  +1.12 [ +0.21,  +3.06]
+  k=10000  none    bo-ard - bo-full (+ = axis-restricted worse)  -3.13 [ -3.72,  +0.47]
+  k=10000  random  bo-ard - bo-full (+ = axis-restricted worse)  +1.46 [ +0.79,  +2.82]
+
+== Part C: trust region (reflect) vs clip, at 200
+  k=100    none    tr-ard   stuck  0 ->  0   reflect - clip  +0.01 [ -0.22,  +0.42]
+  k=100    none    tr-full  stuck  0 ->  0   reflect - clip  -0.48 [ -1.14,  +0.14]
+  k=100    random  tr-ard   stuck  0 ->  0   reflect - clip  +0.15 [ -0.60,  +0.57]
+  k=100    random  tr-full  stuck  0 ->  0   reflect - clip  -0.74 [ -1.27,  -0.03]
+  k=10000  none    tr-ard   stuck  6 ->  0   reflect - clip  -1.74 [ -5.78,  -0.72]
+  k=10000  none    tr-full  stuck  4 ->  0   reflect - clip  -2.19 [ -5.78,  -1.00]
+  k=10000  random  tr-ard   stuck  0 ->  3   reflect - clip  +0.07 [ -1.03,  +0.74]
+  k=10000  random  tr-full  stuck  0 ->  0   reflect - clip  -0.33 [ -1.72,  +0.47]
+  k=100    none    tr-ard - tr-full (+ = axis-restricted worse)  -0.08 [ -0.56,  +0.39]
+  k=100    random  tr-ard - tr-full (+ = axis-restricted worse)  +0.80 [ -0.23,  +1.46]
+  k=10000  none    tr-ard - tr-full (+ = axis-restricted worse)  +0.06 [ -0.12,  +0.73]
+  k=10000  random  tr-ard - tr-full (+ = axis-restricted worse)  +3.32 [ +2.18,  +3.89]

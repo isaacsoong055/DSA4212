@@ -1,0 +1,184 @@
+0 runs already done, 240 to go
+[1/240] bo-ard rosenbrock:none inst=2 110s elapsed 111s
+[2/240] bo-ard rosenbrock:none inst=1 114s elapsed 115s
+[3/240] bo-ard rosenbrock:none inst=0 117s elapsed 118s
+[4/240] bo-ard rosenbrock:none inst=3 117s elapsed 119s
+[5/240] bo-full rosenbrock:none inst=2 180s elapsed 182s
+[6/240] bo-full rosenbrock:none inst=0 185s elapsed 187s
+[7/240] bo-full rosenbrock:none inst=1 190s elapsed 191s
+[8/240] bo-full rosenbrock:none inst=3 221s elapsed 222s
+[9/240] bo-ard rosenbrock:none inst=5 114s elapsed 232s
+[10/240] bo-ard rosenbrock:none inst=4 123s elapsed 234s
+[11/240] bo-ard rosenbrock:none inst=6 123s elapsed 304s
+[12/240] bo-ard rosenbrock:none inst=7 116s elapsed 308s
+[13/240] bo-full rosenbrock:none inst=5 191s elapsed 310s
+[14/240] bo-full rosenbrock:none inst=4 198s elapsed 314s
+[15/240] bo-ard rosenbrock:none inst=8 118s elapsed 350s
+[16/240] bo-full rosenbrock:none inst=6 198s elapsed 385s
+[17/240] bo-ard rosenbrock:none inst=10 111s elapsed 420s
+[18/240] bo-ard rosenbrock:none inst=9 116s elapsed 420s
+[19/240] bo-full rosenbrock:none inst=8 204s elapsed 438s
+[20/240] bo-full rosenbrock:none inst=7 225s elapsed 448s
+[21/240] bo-ard rosenbrock:none inst=11 126s elapsed 476s
+[22/240] bo-full rosenbrock:none inst=9 206s elapsed 514s
+[23/240] bo-full rosenbrock:none inst=10 221s elapsed 535s
+[24/240] bo-ard rosenbrock:none inst=12 1186s elapsed 1607s
+[25/240] bo-ard rosenbrock:none inst=13 3166s elapsed 3603s
+[26/240] bo-full rosenbrock:none inst=11 3247s elapsed 3632s
+[27/240] bo-ard rosenbrock:none inst=14 4181s elapsed 4657s
+[28/240] bo-full rosenbrock:none inst=12 4250s elapsed 4670s
+[29/240] bo-full rosenbrock:none inst=13 4250s elapsed 4697s
+[30/240] bo-ard rosenbrock:random inst=0 4172s elapsed 4706s
+[31/240] bo-ard rosenbrock:random inst=1 1128s elapsed 4731s
+[32/240] bo-full rosenbrock:none inst=14 4259s elapsed 4773s
+[33/240] bo-ard rosenbrock:random inst=2 121s elapsed 4778s
+[34/240] bo-full rosenbrock:random inst=0 3182s elapsed 4789s
+[35/240] bo-ard rosenbrock:random inst=3 119s elapsed 4816s
+[36/240] bo-full rosenbrock:random inst=1 1195s elapsed 4827s
+[37/240] bo-ard rosenbrock:random inst=4 115s elapsed 4846s
+[38/240] bo-full rosenbrock:random inst=2 192s elapsed 4862s
+[39/240] bo-ard rosenbrock:random inst=5 109s elapsed 4887s
+[40/240] bo-full rosenbrock:random inst=3 199s elapsed 4905s
+[41/240] bo-ard rosenbrock:random inst=6 117s elapsed 4933s
+[42/240] bo-full rosenbrock:random inst=4 185s elapsed 4958s
+[43/240] bo-ard rosenbrock:random inst=7 124s elapsed 4970s
+[44/240] bo-ard rosenbrock:random inst=8 109s elapsed 4996s
+[45/240] bo-full rosenbrock:random inst=5 228s elapsed 5017s
+[46/240] bo-full rosenbrock:random inst=6 213s elapsed 5041s
+[47/240] bo-full rosenbrock:random inst=7 184s elapsed 5047s
+[48/240] bo-ard rosenbrock:random inst=9 116s elapsed 5048s
+[49/240] bo-ard rosenbrock:random inst=10 127s elapsed 5097s
+[50/240] bo-full rosenbrock:random inst=8 224s elapsed 5129s
+[51/240] bo-ard rosenbrock:random inst=11 126s elapsed 5143s
+[52/240] bo-full rosenbrock:random inst=9 201s elapsed 5158s
+[53/240] bo-ard rosenbrock:random inst=12 121s elapsed 5168s
+[54/240] bo-full rosenbrock:random inst=10 193s elapsed 5189s
+[55/240] bo-ard rosenbrock:random inst=13 119s elapsed 5216s
+[56/240] bo-ard rosenbrock:random inst=14 124s elapsed 5267s
+[57/240] bo-full rosenbrock:random inst=12 218s elapsed 5267s
+[58/240] bo-full rosenbrock:random inst=11 237s elapsed 5277s
+[59/240] bo-ard noisy:0.01 inst=0 128s elapsed 5296s
+[60/240] bo-ard-fitnoise noisy:0.01 inst=0 127s elapsed 5316s
+[61/240] bo-full rosenbrock:random inst=13 219s elapsed 5348s
+[62/240] bo-ard noisy:0.01 inst=1 136s elapsed 5352s
+[63/240] bo-ard-fitnoise noisy:0.01 inst=1 116s elapsed 5383s
+[64/240] bo-full rosenbrock:random inst=14 230s elapsed 5388s
+[65/240] bo-ard noisy:0.01 inst=2 131s elapsed 5398s
+[66/240] bo-ard-fitnoise noisy:0.01 inst=2 129s elapsed 5406s
+[67/240] bo-ard noisy:0.01 inst=3 132s elapsed 5428s
+[68/240] bo-ard-fitnoise noisy:0.01 inst=3 129s elapsed 5445s
+[69/240] bo-ard noisy:0.01 inst=4 132s elapsed 5479s
+[70/240] bo-ard-fitnoise noisy:0.01 inst=4 131s elapsed 5483s
+[71/240] bo-ard noisy:0.01 inst=5 132s elapsed 5515s
+[72/240] bo-ard-fitnoise noisy:0.01 inst=5 127s elapsed 5516s
+[73/240] bo-ard noisy:0.01 inst=6 131s elapsed 5529s
+[74/240] bo-ard-fitnoise noisy:0.01 inst=6 130s elapsed 5536s
+[75/240] bo-ard noisy:0.01 inst=7 127s elapsed 5556s
+[76/240] bo-ard-fitnoise noisy:0.01 inst=7 116s elapsed 5561s
+[77/240] bo-ard-fitnoise noisy:0.01 inst=8 136s elapsed 5618s
+[78/240] bo-ard noisy:0.01 inst=8 142s elapsed 5621s
+[79/240] bo-ard-fitnoise noisy:0.01 inst=9 130s elapsed 5645s
+[80/240] bo-ard noisy:0.01 inst=9 144s elapsed 5659s
+[81/240] bo-ard-fitnoise noisy:0.01 inst=10 129s elapsed 5666s
+[82/240] bo-ard noisy:0.01 inst=10 139s elapsed 5668s
+[83/240] bo-ard-fitnoise noisy:0.01 inst=11 112s elapsed 5673s
+[84/240] bo-ard noisy:0.01 inst=11 141s elapsed 5697s
+[85/240] bo-ard-fitnoise noisy:0.01 inst=12 115s elapsed 5737s
+[86/240] bo-ard noisy:0.01 inst=12 142s elapsed 5760s
+[87/240] bo-ard-fitnoise noisy:0.01 inst=13 129s elapsed 5788s
+[88/240] bo-ard noisy:0.01 inst=13 144s elapsed 5789s
+[89/240] bo-ard-fitnoise noisy:0.01 inst=14 123s elapsed 5791s
+[90/240] bo-ard noisy:1 inst=0 127s elapsed 5801s
+[91/240] bo-ard noisy:0.01 inst=14 144s elapsed 5810s
+[92/240] bo-ard-fitnoise noisy:1 inst=0 117s elapsed 5814s
+[93/240] bo-ard noisy:1 inst=1 126s elapsed 5863s
+[94/240] bo-ard-fitnoise noisy:1 inst=1 133s elapsed 5893s
+[95/240] bo-ard-fitnoise noisy:1 inst=2 128s elapsed 5917s
+[96/240] bo-ard noisy:1 inst=4 112s elapsed 5922s
+[97/240] bo-ard noisy:1 inst=3 133s elapsed 5923s
+[98/240] bo-ard-fitnoise noisy:1 inst=3 125s elapsed 5925s
+[99/240] bo-ard noisy:1 inst=2 137s elapsed 5925s
+[100/240] bo-ard-fitnoise noisy:1 inst=4 123s elapsed 5937s
+[101/240] bo-ard noisy:1 inst=5 132s elapsed 5994s
+[102/240] bo-ard-fitnoise noisy:1 inst=5 120s elapsed 6013s
+[103/240] bo-ard-fitnoise noisy:1 inst=7 116s elapsed 6041s
+[104/240] bo-ard-fitnoise noisy:1 inst=6 126s elapsed 6048s
+[105/240] bo-ard noisy:1 inst=7 126s elapsed 6049s
+[106/240] bo-ard noisy:1 inst=6 144s elapsed 6061s
+[107/240] bo-ard-fitnoise noisy:1 inst=8 127s elapsed 6064s
+[108/240] bo-ard noisy:1 inst=8 148s elapsed 6074s
+[109/240] bo-ard-fitnoise noisy:1 inst=9 120s elapsed 6133s
+[110/240] bo-ard noisy:1 inst=9 141s elapsed 6136s
+[111/240] bo-ard noisy:1 inst=11 97s elapsed 6146s
+[112/240] bo-ard-fitnoise noisy:1 inst=10 122s elapsed 6171s
+[113/240] bo-ard noisy:1 inst=10 129s elapsed 6171s
+[120/240] cmaes-full rosenbrock:none inst=3 0s elapsed 6171s
+[160/240] cmaes-full rosenbrock:random inst=8 0s elapsed 6171s
+[200/240] cmaes-full noisy:0.01 inst=13 0s elapsed 6171s
+[234/240] bo-ard-fitnoise noisy:1 inst=11 122s elapsed 6183s
+[235/240] bo-ard-fitnoise noisy:1 inst=12 116s elapsed 6190s
+[236/240] bo-ard noisy:1 inst=12 142s elapsed 6206s
+[237/240] bo-ard-fitnoise noisy:1 inst=13 105s elapsed 6240s
+[238/240] bo-ard noisy:1 inst=14 102s elapsed 6248s
+[239/240] bo-ard noisy:1 inst=13 125s elapsed 6258s
+[240/240] bo-ard-fitnoise noisy:1 inst=14 97s elapsed 6268s
+
+== median log10 f of the recommended point (true f), at fixed budgets
+                                   log10_f_100  log10_f_20  log10_f_200  log10_f_50
+problem           method                                                           
+noisy:0.01        bo-ard                 -1.86       -0.73        -1.98       -1.71
+                  bo-ard-fitnoise        -1.38       -0.06        -1.57       -0.74
+                  cmaes-diagonal         -1.37        0.57        -2.66       -0.05
+                  cmaes-full             -0.82        0.55        -2.40       -0.23
+noisy:1           bo-ard                 -0.60       -0.07        -0.75       -0.37
+                  bo-ard-fitnoise        -0.16        0.31        -0.35       -0.35
+                  cmaes-diagonal         -0.51        0.57        -0.50        0.10
+                  cmaes-full             -0.14        0.33        -0.74        0.08
+rosenbrock:none   bo-ard                 -0.36        0.54        -0.72       -0.18
+                  bo-full                -0.66        0.46        -1.35       -0.01
+                  cmaes-diagonal         -0.39        0.88        -1.21        0.19
+                  cmaes-full             -0.36        0.89        -0.87        0.28
+rosenbrock:random bo-ard                 -0.47        0.73        -0.83       -0.08
+                  bo-full                -0.41        0.57        -1.22        0.03
+                  cmaes-diagonal         -0.37        0.41        -0.49       -0.04
+                  cmaes-full             -0.37        0.58        -0.76        0.14
+
+== noisy problems: median log10 of the best TRUE value ever evaluated (oracle)
+                            log10_oracle_200  log10_oracle_50
+problem    method                                            
+noisy:0.01 bo-ard                      -2.67            -1.71
+           bo-ard-fitnoise             -1.57            -0.74
+           cmaes-diagonal              -3.33            -0.05
+           cmaes-full                  -3.57            -0.23
+noisy:1    bo-ard                      -1.70            -1.22
+           bo-ard-fitnoise             -1.11            -0.47
+           cmaes-diagonal              -2.10            -0.05
+           cmaes-full                  -2.14            -0.17
+
+== Rosenbrock, paired within geometry, at 200 (+ = first method worse)
+  rosenbrock:none  bo-ard - bo-full                           +0.63 [ +0.21,  +1.08]  <-- differs
+  rosenbrock:none  cmaes-diagonal - cmaes-full                -0.35 [ -1.56,  +0.97]
+  rosenbrock:none  bo-full - cmaes-full                       -0.48 [ -1.57,  +0.59]
+  rosenbrock:random  bo-ard - bo-full                         +0.39 [ -0.24,  +0.96]
+  rosenbrock:random  cmaes-diagonal - cmaes-full              +0.26 [ -0.25,  +0.41]
+  rosenbrock:random  bo-full - cmaes-full                     -0.47 [ -0.89,  +0.04]
+
+== Rosenbrock rotation penalty at 200, rotated - aligned (unpaired; + = hurts)
+  bo-ard                                                      -0.11 [ -0.55,  +0.37]
+  bo-full                                                     +0.13 [ -0.46,  +0.70]
+  cmaes-full                                                  +0.11 [ -0.97,  +1.59]
+  cmaes-diagonal                                              +0.72 [ -0.21,  +1.18]
+
+== noisy quadratic, paired, at 50 and 200 (+ = first method worse)
+  noisy:0.01  bo-ard - bo-ard-fitnoise  n=50                  -0.97 [ -1.18,  -0.21]  <-- differs
+  noisy:0.01  bo-ard - bo-ard-fitnoise  n=200                 -0.41 [ -0.73,  -0.10]  <-- differs
+  noisy:0.01  bo-ard - cmaes-full  n=50                       -1.48 [ -1.86,  -1.11]  <-- differs
+  noisy:0.01  bo-ard - cmaes-full  n=200                      +0.42 [ +0.19,  +0.89]  <-- differs
+  noisy:0.01  bo-ard-fitnoise - cmaes-full  n=50              -0.50 [ -1.27,  -0.26]  <-- differs
+  noisy:0.01  bo-ard-fitnoise - cmaes-full  n=200             +0.83 [ +0.57,  +1.44]  <-- differs
+  noisy:1  bo-ard - bo-ard-fitnoise  n=50                     -0.01 [ -0.66,  +0.99]
+  noisy:1  bo-ard - bo-ard-fitnoise  n=200                    -0.40 [ -0.76,  +0.07]
+  noisy:1  bo-ard - cmaes-full  n=50                          -0.45 [ -0.83,  -0.07]  <-- differs
+  noisy:1  bo-ard - cmaes-full  n=200                         -0.01 [ -0.31,  +0.47]
+  noisy:1  bo-ard-fitnoise - cmaes-full  n=50                 -0.44 [ -1.19,  +0.05]
+  noisy:1  bo-ard-fitnoise - cmaes-full  n=200                +0.39 [ +0.02,  +0.74]  <-- differs

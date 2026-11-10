@@ -1,0 +1,5 @@
+instance,method,comparison,identical,max_rel_diff,final_log10_a,final_log10_b
+2,bo-ard,plain vs plain,True,0.0,-5.170953367560914,-5.170953367560914
+2,bo-ard,plain vs traced,True,0.0,-5.170953367560914,-5.170953367560914
+9,bo-full,plain vs plain,True,0.0,-3.7718891347728705,-3.7718891347728705
+9,bo-full,plain vs traced,True,0.0,-3.7718891347728705,-3.7718891347728705

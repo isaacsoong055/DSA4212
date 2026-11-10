@@ -52,11 +52,11 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python -m pytest -q
 
-# geometry   (TODO(Paul): confirm commands)
+# geometry
 cd ../geometry
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python -m unittest discover -s tests
+python -m unittest discover -s tests      # 11 checks, about a second
 ```
 
 ## Reproducing the main results
@@ -69,12 +69,16 @@ To regenerate the runs themselves, see `multimodality/readme.md`: `python run_ex
 and so on (hours of compute; BO is about 100 s per run), then `--aggregate`. Raw BO runs are archived compressed in
 `multimodality/results/archive/`. Smoke test (5 seeds, N = 100, about 5 minutes): `python run_experiments.py --fast`.
 
-**Geometry.** `geometry/readme.md` (TODO(Paul): one line on the notebook and the `run_all.sh` command and its run time).
+**Geometry.** The notebook `geometry/notebooks/main.ipynb` (Section 8, run from `geometry/notebooks/`) reloads
+every number the geometry part reports from `geometry/results/`, and `python code/make_figures.py` (from `geometry/`)
+redraws its figures. To regenerate the runs themselves, `./run_all.sh 8` from `geometry/` re-runs every experiment
+in order (about 12-13 hours on 8 cores; each sweep checkpoints and resumes). See `geometry/readme.md` for the
+per-experiment commands.
 
 **Reproducibility notes.** Runs are seeded; random streams are derived from the seed. CMA-ES and random sampling
-reproduce exactly. BO reproduces exactly on one machine with BLAS pinned to one thread (geometry part), and in
-distribution across processes and machines (multimodality part), because floating-point differences compound
-through the GP fitting loop. Comparisons are therefore paired on starting conditions.
+reproduce exactly. BO reproduces in distribution, not run for run, in both parts: floating-point differences
+compound through the GP fitting loop, and in the geometry part even a single long run with BLAS pinned to one
+thread can end differently in two processes (see `geometry/readme.md`, Repeatability). Comparisons are therefore paired on starting conditions.
 
 ## Report
 

@@ -1,0 +1,223 @@
+0 runs already done, 180 to go
+[1/180] bo-full rosenbrock:none inst=5 891s elapsed 893s
+[2/180] bo-full rosenbrock:none inst=6 929s elapsed 931s
+[3/180] bo-full rosenbrock:none inst=0 967s elapsed 968s
+[4/180] bo-full rosenbrock:none inst=2 986s elapsed 988s
+[5/180] bo-full rosenbrock:none inst=4 996s elapsed 998s
+[6/180] bo-full rosenbrock:none inst=3 1008s elapsed 1010s
+[7/180] bo-full rosenbrock:none inst=1 1019s elapsed 1021s
+[8/180] bo-full rosenbrock:none inst=7 1053s elapsed 1055s
+[9/180] bo-full rosenbrock:none inst=8 893s elapsed 1786s
+[10/180] bo-full rosenbrock:none inst=9 877s elapsed 1808s
+[11/180] bo-full rosenbrock:none inst=10 862s elapsed 1830s
+[12/180] bo-full rosenbrock:none inst=13 871s elapsed 1881s
+[13/180] bo-full rosenbrock:none inst=11 951s elapsed 1938s
+[14/180] bo-full rosenbrock:none inst=12 966s elapsed 1964s
+[15/180] bo-full rosenbrock:random inst=0 992s elapsed 2047s
+[16/180] bo-full rosenbrock:none inst=14 1035s elapsed 2056s
+[17/180] bo-full rosenbrock:random inst=1 923s elapsed 2709s
+[18/180] bo-full rosenbrock:random inst=2 926s elapsed 2733s
+[19/180] bo-full rosenbrock:random inst=3 907s elapsed 2737s
+[20/180] bo-full rosenbrock:random inst=4 872s elapsed 2753s
+[21/180] bo-full rosenbrock:random inst=5 976s elapsed 2914s
+[22/180] bo-full rosenbrock:random inst=6 957s elapsed 2921s
+[23/180] bo-full rosenbrock:random inst=7 902s elapsed 2949s
+[24/180] tr-full rosenbrock:none inst=0 147s elapsed 3096s
+[25/180] bo-full rosenbrock:random inst=8 1068s elapsed 3123s
+[26/180] tr-full-local rosenbrock:none inst=0 61s elapsed 3157s
+[27/180] tr-ard rosenbrock:none inst=0 43s elapsed 3166s
+[28/180] tr-ard-local rosenbrock:none inst=0 23s elapsed 3180s
+[29/180] tr-full-local rosenbrock:none inst=1 60s elapsed 3240s
+[30/180] tr-full rosenbrock:none inst=1 156s elapsed 3322s
+[31/180] tr-ard rosenbrock:none inst=1 88s elapsed 3328s
+[32/180] tr-ard-local rosenbrock:none inst=1 24s elapsed 3346s
+[33/180] tr-full-local rosenbrock:none inst=2 60s elapsed 3406s
+[34/180] tr-full rosenbrock:none inst=2 118s elapsed 3446s
+[35/180] tr-ard rosenbrock:none inst=2 48s elapsed 3453s
+[36/180] tr-ard-local rosenbrock:none inst=2 26s elapsed 3472s
+[37/180] tr-full-local rosenbrock:none inst=3 57s elapsed 3529s
+[38/180] tr-full rosenbrock:none inst=3 129s elapsed 3582s
+[39/180] tr-ard rosenbrock:none inst=3 75s elapsed 3604s
+[40/180] tr-ard-local rosenbrock:none inst=3 25s elapsed 3607s
+[41/180] bo-full rosenbrock:random inst=9 917s elapsed 3626s
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/resource_tracker.py:396: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown: {'/mp-81u7ap85', '/mp-95qrlen5', '/mp-uji5tuz1', '/mp-nyem7tyn', '/mp-mqmj4li5', '/mp-kgirpgfe'}
+  warnings.warn(
+41 runs already done, 139 to go
+[1/139] tr-ard rosenbrock:none inst=4 40s elapsed 41s
+[2/139] tr-full-local rosenbrock:none inst=4 47s elapsed 49s
+[3/139] tr-ard-local rosenbrock:none inst=4 20s elapsed 61s
+[4/139] tr-full-local rosenbrock:none inst=5 47s elapsed 108s
+[5/139] tr-full rosenbrock:none inst=4 131s elapsed 133s
+[6/139] tr-full rosenbrock:none inst=5 93s elapsed 142s
+[7/139] tr-ard-local rosenbrock:none inst=5 20s elapsed 153s
+[8/139] tr-ard rosenbrock:none inst=5 49s elapsed 157s
+[9/139] tr-full-local rosenbrock:none inst=6 50s elapsed 202s
+[10/139] tr-full rosenbrock:none inst=6 73s elapsed 215s
+[11/139] tr-ard-local rosenbrock:none inst=6 21s elapsed 224s
+[12/139] tr-ard rosenbrock:none inst=6 69s elapsed 226s
+[13/139] tr-ard rosenbrock:none inst=7 81s elapsed 306s
+[14/139] tr-full-local rosenbrock:none inst=7 98s elapsed 321s
+[15/139] tr-ard-local rosenbrock:none inst=7 34s elapsed 340s
+[16/139] tr-full rosenbrock:none inst=7 155s elapsed 370s
+[17/139] tr-full-local rosenbrock:none inst=8 83s elapsed 423s
+[18/139] tr-ard rosenbrock:none inst=8 66s elapsed 436s
+[19/139] tr-ard-local rosenbrock:none inst=8 35s elapsed 458s
+[20/139] tr-full rosenbrock:none inst=8 183s elapsed 504s
+[21/139] tr-full-local rosenbrock:none inst=9 98s elapsed 556s
+[22/139] tr-ard rosenbrock:none inst=9 82s elapsed 587s
+[23/139] tr-ard-local rosenbrock:none inst=9 39s elapsed 595s
+[24/139] tr-full rosenbrock:none inst=9 162s elapsed 598s
+[25/139] tr-ard rosenbrock:none inst=10 98s elapsed 696s
+[26/139] tr-full-local rosenbrock:none inst=10 106s elapsed 701s
+[27/139] tr-ard-local rosenbrock:none inst=10 54s elapsed 750s
+[28/139] tr-full rosenbrock:none inst=10 259s elapsed 846s
+[29/139] tr-full-local rosenbrock:none inst=11 127s elapsed 878s
+[30/139] tr-ard-local rosenbrock:none inst=11 52s elapsed 930s
+[31/139] tr-full rosenbrock:none inst=11 330s elapsed 1031s
+[32/139] tr-ard rosenbrock:none inst=11 276s elapsed 1122s
+[33/139] tr-full-local rosenbrock:none inst=12 101s elapsed 1133s
+[34/139] tr-full rosenbrock:none inst=12 246s elapsed 1176s
+[35/139] tr-ard-local rosenbrock:none inst=12 46s elapsed 1179s
+[36/139] tr-full-local rosenbrock:none inst=13 102s elapsed 1281s
+[37/139] bo-full rosenbrock:random inst=12 1316s elapsed 1318s
+[38/139] bo-full rosenbrock:random inst=10 1345s elapsed 1347s
+[39/139] tr-ard-local rosenbrock:none inst=13 38s elapsed 1356s
+[40/139] tr-ard rosenbrock:none inst=12 245s elapsed 1367s
+[41/139] bo-full rosenbrock:random inst=13 1370s elapsed 1372s
+[42/139] tr-full rosenbrock:none inst=13 203s elapsed 1379s
+[43/139] tr-ard rosenbrock:none inst=13 104s elapsed 1384s
+[44/139] tr-ard-local rosenbrock:none inst=14 40s elapsed 1412s
+[45/139] bo-full rosenbrock:random inst=14 1412s elapsed 1414s
+[46/139] bo-full rosenbrock:random inst=11 1426s elapsed 1428s
+[47/139] tr-full-local rosenbrock:none inst=14 91s elapsed 1446s
+[48/139] tr-ard rosenbrock:none inst=14 80s elapsed 1447s
+[49/139] tr-ard-local rosenbrock:random inst=0 34s elapsed 1448s
+[50/139] tr-full-local rosenbrock:random inst=0 86s elapsed 1471s
+[51/139] tr-ard-local rosenbrock:random inst=1 50s elapsed 1498s
+[52/139] tr-ard rosenbrock:random inst=0 88s elapsed 1500s
+[53/139] tr-ard rosenbrock:random inst=1 79s elapsed 1526s
+[54/139] tr-full-local rosenbrock:random inst=1 99s elapsed 1545s
+[55/139] tr-full rosenbrock:random inst=0 195s elapsed 1574s
+[56/139] tr-ard-local rosenbrock:random inst=2 53s elapsed 1579s
+[57/139] tr-full rosenbrock:none inst=14 235s elapsed 1582s
+[58/139] tr-ard rosenbrock:random inst=2 82s elapsed 1582s
+[59/139] tr-full rosenbrock:random inst=1 195s elapsed 1623s
+[60/139] tr-full-local rosenbrock:random inst=2 131s elapsed 1629s
+[61/139] tr-ard-local rosenbrock:random inst=3 66s elapsed 1648s
+[62/139] tr-full rosenbrock:random inst=2 217s elapsed 1687s
+[63/139] tr-full-local rosenbrock:random inst=3 114s elapsed 1688s
+[64/139] tr-ard-local rosenbrock:random inst=4 40s elapsed 1688s
+[65/139] tr-full-local rosenbrock:random inst=4 97s elapsed 1719s
+[66/139] tr-ard rosenbrock:random inst=3 152s elapsed 1731s
+[67/139] tr-full rosenbrock:random inst=3 198s elapsed 1743s
+[68/139] tr-ard rosenbrock:random inst=5 74s elapsed 1763s
+[69/139] tr-ard-local rosenbrock:random inst=5 46s elapsed 1765s
+[70/139] tr-full-local rosenbrock:random inst=5 100s elapsed 1788s
+[71/139] tr-full rosenbrock:random inst=4 222s elapsed 1804s
+[72/139] tr-ard rosenbrock:random inst=4 181s elapsed 1811s
+[73/139] tr-ard-local rosenbrock:random inst=6 67s elapsed 1833s
+[74/139] tr-full-local rosenbrock:random inst=6 121s elapsed 1865s
+[75/139] tr-ard-local rosenbrock:random inst=7 39s elapsed 1872s
+[76/139] tr-ard rosenbrock:random inst=6 112s elapsed 1874s
+[77/139] tr-full-local rosenbrock:random inst=7 121s elapsed 1925s
+[78/139] tr-ard rosenbrock:random inst=7 122s elapsed 1932s
+[79/139] tr-ard-local rosenbrock:random inst=8 54s elapsed 1979s
+[80/139] tr-full rosenbrock:random inst=6 266s elapsed 1997s
+[81/139] tr-full rosenbrock:random inst=5 319s elapsed 2007s
+[82/139] tr-full-local rosenbrock:random inst=8 137s elapsed 2010s
+[83/139] tr-full rosenbrock:random inst=7 238s elapsed 2026s
+[84/139] tr-ard rosenbrock:random inst=8 156s elapsed 2030s
+[85/139] tr-ard-local rosenbrock:random inst=9 48s elapsed 2055s
+[86/139] tr-ard rosenbrock:random inst=9 77s elapsed 2074s
+[87/139] tr-full-local rosenbrock:random inst=9 109s elapsed 2088s
+[88/139] tr-ard-local rosenbrock:random inst=10 48s elapsed 2103s
+[89/139] tr-full rosenbrock:random inst=8 245s elapsed 2109s
+[90/139] tr-ard rosenbrock:random inst=10 95s elapsed 2125s
+[91/139] tr-full-local rosenbrock:random inst=10 123s elapsed 2149s
+[92/139] tr-full rosenbrock:random inst=9 224s elapsed 2156s
+[93/139] tr-ard-local rosenbrock:random inst=11 54s elapsed 2163s
+[94/139] tr-ard rosenbrock:random inst=11 80s elapsed 2183s
+[95/139] tr-full rosenbrock:random inst=10 189s elapsed 2198s
+[96/139] tr-full-local rosenbrock:random inst=11 120s elapsed 2208s
+[97/139] tr-ard-local rosenbrock:random inst=12 47s elapsed 2211s
+[98/139] tr-ard-local rosenbrock:random inst=13 55s elapsed 2266s
+[99/139] tr-full-local rosenbrock:random inst=12 121s elapsed 2270s
+[100/139] tr-ard rosenbrock:random inst=12 150s elapsed 2307s
+[101/139] tr-full-local rosenbrock:random inst=13 114s elapsed 2312s
+[102/139] tr-ard rosenbrock:random inst=13 128s elapsed 2336s
+[103/139] tr-ard-local rosenbrock:random inst=14 41s elapsed 2353s
+[104/139] tr-full-local rosenbrock:random inst=14 88s elapsed 2358s
+[105/139] tr-full rosenbrock:random inst=12 267s elapsed 2392s
+[106/139] tr-ard rosenbrock:random inst=14 99s elapsed 2406s
+[107/139] tr-full rosenbrock:random inst=11 333s elapsed 2407s
+[108/139] tr-full rosenbrock:random inst=13 244s elapsed 2427s
+[109/139] tr-full-local quadratic:random inst=0 122s elapsed 2476s
+[110/139] tr-full rosenbrock:random inst=14 218s elapsed 2484s
+[111/139] tr-full quadratic:random inst=0 167s elapsed 2503s
+[112/139] tr-full-local quadratic:random inst=1 126s elapsed 2517s
+[113/139] tr-full-local quadratic:random inst=2 122s elapsed 2529s
+[114/139] tr-full quadratic:random inst=1 180s elapsed 2538s
+[115/139] tr-full-local quadratic:random inst=3 109s elapsed 2584s
+[116/139] tr-full quadratic:random inst=2 186s elapsed 2591s
+[117/139] tr-full quadratic:random inst=3 173s elapsed 2599s
+[118/139] tr-full-local quadratic:random inst=4 107s elapsed 2610s
+[119/139] tr-full-local quadratic:random inst=5 100s elapsed 2629s
+[120/139] tr-full quadratic:random inst=5 135s elapsed 2652s
+[121/139] tr-full quadratic:random inst=4 175s elapsed 2659s
+[122/139] tr-full quadratic:random inst=6 132s elapsed 2670s
+[123/139] tr-full-local quadratic:random inst=6 93s elapsed 2677s
+[124/139] tr-full-local quadratic:random inst=7 95s elapsed 2695s
+[125/139] tr-full-local quadratic:random inst=8 102s elapsed 2731s
+[126/139] tr-full-local quadratic:random inst=9 99s elapsed 2758s
+[127/139] tr-full quadratic:random inst=7 177s elapsed 2768s
+[128/139] tr-full-local quadratic:random inst=10 97s elapsed 2774s
+[129/139] tr-full quadratic:random inst=8 166s elapsed 2776s
+[130/139] tr-full quadratic:random inst=9 146s elapsed 2798s
+[131/139] tr-full quadratic:random inst=10 144s elapsed 2814s
+[132/139] tr-full-local quadratic:random inst=11 97s elapsed 2828s
+[133/139] tr-full quadratic:random inst=11 136s elapsed 2831s
+[134/139] tr-full-local quadratic:random inst=13 92s elapsed 2869s
+[135/139] tr-full-local quadratic:random inst=12 104s elapsed 2872s
+[136/139] tr-full quadratic:random inst=12 132s elapsed 2890s
+[137/139] tr-full-local quadratic:random inst=14 78s elapsed 2892s
+[138/139] tr-full quadratic:random inst=13 120s elapsed 2893s
+[139/139] tr-full quadratic:random inst=14 111s elapsed 2909s
+
+== median log10 best f at 100 / 200 / 300 evaluations
+                                 log10_f_100  log10_f_200  log10_f_300
+problem           method                                              
+quadratic:random  tr-full              -2.64        -4.18        -4.62
+                  tr-full-local        -1.23        -1.72        -1.89
+rosenbrock:none   bo-full              -0.68        -1.40        -1.79
+                  tr-ard               -1.87        -2.52        -3.01
+                  tr-ard-local         -1.13        -1.33        -1.57
+                  tr-full              -4.10        -4.91        -5.49
+                  tr-full-local        -1.99        -3.23        -3.50
+rosenbrock:random bo-full              -0.65        -1.43        -1.66
+                  tr-ard               -2.89        -3.02        -3.15
+                  tr-ard-local         -1.60        -2.26        -2.37
+                  tr-full              -4.55        -5.13        -5.17
+                  tr-full-local        -2.91        -3.32        -3.39
+
+== paired at 300 evaluations (negative = first arm better)
+  rosenbrock:none    tr-full-local  - tr-full         +1.99 [ +1.35,  +2.54]  <-- differs
+  rosenbrock:none    tr-ard-local   - tr-ard          +1.44 [ +0.85,  +2.13]  <-- differs
+  rosenbrock:none    tr-full        - bo-full         -3.70 [ -4.33,  -2.96]  <-- differs
+  rosenbrock:none    tr-full-local  - bo-full         -1.71 [ -2.22,  -1.29]  <-- differs
+  rosenbrock:none    tr-ard         - tr-full         +2.48 [ +1.66,  +3.31]  <-- differs
+  rosenbrock:none    tr-ard-local   - tr-full-local   +1.93 [ +1.66,  +2.52]  <-- differs
+  rosenbrock:random  tr-full-local  - tr-full         +1.78 [ +1.31,  +2.35]  <-- differs
+  rosenbrock:random  tr-ard-local   - tr-ard          +0.78 [ -0.57,  +1.66]
+  rosenbrock:random  tr-full        - bo-full         -3.50 [ -4.14,  -3.01]  <-- differs
+  rosenbrock:random  tr-full-local  - bo-full         -1.73 [ -2.14,  -1.28]  <-- differs
+  rosenbrock:random  tr-ard         - tr-full         +2.02 [ +1.01,  +2.83]  <-- differs
+  rosenbrock:random  tr-ard-local   - tr-full-local   +1.02 [ -0.03,  +1.86]
+  quadratic:random   tr-full-local  - tr-full         +2.73 [ +2.13,  +3.45]  <-- differs
+
+== median wall-clock seconds per run
+method
+bo-full          966.0
+tr-ard            85.0
+tr-ard-local      41.0
+tr-full          180.0
+tr-full-local    100.0
