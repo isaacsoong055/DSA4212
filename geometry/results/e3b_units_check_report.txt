@@ -1,0 +1,40 @@
+0 runs already done, 30 to go
+[1/30] bo-full inst=6 178s, final f=1.42e-04, elapsed 179s
+[2/30] bo-full inst=1 181s, final f=1.94e-05, elapsed 183s
+[3/30] bo-full inst=2 184s, final f=1.12e-04, elapsed 185s
+[4/30] bo-full inst=5 187s, final f=4.54e-06, elapsed 188s
+[5/30] bo-full inst=3 189s, final f=4.75e-05, elapsed 191s
+[6/30] bo-full inst=4 190s, final f=6.80e-06, elapsed 191s
+[7/30] bo-full inst=0 192s, final f=1.22e-05, elapsed 194s
+[8/30] bo-full inst=9 275s, final f=1.11e-04, elapsed 460s
+[9/30] bo-full inst=10 273s, final f=2.23e-05, elapsed 461s
+[10/30] bo-full inst=7 285s, final f=1.21e-05, elapsed 464s
+[11/30] bo-full inst=8 283s, final f=3.70e-06, elapsed 466s
+[12/30] bo-full inst=12 275s, final f=6.78e-05, elapsed 466s
+[13/30] bo-full inst=13 279s, final f=1.58e-06, elapsed 473s
+[14/30] bo-full inst=11 302s, final f=1.11e-04, elapsed 492s
+[15/30] bo-ard inst=3 177s, final f=8.06e-08, elapsed 643s
+[16/30] bo-ard inst=2 181s, final f=7.84e-05, elapsed 647s
+[17/30] bo-ard inst=4 181s, final f=3.55e-06, elapsed 654s
+[18/30] bo-ard inst=1 190s, final f=9.76e-05, elapsed 655s
+[19/30] bo-ard inst=0 194s, final f=6.93e-05, elapsed 655s
+[20/30] bo-ard inst=5 182s, final f=3.13e-05, elapsed 675s
+[21/30] bo-full inst=14 275s, final f=1.04e-05, elapsed 735s
+[22/30] bo-ard inst=6 172s, final f=1.44e-05, elapsed 814s
+[23/30] bo-ard inst=7 168s, final f=3.36e-04, elapsed 815s
+[24/30] bo-ard inst=10 165s, final f=2.10e-05, elapsed 820s
+[25/30] bo-ard inst=9 170s, final f=2.05e-05, elapsed 825s
+[26/30] bo-ard inst=8 177s, final f=1.60e-05, elapsed 830s
+[27/30] bo-ard inst=11 171s, final f=1.18e-05, elapsed 846s
+[28/30] bo-ard inst=12 152s, final f=1.20e-04, elapsed 887s
+[29/30] bo-ard inst=13 109s, final f=9.17e-06, elapsed 923s
+[30/30] bo-ard inst=14 113s, final f=1.40e-05, elapsed 927s
+median log10 f at 200 evaluations, BO with local candidates
+         log10_f_200_baseline  log10_f_200_units
+method                                          
+bo-ard                  -3.87              -4.69
+bo-full                 -4.33              -4.71
+
+units (10,1) minus original units, paired by instance (+ = units hurt)
+  bo-ard    -0.82 [ -5.45,  +0.61]   (E3, plain EI: bo-full +0.91 [+0.62, +1.47], bo-ard +0.45 [-0.44, +1.07])
+  bo-full   -0.38 [ -4.98,  +0.93]   (E3, plain EI: bo-full +0.91 [+0.62, +1.47], bo-ard +0.45 [-0.44, +1.07])

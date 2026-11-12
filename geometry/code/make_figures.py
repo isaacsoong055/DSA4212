@@ -1,12 +1,17 @@
 """Build the report figures from results/ (no experiment is re-run).
 
 Encoding, fixed across every figure so a method looks the same everywhere:
-  colour     = family      CMA-ES blue, BO orange
+  colour     = method      CMA-ES cool (full blue, diagonal aqua),
+                           BO warm (full metric red, ARD yellow)
   line style = geometry    solid = can tilt (full covariance, full GP metric)
                            dashed = axis-aligned (diagonal covariance, ARD kernel)
-Palette: the dataviz skill's reference categorical slots 1-2 (slot 3, aqua, is
-kept for reflected CMA-ES but no current figure plots it), validated all-pairs
-in light mode.
+Palette: the dataviz skill's reference categorical slots blue, aqua, yellow and
+red. Of all 70 four-colour sets in that palette, 16 pass every all-pairs check
+(colour-blind separation and the normal-vision floor) and none contains orange,
+so BO moved from orange to this warm pair. Aqua and yellow are below 3:1
+contrast on the surface, so those methods are always named in a legend or
+label as well; line style (solid / dashed) still repeats the geometry.
+Reflected CMA-ES (no current figure plots it) takes slot 7, violet.
 
 Writes report/figures/fig*.pdf (for the report) and .png (for previews).
 Usage: python code/make_figures.py
@@ -29,17 +34,18 @@ OUT = ROOT / "report" / "figures"
 sys.path.insert(0, str(ROOT / "code"))
 import analysis
 
-BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
+BLUE, AQUA, RED, YELLOW, VIOLET = "#2a78d6", "#1baf7a", "#e34948", "#eda100", "#6250d6"
+ORANGE = "#eb6834"   # no longer used for a method; kept for reference
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#898781"
 GRID, AXIS, SURFACE = "#e1e0d9", "#c3c2b7", "#ffffff"
 
 STYLE = {   # method -> (label, colour, dash)
     "cmaes-full": ("CMA-ES, full", BLUE, "-"),
-    "cmaes-diagonal": ("CMA-ES, diagonal", BLUE, "--"),
-    "bo-full": ("BO, full metric", ORANGE, "-"),
-    "bo-ard": ("BO, ARD", ORANGE, "--"),
-    "cmaes-full-reflect": ("CMA-ES, full + reflection", AQUA, "-"),
-    "bo-ard-fitnoise": ("BO, ARD, noise fitted (original)", ORANGE, ":"),
+    "cmaes-diagonal": ("CMA-ES, diagonal", AQUA, "--"),
+    "bo-full": ("BO, full metric", RED, "-"),
+    "bo-ard": ("BO, ARD", YELLOW, "--"),
+    "cmaes-full-reflect": ("CMA-ES, full + reflection", VIOLET, "-"),
+    "bo-ard-fitnoise": ("BO, ARD, noise fitted (original)", YELLOW, ":"),
 }
 GEO = {"none": "aligned", "random": "Haar-random rotation"}
 
@@ -245,31 +251,60 @@ def fig6_e4_boundary():
     """
     s = pd.read_csv(R / "e4_summary.csv")
     s = s[(s.budget == 200) & s.position.isin(["near-edge", "on-edge", "corner"])]
-    methods = ["bo-ard", "cmaes-full"]
+    runs = pd.read_csv(R / "e4_runs.csv")
+    share = runs.groupby(["condition", "position", "method"])[["pct_on_boundary", "pct_outside_box"]].median()
+    hit = runs.assign(exact=runs.log10_f_200 < -250).groupby(["condition", "position", "method"]).exact.mean()
+    # Panel: (method, title, which share to report beside each row, its words)
+    panels = [("bo-ard", "BO (ARD kernel), searches only inside the box", "pct_on_boundary", "on the edge"),
+              ("cmaes-full", "CMA-ES (full), no box handling", "pct_outside_box", "outside the box")]
     rows = [(k, p) for k in (1, 100) for p in ("near-edge", "on-edge", "corner")]
-    names = {"near-edge": "0.1 inside the edge", "on-edge": "on the edge", "corner": "in the corner"}
-    fig, axes = plt.subplots(1, 2, figsize=(5.6, 2.7), sharex=True, sharey=True)
-    for ax, method in zip(axes, methods):
-        ax.axvline(0, color=AXIS, linewidth=0.8, zorder=0)
+    names = {"near-edge": "optimum 0.1 inside the edge", "on-edge": "optimum on the edge",
+             "corner": "optimum in the corner"}
+    fig, axes = plt.subplots(2, 1, figsize=(7.4, 4.3), sharex=True, gridspec_kw={"hspace": 0.55})
+    for ax, (method, title, col, col_words) in zip(axes, panels):
+        ax.axvline(0, color=INK2, linewidth=0.9, zorder=0)
         for k, (kappa, pos) in enumerate(rows):
             y = len(rows) - 1 - k
+            pct = share.loc[(kappa, pos, method), col]
             if method == "bo-ard" and pos == "corner":
-                ax.text(-2.6, y, "exact hit (f = 0)", ha="left", va="center",
+                ax.text(-2.7, y, "not comparable: BO lands exactly on the corner", ha="left", va="center",
                         color=INK2, fontsize=7)
+                note = (f"hits f = 0 in {100 * hit.loc[(kappa, pos, method)]:.0f}% of runs"
+                        f"   ({pct:.0f}% of evals {col_words})")
+                ax.text(1.02, y, note, transform=ax.get_yaxis_transform(), va="center", ha="left",
+                        fontsize=7, color=INK, fontweight="bold", clip_on=False)
                 continue
             r = s[(s.condition == kappa) & (s.position == pos) & (s.method == method)].iloc[0]
             interval(ax, y, r, STYLE[method][1])
+            if r.ci_high < 0:
+                verdict, weight, ink = "easier at the edge", "bold", INK
+            elif r.ci_low > 0:
+                verdict, weight, ink = "harder at the edge", "bold", INK
+            else:
+                verdict, weight, ink = "no clear difference", "normal", MUTED
+            sign = "−" if r.difference < 0 else "+"
+            ax.text(1.02, y, f"{sign}{abs(r.difference):.2f}  {verdict}", transform=ax.get_yaxis_transform(),
+                    va="center", ha="left", fontsize=7, color=ink, fontweight=weight, clip_on=False)
+            ax.text(1.32, y, f"{pct:.0f}% of evals {col_words}", transform=ax.get_yaxis_transform(),
+                    va="center", ha="left", fontsize=7, color=INK2, clip_on=False)
         ax.axhline(2.5, color=GRID, linewidth=0.8)
-        ax.set_title(STYLE[method][0])
+        ax.set_yticks(range(len(rows)))
+        ax.set_yticklabels([f"κ = {k}: {names[p]}" for k, p in reversed(rows)], fontsize=7)
+        ax.tick_params(axis="y", length=0)
+        ax.set_ylim(-0.6, len(rows) - 0.4)
         ax.grid(axis="y", visible=False)
         ax.set_xlim(-2.8, 2.6)
-    axes[0].set_yticks(range(len(rows)))
-    axes[0].set_yticklabels([f"κ = {k}: {names[p]}" for k, p in reversed(rows)])
-    axes[0].tick_params(axis="y", length=0)
-    fig.supxlabel("position − interior control at the same distance,\nmedian log$_{10}$ f "
-                  "at 200 evaluations (+ = worse)", fontsize=8.5, color=INK2, y=-0.08)
-    fig.suptitle("E4. Optimum near the box edge (2-D aligned; paired; 95% bootstrap intervals)",
-                 x=0.0, ha="left", fontsize=9.5, y=1.03)
+        ax.set_title(title, fontsize=8.5, pad=16)
+        ax.text(0, 1.01, "← easier at the edge   ", transform=ax.get_xaxis_transform(), ha="right",
+                va="bottom", fontsize=7, color=INK2)
+        ax.text(0, 1.01, "   harder at the edge →", transform=ax.get_xaxis_transform(), ha="left",
+                va="bottom", fontsize=7, color=INK2)
+    axes[1].set_xlabel("edge position minus an interior optimum at the same distance from the start,\n"
+                       "median log$_{10}$ f at 200 evaluations (1 = ten times the error)", fontsize=7.5)
+    fig.suptitle("E4. Optimum at the box edge: 2-D aligned, 15 instances, paired.\n"
+                 "Dot = median difference; bar = 95% bootstrap interval; a bar crossing 0 = no clear difference.",
+                 x=0.0, ha="left", fontsize=8.5, y=1.0)
+    fig.subplots_adjust(top=0.84)
     save(fig, "fig6_e4_boundary")
 
 
@@ -310,41 +345,60 @@ def fig7_e5_other_functions():
 def fig8_e6_noise():
     """E6: recommendation rule and budget split under noise (paired, 200 noisy evaluations)."""
     s = pd.read_csv(R / "e6_summary.csv")
+    # Each panel: (question, left-side words, right-side words, rows). A row's verdict is read off its
+    # 95% interval: entirely left of 0 = the left side wins, entirely right = the right side wins.
     panels = [
-        ("Recommendation rule: model estimate − lowest observed", [
-            ("cmaes-base: R2 - R1", "CMA-ES, λ = 6: mean", BLUE),
-            ("cmaes-pop24: R2 - R1", "CMA-ES, λ = 24: mean", BLUE),
-            ("bo-base: R2 - R1", "BO: posterior-mean minimiser", ORANGE)]),
-        ("Budget split − baseline (both read through the model)", [
-            ("cmaes-resample - cmaes-base (R2)", "CMA-ES: resample ×4", BLUE),
+        ("Which point to report? Model's estimate minus lowest reading",
+         "model's estimate better", "lowest reading better", [
+            ("cmaes-base: R2 - R1", "CMA-ES (λ = 6): final mean", BLUE),
+            ("cmaes-pop24: R2 - R1", "CMA-ES (λ = 24): final mean", BLUE),
+            ("bo-base: R2 - R1", "BO: lowest posterior mean", YELLOW)]),
+        ("How to spend the budget? Each split minus a new point every evaluation",
+         "split better", "split worse", [
+            ("cmaes-resample - cmaes-base (R2)", "CMA-ES: repeat each point ×4", BLUE),
             ("cmaes-pop24 - cmaes-base (R2)", "CMA-ES: population ×4", BLUE),
-            ("cmaes-reserve R3 - cmaes-base R2", "CMA-ES: final re-evaluation", BLUE),
-            ("bo-replicate - bo-base (R2)", "BO: replicates ×4", ORANGE),
-            ("bo-reserve R3 - bo-base R2", "BO: final re-evaluation", ORANGE)]),
+            ("cmaes-reserve R3 - cmaes-base R2", "CMA-ES: keep 40 to re-check best 5", BLUE),
+            ("bo-replicate - bo-base (R2)", "BO: repeat each point ×4", YELLOW),
+            ("bo-reserve R3 - bo-base R2", "BO: keep 40 to re-check best 5", YELLOW)]),
     ]
     sigmas = (0.01, 0.1, 1.0)
-    fig, axes = plt.subplots(2, 1, figsize=(5.6, 6.2),
-                             gridspec_kw={"height_ratios": [9, 15], "hspace": 0.35})
-    for ax, (title, rows) in zip(axes, panels):
-        ax.axvline(0, color=AXIS, linewidth=0.8, zorder=0)
+    fig, axes = plt.subplots(2, 1, figsize=(7.4, 5.0),
+                             gridspec_kw={"height_ratios": [9, 15], "hspace": 0.5})
+    for ax, (title, left_word, right_word, rows) in zip(axes, panels):
+        ax.axvline(0, color=INK2, linewidth=0.9, zorder=0)
         labels, y = [], 0
         for sigma in reversed(sigmas):
             for comparison, label, colour in reversed(rows):
                 r = s[(s.comparison == comparison) & (np.isclose(s.sigma, sigma))].iloc[0]
                 interval(ax, y, r, colour)
+                if r.ci_high < 0:
+                    verdict, weight, ink = left_word, "bold", INK
+                elif r.ci_low > 0:
+                    verdict, weight, ink = right_word, "bold", INK
+                else:
+                    verdict, weight, ink = "no clear difference", "normal", MUTED
+                sign = "−" if r.difference < 0 else "+"
+                ax.text(1.02, y, f"{sign}{abs(r.difference):.2f}  {verdict}", transform=ax.get_yaxis_transform(),
+                        va="center", ha="left", fontsize=7, color=ink, fontweight=weight, clip_on=False)
                 labels.append(f"σ = {sigma:g} · {label}")
                 y += 1
             ax.axhline(y - 0.5, color=GRID, linewidth=0.8)
-            y += 0.0
         ax.set_yticks(range(len(labels)))
         ax.set_yticklabels(labels, fontsize=7)
         ax.tick_params(axis="y", length=0)
         ax.set_ylim(-0.6, len(labels) - 0.4)
-        ax.set_title(title, fontsize=8.5)
+        ax.set_title(title, fontsize=8.5, pad=16)
         ax.grid(axis="y", visible=False)
-    axes[1].set_xlabel("difference in median log$_{10}$ f of the recommended point (− = better)")
-    fig.suptitle("E6. Noisy evaluations (κ = 100 quadratic; 200 noisy evaluations;\npaired; 95% bootstrap intervals)",
-                 x=0.0, ha="left", fontsize=9.5, y=0.99)
+        # Name the two sides of zero just above the plot, so the sign never has to be decoded.
+        ax.text(0, 1.01, f"← {left_word}   ", transform=ax.get_xaxis_transform(), ha="right", va="bottom",
+                fontsize=7, color=INK2)
+        ax.text(0, 1.01, f"   {right_word} →", transform=ax.get_xaxis_transform(), ha="left", va="bottom",
+                fontsize=7, color=INK2)
+        ax.set_xlabel("difference in median log$_{10}$ f of the reported point (1 = ten times the error)",
+                      fontsize=7.5)
+    fig.suptitle("E6. Noisy evaluations: κ = 100 quadratic, 200 noisy evaluations, 15 instances, paired.\n"
+                 "Dot = median difference; bar = 95% bootstrap interval; a bar crossing 0 = no clear difference.",
+                 x=0.0, ha="left", fontsize=8.5, y=1.0)
     save(fig, "fig8_e6_noise")
 
 

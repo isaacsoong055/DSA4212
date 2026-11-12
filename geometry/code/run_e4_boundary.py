@@ -1,10 +1,12 @@
 """E4: boundary constraints. What happens when the optimum is near the box edge?
 
 The two families treat the box differently. BO searches only inside it (the
-acquisition optimiser is bounded), and GP-EI is known to over-sample the box
-boundary, where posterior variance is largest (Siivola et al., "Correcting
-boundary over-exploration deficiencies in Bayesian optimization with virtual
-derivative sign observations", 2018). The CMA-ES implementation has no box
+acquisition optimiser is bounded), and GP-based BO is known to over-explore the
+box boundary (Siivola et al., "Correcting boundary over-exploration deficiencies
+in Bayesian optimization with virtual derivative sign observations", 2018, who
+link it to myopic acquisition). Whether the GP's posterior uncertainty, highest
+near the edge, is what pulls EI there is tested separately in E4b
+(run_e4b_edge_uncertainty.py). The CMA-ES implementation has no box
 handling at all, so it is tested twice: as in E2 (unconstrained; the share of
 its evaluations outside the box is logged), and with a reflection boundary
 transform, which evaluates f at x mirrored back into the box. The reflection is

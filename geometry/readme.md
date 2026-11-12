@@ -30,7 +30,7 @@ code/
   cmaes.py                    CMA-ES with full or diagonal covariance (the ablation)
   bo.py                       GP-EI with an ARD or a full (learned) kernel metric
   analysis.py                 runtime-to-target, ECDF, paired bootstrap CIs
-  run_e1_cmaes_geometry.py    E1: angle sweep, random-rotation invariance, dimension sweep
+  run_e1_cmaes_geometry.py    E1: angle sweep, random-rotation invariance
   run_e2_bo_metric.py         E2: BO vs CMA-ES head to head, 2x2 of {surrogate, population} x {axis-aligned, rotation-aware}
   run_e2c_lengthscale_diagnostic.py  E2c: read the kernel's learned geometry directly
   run_e2d_fit_diagnostic.py   E2d: is the GP fit at a bound? (diagnosed the lengthscale cap; checks the MAP fit)
@@ -40,12 +40,19 @@ code/
   run_e4_boundary.py          E4: optimum near the box edge, with a same-distance interior control
   run_e5_other_functions.py   E5: Rosenbrock (COCO f8/f9) and a noisy quadratic
   run_e6_noise_budget.py      E6: noisy evaluations -- budget split (repeats, population, reserve) and recommendation rule
+  run_e6b_recommendation_gp.py  E6b: why BO's model-based recommendation loses to its lowest reading with replicates
   run_e7_cmaes_restarts.py    E7: do IPOP-style restarts change any CMA-ES result? (seconds)
   run_e8_matern.py            E8: the rotation result with a Matern-5/2 kernel
   run_e9_rosenbrock_long.py   E9: Rosenbrock with 4,000 CMA-ES evaluations (seconds)
   run_e10_trust_region.py     E10: TuRBO-style trust region, axis-aligned (ARD) vs rotated (full) box
+  run_e11_boundary_trap.py    E11: why BO sticks at the box edge; reflecting instead of clipping candidates
+  run_e12_local_fit.py        E12: does a GP fitted only inside the trust region follow Rosenbrock's bend?
+  run_e3b_units_check.py      E3b: does local search remove BO's penalty from the 'easier' change of units?
+  run_e4b_edge_uncertainty.py E4b: why BO evaluates on the box edge (GP uncertainty and predicted value of its picks)
   make_figures.py             rebuilds every report figure from results/ (no experiment is re-run)
 results/                      CSV output of the above (one file per experiment)
+view_results.sh               rebuilds every table and figure from results/ without re-running (about a minute)
+run_all.sh                    re-runs every experiment from scratch (about 20 hours on 8 cores)
 report/                       report.tex, references.bib, figures/ (and the compiled report.pdf)
 notebooks/main.ipynb          exploratory notebook; Section 8 reloads every result quoted in the report (run from notebooks/)
 ```
@@ -69,15 +76,35 @@ differences, LogEI against the direct formula, CMA-ES's exact rank invariance,
 and that a *short* BO run (20 evaluations, one process) repeats bit for bit.
 Long BO runs are not guaranteed to repeat; see Repeatability below.
 
-`./run_all.sh [workers]` re-runs everything in order (about 6-7 hours on
-8 cores), rebuilds the figures and compiles the report.
+`./run_all.sh [workers]` re-runs everything in order (about 20 hours on
+8 cores, from the run times saved in `results/`), rebuilds the figures and
+compiles the report.
 
 No data download is required: every objective is generated in code.
+
+## Viewing the results without re-running
+
+Every run is saved in `results/`, so nothing needs to be re-run to see or
+check a result:
+
+```
+./view_results.sh > tables.txt     # every table, rebuilt from the saved runs (~1 min)
+python code/make_figures.py        # every report figure (seconds)
+```
+
+- `results/*_report.txt` are the printed tables of each experiment, as they
+  came out of the run.
+- `notebooks/main.ipynb`, Section 8, reloads the saved results behind each
+  claim in the report (run it from `notebooks/`).
+- `--report-only` on any sweep script rebuilds that experiment's tables from
+  its checkpoint. Scripts without the option (E1, E2c, E2d, E2e Stage A, E7,
+  E9) write their CSVs directly, and those are in `results/` too.
 
 ## Reproducing the results
 
 Each script is self-contained, writes CSV into `results/`, and prints the
-tables used in the report. Run order does not matter.
+tables used in the report. Run order matters only where noted: E6b reads
+E6's results, and E11 pairs against `--local-cand` and E10.
 
 ```
 python code/run_e1_cmaes_geometry.py                 # minutes
@@ -91,12 +118,17 @@ python code/run_e3_invariance.py --workers 8         # ~1.5 h (BO dominates)
 python code/run_e4_boundary.py --workers 8           # ~1 h
 python code/run_e5_other_functions.py --workers 8    # ~45 min
 python code/run_e6_noise_budget.py --workers 8       # ~30 min
+python code/run_e6b_recommendation_gp.py --workers 8 # ~15 min; reads results/e6_runs.csv
 python code/run_e2_bo_metric.py --refit-local --workers 8   # original BO on this machine -> results/e2_local_* (~2.5 h)
 python code/run_e2_bo_metric.py --local-cand --workers 8    # BO fix + local candidates -> results/e2_lc_* (~1.5 h)
 python code/run_e7_cmaes_restarts.py                 # seconds
 python code/run_e8_matern.py --workers 8             # ~1.5 h
 python code/run_e9_rosenbrock_long.py                # seconds
 python code/run_e10_trust_region.py --workers 8      # ~15 min
+python code/run_e11_boundary_trap.py --workers 8     # ~1.7 h; pairs against e2_lc and E10
+python code/run_e12_local_fit.py --workers 8         # ~1.8 h (plain BO-full is ~16 min a run)
+python code/run_e3b_units_check.py --workers 8       # ~15 min; pairs against e2_lc
+python code/run_e4b_edge_uncertainty.py --workers 8  # ~18 min
 python code/make_figures.py                          # seconds; writes report/figures/
 cd report && latexmk -pdf report.tex                 # compiles the report
 ```

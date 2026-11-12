@@ -118,11 +118,12 @@ bootstrap intervals over 15 instances. Aligned-against-rotated comparisons are u
 rotation is drawn together with the optimum.
 
 \textbf{Reproducibility.} Each experiment is one script in \texttt{code/} that writes CSVs to
-\texttt{results/}. Section 8 of the notebook reloads every number quoted here, and
+\texttt{results/}. Section 8 of the notebook reloads every number quoted here except E4b's, which
+\texttt{code/run\_e4b\_edge\_uncertainty.py --report-only} prints, and
 \texttt{code/make\_figures.py} rebuilds every figure from the CSVs. Long BO runs are \emph{not}
-bit-repeatable. Even on one machine with BLAS pinned to one thread (as the scripts do), the same
-200-evaluation run with the same code and seed ended at $10^{0.06}$ in one process and $10^{-1.15}$ in
-another: tiny rounding differences in the linear algebra are amplified by BO's sequential choices. We
+bit-repeatable. Even on one machine with BLAS pinned to one thread (as the scripts do), re-running the
+60 aligned local-candidate runs of E2 with the same code and seeds in a later process (E11) reproduced 31 of
+them to 0.01 decades; the other 29 ended up to 5.2 decades apart: tiny rounding differences in the linear algebra are amplified by BO's sequential choices. We
 did not pin down where the differences arise. Every comparison is therefore statistical (medians and
 paired bootstrap intervals over 15 instances), and BO results reproduce in distribution, not run for
 run. CMA-ES runs repeated exactly in our checks (E3).
@@ -130,15 +131,14 @@ run. CMA-ES runs repeated exactly in our checks (E3).
 %=====================================================================
 \section{The tilt in each family}
 %=====================================================================
-\textbf{E1: CMA-ES.} At $\kappa=1{,}000$ in 2-D (15 instances, 4,000 evaluations, target $10^{-8}$),
+\textbf{E1: CMA-ES.} At $\kappa=1{,}000$ in 2-D (15 instances, 4,000 evaluations, target $10^{-8}$,
+start $(2,\dots,2)$ with $\sigma_0=2$),
 diagonal CMA-ES solves every instance at $0^\circ$ and $90^\circ$ and none between $30^\circ$ and
 $60^\circ$; full CMA-ES solves every angle (Fig.~\ref{fig:e1}). The $90^\circ$ point is the control: it
 only swaps the axes, so recovery there shows that the rotation, not the conditioning, causes the
 failure. At $\kappa=100$ both variants succeed at every angle, as prediction (ii) requires. Under
 Haar-random rotation full CMA-ES needs 405 against 408 median evaluations (30 instances), the rotation
-invariance claimed by \citet{hansen2016tutorial}, while diagonal success drops to 47\%, and to 0\% by
-$d=16$. On aligned problems the full variant costs up to 21.6\% more evaluations at $d=32$, because it
-learns $d(d+1)/2$ covariance entries instead of $d$: prediction (iii).
+invariance claimed by \citet{hansen2016tutorial}, while diagonal success drops to 47\%.
 
 \begin{figure}[t]
 \centering\includegraphics[width=0.86\linewidth]{figures/fig1_e1_angle_sweep.pdf}
@@ -152,10 +152,11 @@ the angle between the learned long axis and the true flat direction (Fig.~\ref{f
 exactly $45^\circ$ on $45^\circ$ problems at every $\kappa$, and by a median $18.1^\circ$ under random
 rotation; the full metric is within $0.2^\circ$--$4.1^\circ$. On rotated problems ARD's held-out RMSE is
 1.3--1.9$\times$ the full metric's from $\kappa=100$. On aligned ones ARD is better (ratio 0.75--0.93 at
-$\kappa=10$--1,000), the surrogate-side counterpart of the CMA-ES overhead.
+$\kappa=10$--1,000): the full metric's extra parameter costs accuracy when no tilt is needed,
+prediction (iii).
 
 An earlier maximum-likelihood fit had a hidden bound $\ell\le e^4$: the long lengthscale sat on it in
-60--80\% of fits at $\kappa\ge10^3$ (E2d), so any lengthscale \emph{ratio} we reported was set by the
+73\% of full-metric fits and 23\% of ARD fits (65\% on aligned problems) at $\kappa\ge10^3$ (E2d), so any lengthscale \emph{ratio} we reported was set by the
 bound, not by the data. The MAP prior removed every bound hit and left the axis errors unchanged. We
 therefore report direction and RMSE, not ratios.
 
@@ -169,8 +170,8 @@ therefore report direction and RMSE, not ratios.
 \section{Head to head, a negative result, and its cause}
 %=====================================================================
 \textbf{E2, first run.} Under the budget rule (2-D; $\kappa\in\{1,100,10^4\}$; aligned and random
-rotation; 15 instances), BO led CMA-ES by 0.6--1.0\dec{} at 20 evaluations, and CMA-ES led by
-2.3--3.8\dec{} at 200 for $\kappa\le100$. On rotation, however, prediction (i) \emph{failed} for BO: BO-ARD's
+rotation; 15 instances), BO led CMA-ES by 0.6--1.0\dec{} at 20 evaluations (0.1--0.3 on the rotated $\kappa=100$
+problem), and full CMA-ES led both BO variants by 2.3--3.9\dec{} at 200 for $\kappa\le100$. On rotation, however, prediction (i) \emph{failed} for BO: BO-ARD's
 rotation penalty at $\kappa=100$ was $+0.05$ \ci{-0.53}{+0.63} decades, while diagonal CMA-ES paid
 $+1.70$ \ci{+0.41}{+2.57}. A second anomaly stood out: BO stalled near $10^{-2.6}$ even on the round bowl
 ($\kappa=1$), the easiest case for a GP, and no BO run reached $10^{-5}$.
@@ -178,7 +179,7 @@ $+1.70$ \ci{+0.41}{+2.57}. A second anomaly stood out: BO stalled near $10^{-2.6
 \textbf{E2e, diagnosing the stall.} We re-ran BO on the round bowl with per-iteration logging, behaviour
 unchanged, and tested four hypotheses, each with its own signature:
 \begin{itemize}
-\item \emph{Floor in the log transform:} rejected. The best value stayed 54--82$\times$ above it.
+\item \emph{Floor in the log transform:} rejected. The best value ended a median 54--74$\times$ above it.
 \item \emph{The acquisition search misses the improving region:} rejected. A dense search around the
 incumbent found no more EI than the random candidates did.
 \item \emph{EI underflow:} the mechanism. After 50 evaluations the largest EI anywhere was below
@@ -189,11 +190,20 @@ of width 10, so BO was effectively sampling at random.
 above its observed value, 2--2.5$\times$ the gap to the second-best point. EI, measured against an
 incumbent the model considers unreachable, collapses.
 \end{itemize}
+BO fits the GP to $\log f$, because raw values on these problems span many orders of magnitude and would
+otherwise be dominated by the few largest. But the log turns the optimum into a sharp dip. The GP's
+lengthscales (one per direction, with ARD) are the same everywhere in the box, so following the dip would make
+its whole surface wiggly; since it also learns its noise level, it finds it cheaper to call the dip noise: the marginal likelihood
+favours the simpler explanation \citep[Ch.~5]{rasmussen2006gpml}.
+Each of the three is needed: fixing the noise removes the way out (the fix below), dropping the log removes the
+dip, and a kernel whose lengthscales vary with location (non-stationary) would let the GP bend only near the
+optimum. We tested only the first.
 Changing one thing at a time (BO-ARD, same instances, paired), fixing the noise variance at $10^{-6}$
 improved the median by $-1.43$ \ci{-1.83}{-0.73} decades at 50 evaluations and $-1.17$ \ci{-1.71}{-0.74}
 at 200; every run then reached $10^{-3}$ (27\% before). LogEI \citep{ament2023logei}, which fixes the
 underflow but not its cause, changed nothing ($+0.01$ \ci{-0.79}{+0.47}). Lowering the transform floor as
-well added a non-significant $-0.28$ \ci{-0.68}{+0.15}, so we adopted the fixed noise alone. Even fixed,
+well added a non-significant $-0.28$ \ci{-0.68}{+0.15}, so we adopted the fixed noise alone. For a deterministic objective the noise should be fixed near zero; we
+had kept the usual default (as in BoTorch) of learning it, and E2e shows how that default fails here. Even fixed,
 BO stops improving near $10^{-4}$. The fixed-noise logs explain why: the acquisition search now fails,
 the hypothesis rejected before the fix. After 100 evaluations the GP's shortest lengthscale is about
 0.07, so the region worth searching is about 0.1 wide. In 98--99\% of iterations a dense search there
@@ -221,8 +231,9 @@ Across families (Fig.~\ref{fig:curves}), BO-full now leads CMA-ES-full by 0.85--
 evaluations in every cell, and on aligned $\kappa=10^4$ at every budget ($-1.32$ \ci{-1.92}{-0.62} at 200).
 With plain EI, CMA-ES still wins by 200 evaluations at $\kappa\le100$ (by 1.2--2.7 decades), where its
 linear convergence overtakes BO's stalled progress. That conclusion depends on the acquisition search.
-A TuRBO-style trust-region BO (below) beats full CMA-ES at 200 evaluations on aligned $\kappa=100$ ($-1.36$
-\ci{-2.02}{-0.85}) and on rotated $\kappa=10^4$ ($-3.32$ \ci{-4.24}{-1.82}). BO's early lead costs about
+A TuRBO-style trust-region BO (below), in the version suited to each problem, beats full CMA-ES at 200
+evaluations: the axis-aligned box on aligned $\kappa=100$ ($-1.36$ \ci{-2.02}{-0.85}) and the rotated box on
+rotated $\kappa=10^4$ ($-3.32$ \ci{-4.24}{-1.82}; the axis-aligned box there: $-0.41$ \ci{-1.24}{+0.24}). BO's early lead costs about
 $10^5$ times more computation per run (trust-region BO: 41--79\,s per run).
 
 \textbf{Robustness of the rotation result.} The ARD penalty could be an artefact of one kernel or one
@@ -274,20 +285,22 @@ of $f$, and to invertible linear maps of the search space \emph{provided the ini
 are mapped with it} \citep{hansen2016tutorial}.
 \begin{itemize}
 \item \emph{Monotone maps of $f$} (log1p, cube, square root, $f+1$). Both CMA-ES variants produced runs
-bit-identical to the baseline in all 120 cases. BO is not invariant, and the direction depends on the
+bit-identical to the baseline in all 120 cases (their one use of an $f$ value, the stopping target, was set
+to 0, which no run reaches). BO is not invariant, and the direction depends on the
 map. Cubing costs $+1.72$ \ci{+1.14}{+2.22} (ARD) and $+1.74$ decades (full), and no run reaches
 $10^{-3}$; log1p helps BO-full ($-0.52$ \ci{-0.98}{-0.03}). The cube result has a precise cause in our
 implementation: the target floor is $10^{-6}\times$ the spread of observed values, and cubing stretches
 the spread so much that the floor corresponds to $f\approx14$, below which BO sees nothing. The floor is
 not the whole story, though: square root makes it far finer ($10^{-9}$) without helping.
-\item \emph{Units} ($u_i=x_i/s_i$). With default set-ups, no method is invariant: $s=(1,10)$ raises the
+\item \emph{Units} ($u_i=x_i/s_i$; the box stays $[-5,5]^2$ in the new units). With default set-ups, no method is invariant: $s=(1,10)$ raises the
 effective conditioning to $10^4$ and costs CMA-ES about $+3.9$ decades and BO $+1.3$--1.4. Mapping
 CMA-ES's initial covariance as the theory requires ($C_0=S^{-2}$) restores invariance: exactly (to
 $10^{-12}$) for the diagonal variant, and in distribution for the full one ($+0.21$ \ci{-1.07}{+0.85}).
 The full variant is not identical run for run, because its eigendecomposition sorts the axes by
 eigenvalue and so reassigns the random draws. BO's equivalent, normalising each input to its own range
 \citep{balandat2020botorch}, is invariant by construction, but our box has one width for all coordinates,
-so it was not run.
+so it was not run. For BO the units themselves do not matter; what matters is the size of the valley relative
+to the box, and a change of units with the box's numbers kept the same changes the box's real size.
 \end{itemize}
 
 \begin{figure}[t]
@@ -306,13 +319,15 @@ an interior control at the same distance ($(\pm3.5,\pm3.5)$, 1.5 from both faces
 \begin{itemize}
 \item \emph{BO} is worse when the optimum lies 0.1 inside the edge ($+1.62$ \ci{+0.57}{+2.10} at
 $\kappa=1$, $+0.73$ \ci{+0.31}{+0.99} at $\kappa=100$) and better when it lies exactly on it ($-0.95$,
-$-1.68$, both significant). BO puts 9--15\% of its evaluations exactly on the boundary, consistent with
-GP-EI's known over-exploration there \citep{siivola2018boundary}: the posterior variance is largest where
-there is no data beyond the edge, and the bounded EI optimiser stops exactly on it. With the optimum in a
+$-1.68$, both significant). BO puts 8.5--14.5\% of its evaluations exactly on the boundary, a known tendency of GP-based BO \citep{siivola2018boundary}. Logging every step (E4b) shows that these are
+exploratory moves stopped by the box. EI picks a candidate that is predicted to be good and is among the most
+uncertain (median rank 0.84--1.0 of 200), and refining it moves it further from the data, where the uncertainty
+keeps rising, until the box wall stops it 0.3--0.6 units out. The edge is no more uncertain than the interior; it
+is simply where these moves end. With the optimum in a
 corner, BO evaluates it exactly in 93--100\% of runs, at a median of evaluation 9--10. That is an artefact
 of this preference, not evidence of better search.
 \item \emph{Unconstrained CMA-ES} stays within 0.53 decades of the control everywhere; it is affected by
-distance from the start, not by the edge. But 47--63\% of its evaluations fall outside the box when the
+distance from the start, not by the edge. But 46--63\% of its evaluations fall outside the box when the
 optimum is on an edge or in a corner. A reflection boundary transform (a simplified version of pycma's
 default) removes the violations at no significant cost, except when its periodicity lets the mean
 drift onto a mirror copy of an interior optimum ($+1.04$ \ci{+0.43}{+1.64}).
@@ -387,9 +402,14 @@ noise level ($+0.02$, $+0.08$, $-0.18$ decades; every interval contains 0). Thre
 predictions failed or held only in part (\texttt{code/run\_e6\_noise\_budget.py}).
 \end{itemize}
 At this budget the best use of noisy evaluations was to keep exploring new points and let a model
-average at the end. One anomaly is unexplained: with replicates, BO's R2 is \emph{worse} than R1. A
-plausible cause is that the averaged data are nearly noise-free, so the noise-fitting GP fails as in
-Section~4.
+average at the end. With replicates, BO's R2 is \emph{worse} than R1 ($+0.89$ \ci{+0.00}{+1.54} at $\sigma=0.01$, borderline). The GP
+that picks the recommendation learns its noise level, so it fails as in Section~4: it smooths over its best
+points. Its error at the lowest reading was more than three times the gap between the two best readings, and
+it fitted \emph{more} noise to the averaged data than to single readings (SD 0.37 against 0.22), although
+averaging halves the true noise. Without repeats the same smoothing helps, because a single lowest reading is
+often a lucky draw. A GP fitted to raw $f$ with the true noise level ($\sigma^2/4$) was never worse than the
+lowest reading, and was better at $\sigma=1$ ($-0.50$ \ci{-1.13}{-0.12}; E6b). It changes both the log and the
+noise, so it does not show which one mattered.
 
 \begin{figure}[!htbp]
 \centering\includegraphics[width=0.66\linewidth]{figures/fig8_e6_noise.pdf}
@@ -406,20 +426,20 @@ in both families: diagonal CMA-ES and ARD-BO pay, while their tilting counterpar
 penalty vanishes on aligned or well-conditioned problems. On the BO side this holds for two kernels, two
 acquisition searches and a TuRBO-style trust region; on Rosenbrock, what matters is the local
 orientation (E9). (2) Tilting has a modest cost when no tilt is
-needed (up to $+21.6\%$ evaluations for CMA-ES; worse held-out RMSE for the full GP metric on aligned
+needed (the axis-aligned trust region is 0.57 decades better on aligned $\kappa=100$; worse held-out RMSE for the full GP metric on aligned
 problems). (3) CMA-ES's rank invariance survives the implementation exactly; its linear invariance holds
 only under the stated condition on $C_0$. BO has neither invariance, and how $f$ is written can move it
 by 1.7 decades. (4) The box is part of BO's model and invisible to CMA-ES; a fair comparison has to state
 the bound handling for both. (5) Under noise at this budget, model-based recommendation (GP posterior
 mean; a large-population CMA-ES mean) beats the lowest reading, and repeating evaluations does not pay.
 
-\textbf{Uncertain or limited.} BO was run only in 2-D, so the dimension trend of the ARD penalty is inferred from CMA-ES (E1), not
-measured. The cross-family comparison at 200 evaluations depends on BO's acquisition search: plain EI
+\textbf{Uncertain or limited.} All runs are 2-D, so how the rotation penalty grows with dimension is untested. The cross-family comparison at 200 evaluations depends on BO's acquisition search: plain EI
 stalls near $10^{-4}$, local candidates fix that but fall into a boundary trap, and trust-region BO is
 strongest but shares the trap. No single BO configuration dominates. The full GP metric
 is overconfident (worse log predictive density than ARD nearly everywhere), and about 2\% of fits still
 miss the best hyperparameter optimum. CMA-ES ran without restarts. A check (E7) shows this does not matter here: full CMA-ES solves every
-quadratic without them, and IPOP-style restarts (4 runs, population doubling from 6 to 48) leave diagonal
+quadratic without them, and IPOP-style restarts (4 runs, population doubling from 6 to 48, each from the box
+centre with $\sigma_0=3$, as in the head-to-head) leave diagonal
 CMA-ES's rotated $\kappa=10^4$ failure in place (7\% reach $10^{-5}$ against 20\% for one long run),
 because a restarted diagonal run still cannot tilt. BO results reproduce in distribution, not run for run. Re-running the original E2 on another machine
 matched 40--93\% of BO-ARD runs and 0--27\% of BO-full runs to 0.01 decades and moved one cell's median

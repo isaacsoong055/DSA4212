@@ -5,3 +5,11 @@ __pycache__/
 .DS_Store
 .ipynb_checkpoints/
 .Rhistory
+report/*.aux
+report/*.log
+report/*.out
+report/*.bbl
+report/*.blg
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
