@@ -30,7 +30,7 @@ code/
   cmaes.py                    CMA-ES with full or diagonal covariance (the ablation)
   bo.py                       GP-EI with an ARD or a full (learned) kernel metric
   analysis.py                 runtime-to-target, ECDF, paired bootstrap CIs
-  run_e1_cmaes_geometry.py    E1: angle sweep, random-rotation invariance, dimension sweep
+  run_e1_cmaes_geometry.py    E1: angle sweep, random-rotation invariance
   run_e2_bo_metric.py         E2: BO vs CMA-ES head to head, 2x2 of {surrogate, population} x {axis-aligned, rotation-aware}
   run_e2c_lengthscale_diagnostic.py  E2c: read the kernel's learned geometry directly
   run_e2d_fit_diagnostic.py   E2d: is the GP fit at a bound? (diagnosed the lengthscale cap; checks the MAP fit)
@@ -47,6 +47,8 @@ code/
   run_e10_trust_region.py     E10: TuRBO-style trust region, axis-aligned (ARD) vs rotated (full) box
   run_e11_boundary_trap.py    E11: why BO sticks at the box edge; reflecting instead of clipping candidates
   run_e12_local_fit.py        E12: does a GP fitted only inside the trust region follow Rosenbrock's bend?
+  run_e3b_units_check.py      E3b: does local search remove BO's penalty from the 'easier' change of units?
+  run_e4b_edge_uncertainty.py E4b: why BO evaluates on the box edge (GP uncertainty and predicted value of its picks)
   make_figures.py             rebuilds every report figure from results/ (no experiment is re-run)
 results/                      CSV output of the above (one file per experiment)
 view_results.sh               rebuilds every table and figure from results/ without re-running (about a minute)
@@ -125,6 +127,8 @@ python code/run_e9_rosenbrock_long.py                # seconds
 python code/run_e10_trust_region.py --workers 8      # ~15 min
 python code/run_e11_boundary_trap.py --workers 8     # ~1.7 h; pairs against e2_lc and E10
 python code/run_e12_local_fit.py --workers 8         # ~1.8 h (plain BO-full is ~16 min a run)
+python code/run_e3b_units_check.py --workers 8       # ~15 min; pairs against e2_lc
+python code/run_e4b_edge_uncertainty.py --workers 8  # ~18 min
 python code/make_figures.py                          # seconds; writes report/figures/
 cd report && latexmk -pdf report.tex                 # compiles the report
 ```

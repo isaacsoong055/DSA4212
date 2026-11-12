@@ -1,6 +1,6 @@
-"""E1: does learning a rotation matter, and what does that capability cost?
+"""E1: does learning a rotation matter?
 
-Rewrite of the original notebook experiment with its three weaknesses fixed:
+Rewrite of the original notebook experiment with its two weaknesses fixed:
 
 1. The optimum is no longer at the origin.  Each instance places it on a
    sphere of radius 2, so the search cannot start at the solution.
@@ -8,13 +8,11 @@ Rewrite of the original notebook experiment with its three weaknesses fixed:
    instance, instead of testing only 0 and 45 degrees.  45 degrees in 2-D is a
    special, maximally adversarial angle and a single angle cannot distinguish
    "not invariant" from "unlucky".
-3. Dimension is a factor, not fixed at 2.
 
 The ablation itself is unchanged: full-covariance CMA-ES against a
 diagonal-covariance CMA-ES that can stretch axes but not rotate.
 
-Writes results/e1_angle_sweep.csv, results/e1_random_rotation.csv and
-results/e1_dimension.csv.
+Writes results/e1_angle_sweep_*.csv and results/e1_random_rotation_*.csv.
 """
 
 import itertools
@@ -87,33 +85,6 @@ def random_rotation(conditions=(1, 10, 100, 1000), dimension=2, budget=4000):
     return records
 
 
-def dimension_sweep(dimensions=(2, 4, 8, 16, 32), condition=1000,
-                    budget_per_dimension=2000):
-    """Cost of invariance, and failure of the diagonal model, as d grows.
-
-    The interesting quantity here is not only that the diagonal variant fails
-    on rotated problems, but that full CMA-ES is measurably SLOWER than the
-    diagonal variant on axis-aligned problems: it is paying for d(d+1)/2
-    covariance parameters it does not need.
-    """
-    records = []
-    for dim in dimensions:
-        budget = budget_per_dimension * dim
-        for inst in range(N_INSTANCES):
-            for geometry in ("none", "random"):
-                objective, _ = problems.make_ellipsoid(dim, condition, instance=inst,
-                                                       rotation=geometry)
-                for variant in cmaes.VARIANTS:
-                    r = one_run(objective, dim, inst, variant, budget)
-                    records.append({"dimension": dim, "condition": condition,
-                                    "geometry": geometry, "instance": inst,
-                                    "variant": variant, "best_value": r["best_value"],
-                                    "evaluations": r["evaluations"],
-                                    "population_size": r["population_size"],
-                                    "budget": budget, "history": r["history"]})
-    return records
-
-
 def save(records, name, group_columns):
     RESULTS.mkdir(exist_ok=True)
     runs = pd.DataFrame([{k: v for k, v in r.items() if k != "history"} for r in records])
@@ -128,5 +99,4 @@ if __name__ == "__main__":
     t0 = time.time()
     save(angle_sweep(), "e1_angle_sweep", ["condition", "angle", "variant"])
     save(random_rotation(), "e1_random_rotation", ["condition", "geometry", "variant"])
-    save(dimension_sweep(), "e1_dimension", ["dimension", "geometry", "variant"])
     print(f"\ntotal {time.time() - t0:.1f}s -> {RESULTS}")

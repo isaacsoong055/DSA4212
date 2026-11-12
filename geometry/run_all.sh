@@ -30,5 +30,7 @@ python code/run_e9_rosenbrock_long.py
 python code/run_e10_trust_region.py --workers "$W"
 python code/run_e11_boundary_trap.py --workers "$W"       # needs e2_lc and E10
 python code/run_e12_local_fit.py --workers "$W"
+python code/run_e3b_units_check.py --workers "$W"      # needs e2_lc
+python code/run_e4b_edge_uncertainty.py --workers "$W"
 python code/make_figures.py
 (cd report && latexmk -pdf -interaction=nonstopmode report.tex)

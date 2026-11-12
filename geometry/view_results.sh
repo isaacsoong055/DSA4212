@@ -28,4 +28,6 @@ run code/run_e8_matern.py --report-only
 run code/run_e10_trust_region.py --report-only
 run code/run_e11_boundary_trap.py --report-only
 run code/run_e12_local_fit.py --report-only
+run code/run_e3b_units_check.py --report-only
+run code/run_e4b_edge_uncertainty.py --report-only
 run code/make_figures.py

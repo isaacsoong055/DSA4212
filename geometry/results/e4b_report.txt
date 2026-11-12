@@ -1,0 +1,87 @@
+0 runs already done, 60 to go
+[1/60] k=1 near-edge inst=1 114s, 4% on edge, elapsed 115s
+[2/60] k=1 near-edge inst=4 116s, 9% on edge, elapsed 118s
+[3/60] k=1 near-edge inst=0 119s, 7% on edge, elapsed 120s
+[4/60] k=1 near-edge inst=6 119s, 12% on edge, elapsed 121s
+[5/60] k=1 near-edge inst=5 120s, 9% on edge, elapsed 121s
+[6/60] k=1 near-edge inst=3 120s, 14% on edge, elapsed 121s
+[7/60] k=1 near-edge inst=2 121s, 8% on edge, elapsed 123s
+[8/60] k=1 near-edge inst=8 112s, 8% on edge, elapsed 230s
+[9/60] k=1 near-edge inst=11 110s, 12% on edge, elapsed 231s
+[10/60] k=1 near-edge inst=13 113s, 8% on edge, elapsed 236s
+[11/60] k=1 near-edge inst=7 122s, 10% on edge, elapsed 237s
+[12/60] k=1 near-edge inst=9 121s, 6% on edge, elapsed 241s
+[13/60] k=1 near-edge inst=12 128s, 12% on edge, elapsed 249s
+[14/60] k=1 near-edge inst=10 131s, 20% on edge, elapsed 251s
+[15/60] k=1 interior-far inst=0 109s, 2% on edge, elapsed 340s
+[16/60] k=1 interior-far inst=1 114s, 2% on edge, elapsed 349s
+[17/60] k=1 interior-far inst=2 118s, 2% on edge, elapsed 355s
+[18/60] k=1 near-edge inst=14 128s, 18% on edge, elapsed 358s
+[19/60] k=1 interior-far inst=5 113s, 12% on edge, elapsed 365s
+[20/60] k=1 interior-far inst=4 117s, 8% on edge, elapsed 366s
+[21/60] k=1 interior-far inst=3 131s, 2% on edge, elapsed 372s
+[22/60] k=1 interior-far inst=6 119s, 3% on edge, elapsed 460s
+[23/60] k=1 interior-far inst=7 137s, 0% on edge, elapsed 487s
+[24/60] k=1 interior-far inst=11 123s, 2% on edge, elapsed 489s
+[25/60] k=1 interior-far inst=8 135s, 14% on edge, elapsed 489s
+[26/60] k=1 interior-far inst=9 138s, 5% on edge, elapsed 496s
+[27/60] k=1 interior-far inst=10 148s, 2% on edge, elapsed 512s
+[28/60] k=1 interior-far inst=12 143s, 2% on edge, elapsed 515s
+[29/60] k=1 interior-far inst=13 132s, 2% on edge, elapsed 591s
+[30/60] k=1 interior-far inst=14 128s, 2% on edge, elapsed 615s
+[31/60] k=100 near-edge inst=1 127s, 16% on edge, elapsed 616s
+[32/60] k=100 near-edge inst=0 130s, 9% on edge, elapsed 618s
+[33/60] k=100 near-edge inst=2 148s, 25% on edge, elapsed 644s
+[34/60] k=100 near-edge inst=3 133s, 22% on edge, elapsed 645s
+[35/60] k=100 near-edge inst=4 146s, 14% on edge, elapsed 661s
+[36/60] k=100 near-edge inst=5 145s, 6% on edge, elapsed 736s
+[37/60] k=100 near-edge inst=7 138s, 18% on edge, elapsed 754s
+[38/60] k=100 near-edge inst=6 154s, 6% on edge, elapsed 769s
+[39/60] k=100 near-edge inst=8 160s, 6% on edge, elapsed 779s
+[40/60] k=100 near-edge inst=9 141s, 12% on edge, elapsed 786s
+[41/60] k=100 near-edge inst=11 132s, 8% on edge, elapsed 793s
+[42/60] k=100 near-edge inst=10 154s, 24% on edge, elapsed 799s
+[43/60] k=100 near-edge inst=12 124s, 7% on edge, elapsed 860s
+[44/60] k=100 near-edge inst=13 132s, 8% on edge, elapsed 886s
+[45/60] k=100 interior-far inst=1 130s, 11% on edge, elapsed 916s
+[46/60] k=100 near-edge inst=14 150s, 16% on edge, elapsed 919s
+[47/60] k=100 interior-far inst=0 141s, 12% on edge, elapsed 920s
+[48/60] k=100 interior-far inst=3 128s, 6% on edge, elapsed 927s
+[49/60] k=100 interior-far inst=2 138s, 6% on edge, elapsed 931s
+[50/60] k=100 interior-far inst=4 148s, 3% on edge, elapsed 1008s
+[51/60] k=100 interior-far inst=5 136s, 14% on edge, elapsed 1022s
+[52/60] k=100 interior-far inst=7 132s, 6% on edge, elapsed 1051s
+[53/60] k=100 interior-far inst=6 151s, 7% on edge, elapsed 1066s
+[54/60] k=100 interior-far inst=10 138s, 4% on edge, elapsed 1069s
+[55/60] k=100 interior-far inst=8 153s, 9% on edge, elapsed 1073s
+[56/60] k=100 interior-far inst=9 147s, 2% on edge, elapsed 1074s
+[57/60] k=100 interior-far inst=11 120s, 12% on edge, elapsed 1129s
+[58/60] k=100 interior-far inst=12 125s, 7% on edge, elapsed 1147s
+[59/60] k=100 interior-far inst=13 105s, 24% on edge, elapsed 1156s
+[60/60] k=100 interior-far inst=14 95s, 10% on edge, elapsed 1161s
+% of runs' evaluations on the edge (median), as E4:
+condition  position    
+1          interior-far     2.5
+           near-edge        9.0
+100        interior-far     7.0
+           near-edge       12.0
+
+(a) is the GP more uncertain near the edge? median posterior SD of candidates
+                        sd_edge_band  sd_interior
+condition position                               
+1         interior-far         1.000        1.000
+          near-edge            0.581        0.593
+100       interior-far         1.000        1.000
+          near-edge            0.929        0.982
+
+(b) where do edge picks come from? medians over iterations, by whether the pick is on the edge
+                                       iterations  sd_rank  mean_rank  start_on_edge  dist_polish
+condition position     chosen_on_edge                                                            
+1         interior-far False                 2760    0.172      0.960            0.0        0.028
+                       True                   120    0.998      0.875            0.0        0.314
+          near-edge    False                 2567    0.975      0.815            0.0        0.000
+                       True                   313    0.930      0.910            0.0        0.341
+100       interior-far False                 2617    0.265      0.935            0.0        0.054
+                       True                   263    0.935      0.835            0.0        0.631
+          near-edge    False                 2483    0.770      0.895            0.0        0.003
+                       True                   397    0.835      0.895            0.0        0.386
