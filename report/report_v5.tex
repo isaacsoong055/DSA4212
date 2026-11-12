@@ -23,81 +23,92 @@
 \let\olditemize\itemize
 \renewcommand{\itemize}{\olditemize\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}\setlength{\topsep}{2pt}}
 \makeatletter\renewcommand{\@makecaption}[2]{\vskip 4pt{\small\textbf{#1.} #2\par}}\makeatother
+% Compact headings throughout, as in intro.pdf (section: large, subsection: normalsize).
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}{-3.5ex \@plus -1ex \@minus -.2ex}{2.3ex \@plus.2ex}{\normalfont\large\bfseries}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}{-3.25ex\@plus -1ex \@minus -.2ex}{1.5ex \@plus .2ex}{\normalfont\normalsize\bfseries}}
+\makeatother
 \newcommand{\ci}[2]{[#1,\,#2]}
 \newcommand{\dec}{\,decades}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcommand{\makecell}[1]{\begin{tabular}[c]{@{}c@{}}#1\end{tabular}}  % stand-in for makecell.sty
 
-\title{\vspace{-1.3cm}Does the model fit the landscape?\\
-Shape and scale in Bayesian optimisation and CMA-ES\vspace{-0.3cm}}
-\author{Isaac Soong Hong Wei (A0272752B), Paul Ng Yin Chen (A0272249Y)\\[2pt]
-\small Repository: \url{https://github.com/isaacsoong055/DSA4212}}
+\title{\vspace{-1.3cm}Shape and Scale: What Decides Success for BO and CMA-ES?\vspace{-0.3cm}}
+\author{Isaac Soong Hong Wei (A0272752B)\quad Paul Ng Yin Chen (A0272249Y)\\[2pt]
+\small GitHub: \url{https://github.com/isaacsoong055/DSA4212}}
 \date{\vspace{-0.7cm}}
 
 \begin{document}
 \maketitle
 
-\begin{abstract}
-\noindent
-Bayesian optimisation (BO) and CMA-ES both carry an implicit model of the landscape: CMA-ES a Gaussian
-search distribution with a covariance (its shape) and a step size (its scale), BO a Gaussian-process
-surrogate whose kernel metric and lengthscales play the same two roles. We test one explanation in two
-settings: a method succeeds when its model's shape and scale can match the problem, whatever its family.
-\emph{Part A (multimodality)} asks
-whether the model's scale lets a method \emph{find} and then \emph{refine} a narrow distant basin: neither
-default method finds it; CMA-ES's step size cannot do both jobs at once, and BO succeeds once its lengthscale
-is capped (1/50 to 44/50 on fresh seeds) while acquisition tuning helps far less. \emph{Part B (geometry)}
-asks whether the model can \emph{tilt}: on rotated, ill-conditioned valleys diagonal CMA-ES, the ARD kernel
-and TuRBO's axis-aligned trust region all fail, while their tilting counterparts do not, once BO's own fitting
-failures are removed. In both parts the decisive
-BO changes were to the model fit, not the acquisition function. All results are in 2-D and pre-registered
-predictions are reported whether they held or failed.
-\end{abstract}
-
 %=====================================================================
 \section{Introduction}
 %=====================================================================
-%% AUTHORS: joint section, rewrite together in your own words.
-\subsection{Background}
-Black-box problems give only function values, often at a high cost each, so a method must choose where to
-evaluate next from the values seen so far. \emph{BO} \citep{frazier2018tutorial}
-fits a Gaussian-process (GP) surrogate to all evaluations and picks the next point with an acquisition function
-such as expected improvement (EI); it uses every value, but each step is costly. \emph{CMA-ES} \citep{hansen2016tutorial} samples a population from a Gaussian, ranks it and
-adapts the Gaussian towards the best points; each step is nearly free, and it uses only the ranking. Hansen's
-tutorial states the invariances CMA-ES is designed to have, to order-preserving transformations of $f$ and to linear
-maps of the search space when the initial conditions are mapped too. IPOP and BIPOP restarts
-\citep{auger2005ipop,hansen2009bipop} target multimodal functions; TuRBO \citep{eriksson2019turbo} restricts BO to
-trust regions whose sides are set per coordinate from the ARD lengthscales; COCO \citep{hansen2021coco} sets the
-benchmarking practice we follow for budgets in evaluations and random problem instances. BO's results also depend on rarely
-reported settings: its lengthscale prior \citep{hvarfner2024vanilla}, EI values that vanish numerically
-\citep{ament2023logei}, and over-exploration of the box boundary \citep{siivola2018boundary}.
+%% AUTHORS: joint section (from intro.pdf).
+\subsection{Motivation and the two methods}
+Many problems give only function values (tuning hyperparameters, calibrating a simulator), with no gradients and
+costly evaluations, so the budget is counted in evaluations. Bayesian optimisation (BO) and the covariance matrix
+adaptation evolution strategy (CMA-ES) are two of the most widely used methods here, with opposite designs: BO
+models the function, CMA-ES adapts a search distribution.
 
-\subsection{Question and approach}
-\emph{Problem.} Landscapes differ in geometry (how narrow a valley is, and whether it is tilted against the axes)
-and in modality (whether a narrow basin lies away from a broad one), and each method has settings a user can
-change: CMA-ES's population size, restarts, step size and covariance model; BO's kernel, lengthscales, noise model
-and acquisition function. We ask how these settings affect whether each method finds the optimum within a fixed
-budget, and whether any of them matters more than the choice of family.
+BO \citep{frazier2018tutorial} fits a Gaussian-process (GP) surrogate to all evaluations so far. Its posterior gives
+a prediction and an uncertainty everywhere, and an acquisition function, such as expected improvement (EI), turns
+these into the next point. CMA-ES \citep{hansen2016tutorial} samples a population of $\lambda$ candidates from a
+Gaussian $\mathcal N(m,\sigma^2C)$, ranks them, moves the mean towards the best, and adapts the covariance $C$ and
+step size $\sigma$ from successful steps, using only the ranking of the values. BO is sample-efficient but costly
+per step and depends on its model being right; CMA-ES needs more evaluations but is nearly free per step.
 
-\emph{Guiding hypothesis.} Each method carries an implicit model of the landscape: a built-in assumption about the
-function near where it searches, which decides where it samples next. CMA-ES's model is its sampling distribution
-$\mathcal N(m,\sigma^2C)$: the covariance $C$ sets its \emph{shape} (the directions it stretches along, and by how
-much) and the step size $\sigma$ its \emph{scale} (how far from the mean $m$ it samples). BO's model is the GP: the
-kernel metric sets the shape (a full metric can tilt; the diagonal ARD metric stretches only along the axes) and the
-lengthscales the scale, the distance over which two function values are treated as related, so a basin much
-narrower than the lengthscale is smoothed away. A method succeeds when its model can match the landscape's shape
-and scale, whichever family it belongs to. For BO the acquisition function, which picks the next point given the
-model, is the alternative explanation, and both parts test it (EI's exploration, LCB and Thompson sampling in Part
-A; LogEI, a local candidate search and a trust region in Part B).
+\subsection{What the literature says, and what it leaves open}\label{sec:lit}
+Hansen's tutorial \citep{hansen2016tutorial} states the invariances CMA-ES is designed to have: to any
+order-preserving transformation of $f$, and to rotations and other linear maps of the search space provided the
+initial conditions are mapped too. Restart schemes that grow or mix the population size (IPOP, BIPOP
+\citep{auger2005ipop,hansen2009bipop}) target multimodal functions. TuRBO \citep{eriksson2019turbo} restricts BO to
+local trust regions whose sides are set per coordinate from the ARD lengthscales, an axis-aligned shape.
 
-\emph{Method.} Budgets count objective evaluations, including initial designs and restarts; every variant runs on
-the same seeds, one setting changes at a time, and predictions are committed before the runs
-that test them. Points are judged on the noise-free objective: in Part A by whether regret reaches a success
-threshold (Wilson and Newcombe intervals), in Part B by regret in decades of $\log_{10}f$ (paired bootstrap
-intervals). \emph{Part A} (Isaac Soong; BoTorch \citep{balandat2020botorch}, 300 evaluations) asks whether each
-method can find and then refine a narrow, distant basin; \emph{Part B} (Paul Ng; NumPy/SciPy, 200 evaluations) asks
-whether a method's model can tilt to a rotated, ill-conditioned valley, and which invariances survive the
-implementation; the two parts' numbers are not compared directly.
+BO's results also depend on rarely reported settings. Ament et al.\ \citep{ament2023logei} show that EI's values and
+gradients vanish numerically, so the acquisition optimiser can fail, and Siivola et al.\ \citep{siivola2018boundary}
+show that GP-based BO over-explores the boundary of the search box. A comparison run with library defaults
+therefore mixes the family with hidden choices (kernel fitting, lengthscale bounds, noise handling, step size);
+which of these actually decides success is open.
+
+\subsection{Problem formulation}
+Landscapes differ in modality (one basin or many, wide or narrow) and geometry (well conditioned or stretched along a
+rotated valley), while BO and CMA-ES each have several tunable settings. We ask how adjusting those settings changes
+how well each method finds the optimum: which property of a method decides the outcome, and does it matter more
+than the choice of family?
+
+\textbf{Guiding hypothesis.} Each method carries an implicit model of the landscape: what it assumes the function
+looks like when choosing the next point. The model has a \emph{shape} (the orientation and relative stretch of the
+directions it treats as different) and a \emph{scale} (the distance over which it treats the function as
+changing). For CMA-ES the model is the search distribution: the covariance $C$ sets the shape and the step size
+$\sigma$ the scale, i.e.\ how far from the mean it samples. For BO it is the GP: the kernel metric sets the shape (a
+full metric, or the diagonal ARD metric that stretches only the axes) and the lengthscales the scale, i.e.\ the
+distance over which two points' values are treated as related. BO also has the acquisition function (its form,
+exploration weight and optimiser), which chooses the next point given the model and is tested as a competing
+explanation. A method succeeds when its model can match the landscape's shape (orientation, conditioning) and scale
+(the size of the features to find and resolve), and fails when a restriction or fitting failure prevents it,
+whichever its family.
+
+\subsection{Shared experimental approach}
+Both parts count the budget in objective evaluations, initial designs and restarts included; run every variant on
+the same seeds; change one setting at a time against a baseline; and commit predictions before the runs that test
+them, reporting each as held, partly held or failed. A method's recommendation is its best evaluated point, scored
+on the true (noise-free) objective; Section~\ref{sec:noise} also compares other rules under noise. The parts use
+different budgets, measures and BO code (BoTorch \citep{balandat2020botorch}; NumPy/SciPy), so their numbers are
+never put on common axes.
+
+\subsection{The two directions}
+\textbf{Part A, multimodality,} asks whether each method can find a narrow, distant global basin and then refine it,
+within 300 evaluations. It varies CMA-ES's population size, restarts and step size, and BO's acquisition function,
+GP fitting settings and kernel, on a decoy bowl with a narrow Gaussian well (width and distance varied), with a
+sphere control and Rastrigin and Schwefel for validation.
+
+\textbf{Part B, geometry and parameterisation,} asks whether a method's model can tilt to a rotated,
+ill-conditioned valley, and which of the invariances in Section~\ref{sec:lit} (to monotone transformations of $f$
+and to linear changes of the search space) hold in practice. It varies conditioning, rotation and whether the model
+can rotate (full against diagonal covariance; full against ARD metric; rotated against axis-aligned trust region),
+and tests units, monotone transformations, the box boundary and noise, on ellipsoids, Rosenbrock (COCO
+\citep{hansen2009bbobfunctions}) and a noisy quadratic, mostly within 200 evaluations.
 
 %=====================================================================
 \section{Part A (Multimodality): Can CMA-ES and Bayesian optimisation find a narrow, distant global basin?}\label{sec:partA}
@@ -290,19 +301,11 @@ Schwefel & 8/50 & 6/50 & 2/50 & 4/50 & 16/20 & 20/20 & 2/50 & $0.56\to1.28$ \\
 \subsection{Conclusion}
 At a fixed budget of 300 evaluations, both baselines fail on a narrow, distant well because they never \emph{find} it. For CMA-ES, a larger population and restarts only add chances to touch it, and a small step refines only a nearby well. For BO, bounding the lengthscale at about three well widths turned 5/50 into 39/50, provided the baseline lengthscale runs to its upper limit.
 
-% Smaller headings from Part B onwards (section: large, subsection: normalsize).
-\makeatletter
-\renewcommand\section{\@startsection{section}{1}{\z@}{-3.5ex \@plus -1ex \@minus -.2ex}{2.3ex \@plus.2ex}{\normalfont\large\bfseries}}
-\renewcommand\subsection{\@startsection{subsection}{2}{\z@}{-3.25ex\@plus -1ex \@minus -.2ex}{1.5ex \@plus .2ex}{\normalfont\normalsize\bfseries}}
-\makeatother
 
 %=====================================================================
 \section{Part B: can the search tilt? (geometry and parameterisation)}\label{sec:partB}
 %=====================================================================
 %% AUTHOR: Paul Ng. Condensed from geometry/report/report.tex; rewrite in your own words.
-The scripts and saved results for every experiment are in the repository's \texttt{geometry/} folder,
-which also holds a longer write-up of this part (\texttt{geometry/report/report.pdf}).
-
 \subsection{Question, set-up and predictions}
 Near a minimum $f\approx f^*+\tfrac12h^\top Hh$. The Hessian's eigenvalues
 are the curvatures; their ratio $\kappa$ is the conditioning (a narrow valley when large); its eigenvectors
@@ -343,7 +346,7 @@ prediction at the incumbent sat 2--2.5 times the gap to the second-best point ab
 $10^{-12}$ in 97--100\% of late iterations. BO fits the GP to $\log f$, because raw values on these problems span many orders of magnitude and would
 otherwise be dominated by the few largest. But the log turns the optimum into a sharp dip. The GP's
 lengthscales (one per direction, with ARD) are the same everywhere in the box, so following the dip would make
-its whole surface wiggly; since it also learns its noise level, it finds it cheaper to call the dip noise, since the marginal likelihood
+its whole surface wiggly; since it also learns its noise level, it finds it cheaper to call the dip noise: the marginal likelihood
 favours the simpler explanation \citep[Ch.~5]{rasmussen2006gpml}.
 Each of the three is needed: fixing the noise removes the way out (the fix below), dropping the log removes the
 dip, and a kernel whose lengthscales vary with location (non-stationary) would let the GP bend only near the
@@ -357,10 +360,14 @@ acquisition searches and a trust region. Run on one machine, BO-ARD's penalty be
 $\kappa=10^4$ and BO-full's stayed non-significant (Fig.~\ref{fig:pen}). Table~\ref{tab:robust} repeats the comparison with a
 Mat\'ern-5/2 kernel, 200 extra candidates around the incumbent, and a TuRBO-style trust region \citep{eriksson2019turbo} whose box is
 either axis-aligned with ARD-scaled sides or rotated to the full metric; in every variant the axis-restricted version ends
-significantly behind on rotated problems. The reason is shared: the ARD kernel and the published trust region both scale each
+significantly behind on rotated problems. Where no tilt is needed, tilting costs a little, as prediction (iii)
+expects: on aligned $\kappa=100$ the axis-aligned trust region is 0.57 decades better ($-0.57$ \ci{-1.04}{-0.27}). The reason is shared: the ARD kernel and the published trust region both scale each
 coordinate separately, so neither can align with a rotated valley. Measured by runtime to a target, BO's standing depends on its search:
 on the round bowl CMA-ES reaches $10^{-5}$ in every run (median 142--154 evaluations), BO with the noise fix in only 0--4 of 15 runs (at most \ci{0.11}{0.52})
-within 200, and BO with local candidates in every run (median 41--56). Across families, the trust region suited to each problem beats full CMA-ES at 200
+within 200, and BO with local candidates in every run (median 41--56). After the fix, plain EI stalls near $10^{-4}$ for
+the reason ruled out before it: its 200 uniform candidates rarely land in the small region below the incumbent
+(in 98\% of late iterations a search near the incumbent found over ten times the EI of the chosen point), and
+local candidates remove this. Across families, the trust region suited to each problem beats full CMA-ES at 200
 evaluations: the axis-aligned box on aligned $\kappa=100$ ($-1.36$ \ci{-2.02}{-0.85}) and the rotated box on rotated
 $\kappa=10^4$ ($-3.32$ \ci{-4.24}{-1.82}; the axis-aligned box there: $-0.41$ \ci{-1.24}{+0.24}), while with plain
 EI CMA-ES wins by 200 evaluations at $\kappa\le100$. Since long BO runs are not bit-repeatable, these results hold in distribution; the
@@ -390,7 +397,7 @@ Trust region, ARD box vs rotated box & $+2.92$ \ci{+1.27}{+3.79} & $-0.39$ \ci{-
 \label{tab:robust}
 \end{table}
 
-\subsection{On a bending valley, local orientation and local search decide (E5, E9, E12)}\label{sec:bend}
+\subsection{On a bending valley, local orientation and local search decide (E9, E12)}\label{sec:bend}
 On Rosenbrock (COCO f8, f9 \citep{hansen2009bbobfunctions}), whose valley bends, what matters is the local orientation. Even ``aligned''
 Rosenbrock is tilted $63.5^\circ$ near its optimum (local $\kappa\approx2{,}500$), so with 4,000 evaluations full CMA-ES
 reached $10^{-5}$ in every run (median about 500 evaluations) but diagonal CMA-ES in only 0/15 (f8; \ci{0}{0.20}) and
@@ -439,7 +446,7 @@ interior optimum at the same distance (2-D, aligned, $\kappa\in\{1,100\}$, 15 in
 
 BO is drawn to the edge. It does worse when the optimum lies 0.1 inside an edge ($+1.62$ \ci{+0.57}{+2.10}
 at $\kappa=1$, $+0.73$ \ci{+0.31}{+0.99} at $\kappa=100$), better when it lies exactly on it ($-0.95$, $-1.68$),
-and with the optimum in a corner it evaluates it exactly in 93--100\% of runs. It places 8--14\% of its
+and with the optimum in a corner it evaluates it exactly in 93--100\% of runs. It places 8.5--14.5\% of its
 evaluations exactly on the edge, a known tendency of GP-based BO \citep{siivola2018boundary}. Logging every step (E4b) shows that these are
 exploratory moves stopped by the box. EI picks a candidate that is predicted to be good and is among the most
 uncertain (median rank 0.84--1.0 of 200), and refining it moves it further from the data, where the uncertainty
@@ -466,7 +473,7 @@ $\log_{10}f$ at 200 evaluations over 15 paired instances; bar = 95\% bootstrap i
 share of evaluations on the edge (BO) or outside the box (CMA-ES).}
 \label{fig:e4}
 \end{figure}
-\subsection{Under noise, spend the budget on new points and report the model's estimate (E5, E6)}\label{sec:noise}
+\subsection{Under noise, spend the budget on new points and report the model's estimate (E5, E6, E6b)}\label{sec:noise}
 We added Gaussian noise $\sigma\in\{0.01,0.1,1\}$ to the aligned $\kappa=100$ quadratic (200 noisy evaluations,
 repeats included; reported points scored on the noise-free $f$). Repeating each point four times made the reported
 point worse for both families (CMA-ES by 1.1--3.0 decades, BO by 1.6 and 1.1 at $\sigma=0.01$ and 0.1): it halves
@@ -480,7 +487,7 @@ noise ($-0.41$ \ci{-0.73}{-0.10}; E5). With each family's best settings, BO and 
 
 \subsection{Limitations}
 \begin{itemize}
-\item \textbf{Scope.} All runs are 2-D, on ellipsoids, Rosenbrock and one noisy quadratic, with 15 instances, so
+\item \textbf{Scope.} All runs are 2-D, on ellipsoids, Rosenbrock and one noisy quadratic, with 15--30 instances, so
 dimension effects and other landscapes are untested and several intervals are wide. Aligned and rotated instances have
 different optima, so rotation penalties are unpaired.
 \item \textbf{Implementation and mechanisms.} BO is our own NumPy/SciPy code: its log transform, relative floor and 200
