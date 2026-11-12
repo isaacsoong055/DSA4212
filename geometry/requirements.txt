@@ -3,3 +3,8 @@ numpy==2.4.1
 scipy==1.17.0
 pandas==2.3.3
 matplotlib==3.10.8
+# To run notebooks/main.ipynb (same versions as multimodality/requirements.txt)
+nbformat==5.11.1
+nbclient==0.11.0
+ipykernel==7.4.0
+nbconvert==7.17.2
